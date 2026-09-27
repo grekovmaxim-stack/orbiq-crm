@@ -151,6 +151,15 @@ export default function Home() {
     setActive("Tasks");
   }
 
+  function resetDemo() {
+    setDeals(seedDeals);
+    setContacts(seedContacts);
+    setTasks(seedTasks);
+    setSelectedDeal(seedDeals[0]);
+    window.localStorage.removeItem("orbiq-demo-state");
+    notify("Demo data restored");
+  }
+
   function renderView() {
     if (active === "Deals") return <DealsView deals={deals} onMove={moveDeal} onSelect={setSelectedDeal}/>;
     if (active === "Journeys") return <JourneyView/>;
@@ -159,7 +168,7 @@ export default function Home() {
     if (active === "Tasks") return <TasksView tasks={tasks} onToggle={toggleTask}/>;
     if (active === "Calendar") return <CalendarView/>;
     if (active === "Analytics") return <AnalyticsView deals={deals} companies={seedCompanies}/>;
-    if (active === "Settings") return <SettingsView/>;
+    if (active === "Settings") return <SettingsView onReset={resetDemo}/>;
     return <OverviewView deals={deals} tasks={tasks} onNavigate={setActive} onSelectDeal={setSelectedDeal}/>;
   }
 

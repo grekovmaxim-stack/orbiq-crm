@@ -309,3 +309,12 @@ button{color:inherit}
   .journeyTimeline{overflow:hidden}.journeyNode span{font-size:8px}
   .fieldRow{flex-direction:column;gap:0}
 }
+
+@media(max-width:680px){
+  .sidebar .brand{display:none}
+  .sidebar nav{margin:0;flex:1;flex-direction:row;justify-content:flex-start;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .sidebar nav::-webkit-scrollbar{display:none}
+  .sidebar nav .navBtn:nth-child(n){display:grid}
+  .sidebar .navBtn{width:42px;height:42px;flex:0 0 auto}
+  .sidebarBottom{display:none}
+}

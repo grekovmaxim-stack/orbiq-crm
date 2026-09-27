@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Icon from "./components/Icon";
 import { AnalyticsView, CalendarView, CompaniesView, ContactsView, DealsView, JourneyView, OverviewView, TasksView } from "./components/Views";
-import { CommandPalette, CreateModal, DealContext, DetailDrawer } from "./components/Overlays";
+import { CommandPalette, CreateModal, DealContext, DetailDrawer, Notifications, Toast } from "./components/Overlays";
 import { seedCompanies, seedContacts, seedDeals, seedTasks } from "./lib/data";
 import { initials } from "./lib/format";
 import type { Company, Contact, Deal, Stage, Task } from "./lib/types";
@@ -33,7 +33,7 @@ export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [focus, setFocus] = useState(false);
-  const [drawer, setDrawer] = useState<DrawerEntity>(null);
+  const [drawer, setDrawer] = useState<DrawerEntity>(null);\n  const [notificationsOpen, setNotificationsOpen] = useState(false);\n  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -60,7 +60,7 @@ export default function Home() {
     return "Northstar workspace · Live portfolio demo";
   }, [active]);
 
-  function moveDeal(id: string, stage: Stage) {
+  function notify(message: string) {\n    setToast(message);\n    window.setTimeout(() => setToast(null), 2200);\n  }\n\n  function moveDeal(id: string, stage: Stage) {
     setDeals((current) => current.map((deal) => deal.id === id ? { ...deal, stage, probability: stage === "Won" ? 100 : deal.probability } : deal));
     const updated = deals.find((deal) => deal.id === id);
     if (updated) setSelectedDeal({ ...updated, stage, probability: stage === "Won" ? 100 : updated.probability });
@@ -174,7 +174,7 @@ export default function Home() {
               <span>Search anything</span>
               <kbd>⌘ K</kbd>
             </button>
-            <button className="iconBtn" aria-label="Notifications"><Icon name="bell" size={18}/><i/></button>
+            <div className="notificationAnchor">\n              <button className="iconBtn" aria-label="Notifications" onClick={() => setNotificationsOpen((value) => !value)}><Icon name="bell" size={18}/><i/></button>\n              {notificationsOpen && <Notifications close={() => setNotificationsOpen(false)}/>}\n            </div>
             <button className="primary" onClick={() => setCreateOpen(true)}><Icon name="plus" size={16}/> New</button>
           </div>
         </header>
@@ -191,7 +191,7 @@ export default function Home() {
           </div>
         </div>
 
-        {renderView()}
+        <div className="viewStage" key={active}>{renderView()}</div>
       </section>
 
       <aside className="context">

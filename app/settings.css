@@ -1,0 +1,23 @@
+.settingsGrid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;align-items:start}
+.settingsMenu{background:rgba(255,255,255,.72);border:1px solid rgba(20,20,20,.055);border-radius:21px;padding:15px;display:flex;flex-direction:column;gap:4px;position:sticky;top:18px}
+.settingsMenu>.label{padding:6px 9px 12px}
+.settingsMenu button{height:39px;border:0;background:transparent;border-radius:11px;display:flex;align-items:center;gap:9px;padding:0 10px;color:#777b81;font-size:10px;cursor:pointer;text-align:left}
+.settingsMenu button:hover{background:#f3f4f5}
+.settingsMenu button.active{background:#17191b;color:#fff}
+.settingsContent{background:#fff;border:1px solid rgba(20,20,20,.055);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
+.settingsHero{padding:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}
+.settingsHero h2{font-size:22px;letter-spacing:-.7px;margin:5px 0 6px}.settingsHero p{margin:0;color:#8a8e94;font-size:10px;max-width:520px;line-height:1.55}
+.workspaceBadge{display:flex;align-items:center;gap:10px;background:#f4f5f6;border:1px solid var(--line);border-radius:15px;padding:9px 12px;min-width:170px}
+.workspaceBadge b{display:block;font-size:10px}.workspaceBadge small{display:block;color:#999;font-size:8px;margin-top:3px}.miniBrand{width:32px;height:32px;border-radius:10px;font-size:10px;flex:0 0 auto}
+.settingsSection{padding:22px 24px;border-bottom:1px solid var(--line)}
+.settingsSectionHead{display:flex;align-items:start;justify-content:space-between;margin-bottom:15px}.settingsSectionHead h3{font-size:13px;margin:0 0 4px}.settingsSectionHead p{font-size:9px;color:#989ba0;margin:0}
+.settingsForm{max-width:620px}
+.settingRow{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:12px 0;border-top:1px solid var(--line)}
+.settingRow:first-of-type{border-top:0}
+.settingRow b{display:block;font-size:10px}.settingRow span{display:block;color:#999;font-size:8px;margin-top:4px}
+.toggle{width:40px;height:23px;border:0;border-radius:999px;background:#dfe2e5;padding:3px;cursor:pointer;transition:.2s;flex:0 0 auto}
+.toggle i{display:block;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.14);transition:.2s}
+.toggle.on{background:#17191b}.toggle.on i{transform:translateX(17px)}
+.settingsSave{min-height:70px;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;background:#fafbfb}.settingsSave span{font-size:9px;color:#96999e}
+@media(max-width:900px){.settingsGrid{grid-template-columns:1fr}.settingsMenu{position:static;flex-direction:row;overflow-x:auto}.settingsMenu>.label{display:none}.settingsMenu button{flex:0 0 auto}.settingsHero{align-items:flex-start;flex-direction:column}.workspaceBadge{width:100%}}
+@media(max-width:680px){.settingsSection,.settingsHero{padding:17px}.settingsSave{padding:13px 17px;align-items:flex-start;flex-direction:column}.settingsSave .primary{width:100%}}

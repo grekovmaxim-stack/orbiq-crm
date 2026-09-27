@@ -380,3 +380,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{
   .navBtn.active:after{display:none}
   body{background:linear-gradient(180deg,#f7f8f9 0%,#eef1f4 100%)}
 }
+
+.forecastPanel{grid-column:1/-1;display:grid;grid-template-columns:minmax(220px,.8fr) minmax(280px,1.2fr);column-gap:30px;align-items:end}
+.forecastPanel .panelHead{grid-column:1/-1}
+.confidenceBadge{font-size:10px;background:#17191b;color:#fff;border-radius:999px;padding:6px 9px}
+.forecastValue{padding:7px 0 12px}.forecastValue strong{display:block;font-size:34px;letter-spacing:-1.5px}.forecastValue span{display:block;margin-top:5px;color:#92969c;font-size:9px}
+.confidenceSlider{width:100%;accent-color:#17191b;cursor:pointer}
+.sliderLabels{display:flex;justify-content:space-between;color:#a0a3a8;font-size:8px;margin-top:6px}
+.forecastMiniGrid{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.forecastMiniGrid>div{background:#f7f8f9;border:1px solid var(--line);border-radius:13px;padding:11px}.forecastMiniGrid span{display:block;font-size:8px;color:#9a9da2;margin-bottom:4px}.forecastMiniGrid b{font-size:12px}
+.teamPanel{grid-column:1/-1}.tinyMeta{font-size:9px;color:#9a9da2}
+.teamRow{display:grid;grid-template-columns:28px auto 1fr 60px 44px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.teamRow:first-of-type{border-top:0}.rank{font-size:8px;color:#b0b3b7}.teamAvatar{width:31px;height:31px}.teamName b{display:block;font-size:10px}.teamName span{display:block;font-size:8px;color:#999;margin-top:3px}.teamRow strong{font-size:11px;text-align:right}.teamRow em{font-size:9px;font-style:normal;color:#4c775e;text-align:right}
+@media(max-width:900px){.forecastPanel{grid-template-columns:1fr}.forecastMiniGrid{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:680px){.forecastMiniGrid{grid-template-columns:1fr}.teamRow{grid-template-columns:24px auto 1fr auto}.teamRow em{display:none}}

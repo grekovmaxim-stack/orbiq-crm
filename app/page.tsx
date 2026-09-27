@@ -37,6 +37,27 @@ export default function Home() {
   const [drawer, setDrawer] = useState<DrawerEntity>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [demoReady, setDemoReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("orbiq-demo-state");
+      if (saved) {
+        const parsed = JSON.parse(saved) as { deals?: Deal[]; contacts?: Contact[]; tasks?: Task[] };
+        if (parsed.deals) setDeals(parsed.deals);
+        if (parsed.contacts) setContacts(parsed.contacts);
+        if (parsed.tasks) setTasks(parsed.tasks);
+      }
+    } catch {
+      // Keep seeded demo data if local storage is unavailable.
+    }
+    setDemoReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!demoReady) return;
+    window.localStorage.setItem("orbiq-demo-state", JSON.stringify({ deals, contacts, tasks }));
+  }, [demoReady, deals, contacts, tasks]);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {

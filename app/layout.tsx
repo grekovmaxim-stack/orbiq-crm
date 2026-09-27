@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import "./globals.css";
+import "./globals.css";\nimport "./interaction.css";
 
 export const metadata: Metadata = {
   title: "ORBIQ CRM — Customer Intelligence Workspace",

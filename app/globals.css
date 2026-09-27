@@ -318,3 +318,65 @@ button{color:inherit}
   .sidebar .navBtn{width:42px;height:42px;flex:0 0 auto}
   .sidebarBottom{display:none}
 }
+
+/* --- Portfolio polish pass --- */
+html{background:#eef0f3}
+body{
+  background:
+    radial-gradient(circle at 18% 8%,rgba(255,255,255,.95),transparent 28%),
+    radial-gradient(circle at 82% 10%,rgba(225,231,238,.65),transparent 26%),
+    linear-gradient(180deg,#f5f6f8 0%,#eef1f4 100%);
+}
+.workspace{position:relative}
+.workspace:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 28%);
+  mask-image:linear-gradient(to bottom,#000,transparent);
+}
+.metric,.panel,.journeyCanvas,.calendarPanel,.settingsContent,.companyCard{
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.metric,.panel,.journeyCanvas,.calendarPanel,.settingsContent{
+  box-shadow:0 10px 30px rgba(24,28,34,.035),inset 0 1px 0 rgba(255,255,255,.75);
+}
+.metric{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.metric:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(20,24,30,.06);border-color:rgba(20,20,20,.085)}
+.topbar h1{font-weight:720;letter-spacing:-1.55px}
+.panelHead h2,.contactsToolbar h2,.calendarToolbar h2{font-weight:680;letter-spacing:-.55px}
+.primary,.softBtn,.iconBtn,.searchBtn,.tab,.navBtn,.dealCard,.companyCard,.contactButton,.taskRow{
+  -webkit-tap-highlight-color:transparent;
+}
+button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid rgba(21,23,25,.4);
+  outline-offset:2px;
+}
+.navBtn.active:after{
+  content:"";
+  position:absolute;
+  left:-9px;
+  width:3px;
+  height:18px;
+  border-radius:999px;
+  background:#151719;
+}
+.sidebar .navBtn.active:after{background:#151719}
+.sidebar .navBtn.active{box-shadow:0 10px 24px rgba(0,0,0,.15)}
+.journeyNode.active i{animation:nodePulse 2.8s ease-in-out infinite}
+@keyframes nodePulse{
+  0%,100%{box-shadow:0 7px 17px rgba(0,0,0,.14),0 0 0 0 rgba(21,23,25,.12)}
+  50%{box-shadow:0 9px 22px rgba(0,0,0,.16),0 0 0 7px rgba(21,23,25,0)}
+}
+.dealCard:hover .logo,.companyCard:hover .logo{transform:scale(1.04)}
+.logo{transition:transform .2s ease}
+.contactButton,.taskRow{transition:background .16s ease,transform .16s ease}
+.contactButton:hover,.taskRow:hover{background:#f8f9fa}
+.context{box-shadow:-18px 0 48px rgba(31,36,42,.025)}
+.insight{background:linear-gradient(145deg,#141618,#202327)}
+@media(max-width:680px){
+  .navBtn.active:after{display:none}
+  body{background:linear-gradient(180deg,#f7f8f9 0%,#eef1f4 100%)}
+}

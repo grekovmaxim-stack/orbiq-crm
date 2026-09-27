@@ -343,7 +343,7 @@ export function TasksView({
 }
 
 export function CalendarView() {
-  const days = Array.from({ length: 35 }, (_, index) => index - 1);
+  const days = Array.from({ length: 35 }, (_, index) => index);
   const events: Record<number, Array<[string, string]>> = {
     3: [["09:30", "Arcwell follow-up"]],
     8: [["11:00", "Northwave demo"], ["15:30", "Internal review"]],

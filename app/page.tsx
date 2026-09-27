@@ -33,7 +33,9 @@ export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [focus, setFocus] = useState(false);
-  const [drawer, setDrawer] = useState<DrawerEntity>(null);\n  const [notificationsOpen, setNotificationsOpen] = useState(false);\n  const [toast, setToast] = useState<string | null>(null);
+  const [drawer, setDrawer] = useState<DrawerEntity>(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -60,7 +62,12 @@ export default function Home() {
     return "Northstar workspace · Live portfolio demo";
   }, [active]);
 
-  function notify(message: string) {\n    setToast(message);\n    window.setTimeout(() => setToast(null), 2200);\n  }\n\n  function moveDeal(id: string, stage: Stage) {
+  function notify(message: string) {
+    setToast(message);
+    window.setTimeout(() => setToast(null), 2200);
+  }
+
+  function moveDeal(id: string, stage: Stage) {
     setDeals((current) => current.map((deal) => deal.id === id ? { ...deal, stage, probability: stage === "Won" ? 100 : deal.probability } : deal));
     const updated = deals.find((deal) => deal.id === id);
     if (updated) setSelectedDeal({ ...updated, stage, probability: stage === "Won" ? 100 : updated.probability });
@@ -174,7 +181,10 @@ export default function Home() {
               <span>Search anything</span>
               <kbd>⌘ K</kbd>
             </button>
-            <div className="notificationAnchor">\n              <button className="iconBtn" aria-label="Notifications" onClick={() => setNotificationsOpen((value) => !value)}><Icon name="bell" size={18}/><i/></button>\n              {notificationsOpen && <Notifications close={() => setNotificationsOpen(false)}/>}\n            </div>
+            <div className="notificationAnchor">
+              <button className="iconBtn" aria-label="Notifications" onClick={() => setNotificationsOpen((value) => !value)}><Icon name="bell" size={18}/><i/></button>
+              {notificationsOpen && <Notifications close={() => setNotificationsOpen(false)}/>}
+            </div>
             <button className="primary" onClick={() => setCreateOpen(true)}><Icon name="plus" size={16}/> New</button>
           </div>
         </header>

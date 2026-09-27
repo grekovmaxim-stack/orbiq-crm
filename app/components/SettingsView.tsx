@@ -5,7 +5,7 @@ function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
   return <button className={value ? "toggle on" : "toggle"} onClick={onChange} aria-pressed={value}><i/></button>;
 }
 
-export default function SettingsView() {
+export default function SettingsView({ onReset }: { onReset?: () => void }) {
   const [emailDigest, setEmailDigest] = useState(true);
   const [dealAlerts, setDealAlerts] = useState(true);
   const [taskReminders, setTaskReminders] = useState(false);
@@ -46,7 +46,7 @@ export default function SettingsView() {
           <SettingRow title="Compact tables" copy="Reduce vertical spacing in contacts, activities and tasks." value={compact} toggle={() => setCompact(!compact)}/>
         </div>
 
-        <div className="settingsSave"><span>Changes in this portfolio demo are local to the current session.</span><button className="primary">Save changes</button></div>
+        <div className="settingsSave"><div><span>Demo changes are saved locally in this browser.</span>{onReset && <button className="resetDemo" onClick={onReset}>Reset demo data</button>}</div><button className="primary">Save changes</button></div>
       </section>
     </div>
   );

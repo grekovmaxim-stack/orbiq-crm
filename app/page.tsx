@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Icon from "./components/Icon";
+import SettingsView from "./components/SettingsView";
 import { AnalyticsView, CalendarView, CompaniesView, ContactsView, DealsView, JourneyView, OverviewView, TasksView } from "./components/Views";
 import { CommandPalette, CreateModal, DealContext, DetailDrawer, Notifications, Toast } from "./components/Overlays";
 import { seedCompanies, seedContacts, seedDeals, seedTasks } from "./lib/data";
@@ -137,6 +138,7 @@ export default function Home() {
     if (active === "Tasks") return <TasksView tasks={tasks} onToggle={toggleTask}/>;
     if (active === "Calendar") return <CalendarView/>;
     if (active === "Analytics") return <AnalyticsView deals={deals} companies={seedCompanies}/>;
+    if (active === "Settings") return <SettingsView/>;
     return <OverviewView deals={deals} tasks={tasks} onNavigate={setActive} onSelectDeal={setSelectedDeal}/>;
   }
 
@@ -162,7 +164,7 @@ export default function Home() {
         </nav>
 
         <div className="sidebarBottom">
-          <button className="navBtn" title="Settings"><Icon name="settings" size={19}/><span>Settings</span></button>
+          <button className={active === "Settings" ? "navBtn active" : "navBtn"} title="Settings" onClick={() => setActive("Settings")}><Icon name="settings" size={19}/><span>Settings</span></button>
           <div className="avatar dark">MC</div>
         </div>
       </aside>

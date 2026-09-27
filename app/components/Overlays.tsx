@@ -170,3 +170,20 @@ export function DealContext({ deal }: { deal: Deal }) {
     </>
   );
 }
+
+
+export function Notifications({ close }: { close: () => void }) {
+  return (
+    <div className="notificationPopover">
+      <div className="notificationHead"><div><span className="label">Inbox</span><h3>Notifications</h3></div><button onClick={close}><Icon name="close" size={14}/></button></div>
+      <div className="notificationItem unread"><i/><div><b>Everline viewed your proposal</b><span>4th view · 12 minutes ago</span></div></div>
+      <div className="notificationItem unread"><i/><div><b>Arcwell security review updated</b><span>Daniel added 2 notes · 44 minutes ago</span></div></div>
+      <div className="notificationItem"><i/><div><b>Northwave task completed</b><span>Buying committee confirmed · 2 hours ago</span></div></div>
+      <button className="notificationFooter">Open activity center <Icon name="arrow" size={13}/></button>
+    </div>
+  );
+}
+
+export function Toast({ message }: { message: string }) {
+  return <div className="toast"><span><Icon name="check" size={13}/></span>{message}</div>;
+}

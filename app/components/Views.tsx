@@ -15,101 +15,153 @@ export function OverviewView({
   onNavigate: (view: string) => void;
   onSelectDeal: (deal: Deal) => void;
 }) {
-  const pipeline = deals.filter((deal) => deal.stage !== "Won").reduce((sum, deal) => sum + deal.value, 0);
-  const won = deals.filter((deal) => deal.stage === "Won").reduce((sum, deal) => sum + deal.value, 0);
-  const weighted = deals.reduce((sum, deal) => sum + deal.value * (deal.probability / 100), 0);
+  const openDeals = deals.filter((deal) => deal.stage !== "Won");
+  const pipeline = openDeals.reduce((sum, deal) => sum + deal.value, 0);
+  const weighted = openDeals.reduce((sum, deal) => sum + deal.value * (deal.probability / 100), 0);
   const openTasks = tasks.filter((task) => !task.done).length;
   const attention = deals.filter((deal) => deal.health !== "Healthy").slice(0, 3);
+  const attentionValue = attention.reduce((sum, deal) => sum + deal.value, 0);
+  const spotlightDeals = [...openDeals].sort((a,b) => b.value - a.value).slice(0, 5);
+  const stages: Stage[] = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
 
   return (
-    <div className="contentGrid">
-      <section className="kpis">
-        {[
-          ["Revenue", money(284600, true), "+18.4%", "vs last month"],
-          ["Pipeline", money(pipeline, true), "+12.8%", deals.filter((deal) => deal.stage !== "Won").length + " opportunities"],
-          ["Weighted forecast", money(Math.round(weighted), true), "92%", "of monthly target"],
-          ["Open tasks", String(openTasks), "3 due today", "team workload"]
-        ].map((kpi, index) => (
-          <article className="metric" key={kpi[0]}>
-            <div className="metricTop"><span>{kpi[0]}</span><em>0{index + 1}</em></div>
-            <strong>{kpi[1]}</strong>
-            <div className="metricFoot"><b>{kpi[2]}</b><span>{kpi[3]}</span></div>
-          </article>
-        ))}
+    <div className="overviewExperience">
+      <section className="briefingHero">
+        <div className="briefingCopy">
+          <div className="briefingKicker"><span className="liveDot"/><span>Live revenue briefing</span><em>Updated now</em></div>
+          <h2><span>{attention.length} moves</span> can unlock <strong>{money(attentionValue, true)}</strong> before month close.</h2>
+          <p>Northstar is ahead on velocity, but the next gain is not more activity — it is removing friction from the right accounts.</p>
+
+          <div className="briefingActions">
+            <button className="primary commandPrimary" onClick={() => onNavigate("Deals")}>Open priority pipeline <Icon name="arrow" size={15}/></button>
+            <button className="quietAction" onClick={() => onNavigate("Journeys")}>Follow Everline journey</button>
+          </div>
+
+          <div className="signalMetrics">
+            <div><span>Revenue</span><b>$284.6K</b><em>+18.4%</em></div>
+            <div><span>Weighted forecast</span><b>{money(Math.round(weighted), true)}</b><em>92% target</em></div>
+            <div><span>Pipeline</span><b>{money(pipeline, true)}</b><em>{openDeals.length} active deals</em></div>
+            <div><span>Focus load</span><b>{openTasks}</b><em>open tasks</em></div>
+          </div>
+        </div>
+
+        <div className="orbitPanel" aria-label="Revenue momentum signal map">
+          <div className="orbitMeta"><span>Momentum map</span><b>+14.2%</b></div>
+          <div className="orbitGraphic">
+            <div className="orbitRing ringOuter"/>
+            <div className="orbitRing ringMid"/>
+            <div className="orbitRing ringInner"/>
+            <div className="orbitCenter"><small>Revenue pulse</small><strong>84</strong><span>healthy</span></div>
+
+            <button className="orbitNode orbitOne" onClick={() => onSelectDeal(deals.find((deal) => deal.company === "Everline") || deals[0])}>
+              <i className="mint">EV</i><span><b>Everline</b><small>Proposal · 68%</small></span>
+            </button>
+            <button className="orbitNode orbitTwo" onClick={() => onSelectDeal(deals.find((deal) => deal.company === "Arcwell") || deals[0])}>
+              <i className="blue">AR</i><span><b>Arcwell</b><small>Negotiation · 82%</small></span>
+            </button>
+            <button className="orbitNode orbitThree" onClick={() => onSelectDeal(deals.find((deal) => deal.company === "Novexa") || deals[0])}>
+              <i className="coral">NO</i><span><b>Novexa</b><small>Risk signal</small></span>
+            </button>
+
+            <span className="orbitPulse pulseA"/><span className="orbitPulse pulseB"/>
+          </div>
+          <div className="orbitFooter"><span>Signal strength</span><div><i style={{width:"84%"}}/></div><b>84 / 100</b></div>
+        </div>
       </section>
 
-      <section className="panel revenue">
-        <div className="panelHead">
-          <div><span className="label">Revenue pulse</span><h2>Pipeline movement</h2></div>
-          <div className="legend"><span><i className="dot ink"/>Pipeline</span><span><i className="dot gray"/>Closed won</span></div>
+      <section className="momentumBoard">
+        <div className="momentumMain">
+          <div className="sectionEditorial">
+            <div><span className="label">Deal momentum</span><h2>Where revenue is moving</h2></div>
+            <button className="textBtn" onClick={() => onNavigate("Deals")}>Open pipeline <Icon name="arrow" size={14}/></button>
+          </div>
+
+          <div className="stageLegend">
+            {stages.map((stage) => <span key={stage}>{stage}</span>)}
+          </div>
+
+          <div className="momentumRows">
+            {spotlightDeals.map((deal) => {
+              const stageIndex = Math.max(0, stages.indexOf(deal.stage));
+              const left = stageIndex / (stages.length - 1) * 100;
+              return (
+                <button className="momentumRow" key={deal.id} onClick={() => onSelectDeal(deal)}>
+                  <span className={"logo small " + deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
+                  <span className="momentumName"><b>{deal.company}</b><small>{money(deal.value, true)} · {deal.probability}% confidence</small></span>
+                  <span className="momentumTrack"><i/><em style={{left:left + "%"}}><span>{deal.stage}</span></em></span>
+                  <Icon name="chevron" size={14}/>
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="chart">
-          <svg viewBox="0 0 760 230" preserveAspectRatio="none" aria-label="Revenue chart">
-            <defs><linearGradient id="fade" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#151719" stopOpacity=".13"/><stop offset="100%" stopColor="#151719" stopOpacity="0"/></linearGradient></defs>
-            {[40, 85, 130, 175].map((y) => <line key={y} x1="0" y1={y} x2="760" y2={y} className="gridLine"/>)}
-            <path d="M0 190 C55 178 82 176 120 143 S195 117 235 130 S310 104 350 91 S420 98 468 62 S540 80 590 45 S680 25 760 36 L760 230 L0 230Z" fill="url(#fade)"/>
-            <path d="M0 190 C55 178 82 176 120 143 S195 117 235 130 S310 104 350 91 S420 98 468 62 S540 80 590 45 S680 25 760 36" className="mainLine"/>
-            <path d="M0 202 C90 194 117 170 170 178 S260 147 310 158 S392 131 450 139 S530 118 590 124 S675 102 760 105" className="secondaryLine"/>
-          </svg>
-          <div className="axis"><span>Sep 01</span><span>Sep 08</span><span>Sep 15</span><span>Sep 22</span><span>Sep 30</span></div>
-        </div>
-        <div className="chartSummary">
-          <span>Closed this month <b>{money(won, true)}</b></span>
-          <span>Average cycle <b>26 days</b></span>
-          <span>Velocity <b>+11.2%</b></span>
-        </div>
+
+        <aside className="interventionPanel">
+          <div className="interventionTop">
+            <div><span className="label">Interventions</span><h2>Three things worth doing</h2></div>
+            <span className="count">{attention.length}</span>
+          </div>
+
+          <div className="interventionStack">
+            {attention.map((deal,index) => (
+              <button className="interventionCard" key={deal.id} onClick={() => onSelectDeal(deal)}>
+                <span className="interventionIndex">0{index+1}</span>
+                <div>
+                  <div className="interventionCompany"><b>{deal.company}</b><span>{money(deal.value, true)}</span></div>
+                  <p>{deal.health === "At risk" ? "Bring a decision maker into the next conversation before the cycle slips." : "Re-engage the buying team while recent activity is still warm."}</p>
+                </div>
+                <Icon name="arrow" size={14}/>
+              </button>
+            ))}
+          </div>
+
+          <div className="interventionInsight">
+            <span>✦</span>
+            <p><b>Pattern detected.</b> Deals with a second stakeholder added within 48 hours are closing faster this month.</p>
+          </div>
+        </aside>
       </section>
 
-      <section className="panel attention">
-        <div className="panelHead">
-          <div><span className="label">Priority queue</span><h2>Needs attention</h2></div>
-          <span className="count">{attention.length}</span>
+      <section className="journeyFeature">
+        <div className="journeyFeatureLead">
+          <span className="label">Customer journey spotlight</span>
+          <h2>Everline is not “in Proposal”. It is moving through a decision.</h2>
+          <p>ORBIQ keeps the commercial stage and the human journey connected, so the team sees what has to happen next — not just where the deal sits.</p>
+          <button className="quietAction darkQuiet" onClick={() => onNavigate("Journeys")}>Explore the journey <Icon name="arrow" size={14}/></button>
         </div>
-        {attention.map((deal) => (
-          <button className="attentionRow attentionButton" key={deal.id} onClick={() => onSelectDeal(deal)}>
-            <div className={"logo small " + deal.tone}>{deal.company.slice(0, 2).toUpperCase()}</div>
-            <div><b>{deal.company}</b><small>{deal.health === "At risk" ? "Decision maker missing" : "No activity in 6 days"}</small></div>
-            <strong>{money(deal.value, true)}</strong>
-          </button>
-        ))}
-        <button className="queueAction" onClick={() => onNavigate("Deals")}>Review pipeline <Icon name="arrow" size={14}/></button>
-      </section>
 
-      <section className="panel journeyPreview">
-        <div className="panelHead">
-          <div><span className="label">Customer journey</span><h2>Everline · Expansion</h2></div>
-          <button className="textBtn" onClick={() => onNavigate("Journeys")}>Open journey <Icon name="arrow" size={15}/></button>
-        </div>
-        <div className="journeyRail">
+        <div className="journeyFeatureFlow">
           {[
-            ["01", "Discovery", "100%"],
-            ["02", "Solution", "72%"],
-            ["03", "Decision", "28%"],
-            ["04", "Onboarding", "0%"]
-          ].map((step, index) => (
-            <div className={index === 1 ? "railStep current" : "railStep"} key={step[1]}>
-              <span className="stepNum">{step[0]}</span>
-              <div><b>{step[1]}</b><small>{step[2]}</small><div className="track"><i style={{ width: step[2] }}/></div></div>
-              {index < 3 && <span className="connector"/>}
+            ["01","Discovery","100%","done"],
+            ["02","Solution","72%","active"],
+            ["03","Decision","28%","next"],
+            ["04","Onboarding","0%","future"]
+          ].map((step,index) => (
+            <div className={"featureStage " + step[3]} key={step[1]}>
+              <span className="featureStageNum">{step[0]}</span>
+              <div><b>{step[1]}</b><small>{step[2]}</small></div>
+              {index < 3 && <i className="featureConnector"/>}
             </div>
           ))}
+          <div className="journeyCallout">
+            <span className="avatar">DK</span>
+            <div><b>Technical validation</b><small>In progress · blocking ROI model</small></div>
+            <span className="journeyCalloutTime">Today</span>
+          </div>
         </div>
       </section>
 
-      <section className="panel activity">
-        <div className="panelHead">
-          <div><span className="label">Live workspace</span><h2>Recent activity</h2></div>
-          <button className="textBtn">View all</button>
-        </div>
+      <section className="activityRibbon">
+        <div className="activityRibbonTitle"><span className="liveDot"/><b>Workspace pulse</b><small>What changed while you were away</small></div>
         {[
-          ["MC", "Maya Chen", "moved Everline to Proposal", "Proposal · $31.8K", "12m"],
-          ["DL", "Daniel Lewis", "completed technical review", "Arcwell · Customer intelligence", "44m"],
-          ["SR", "Sofia Reed", "added a new contact", "Northwave · Revenue operations", "2h"]
-        ].map((item, index) => (
-          <div className="activityRow" key={item[0] + item[4]}>
-            <div className={"activityAvatar av" + index}>{item[0]}</div>
-            <div><p><b>{item[1]}</b> {item[2]}</p><small>{item[3]}</small></div>
-            <time>{item[4]}</time>
+          ["MC","Everline moved to Proposal","12m"],
+          ["DL","Arcwell technical review completed","44m"],
+          ["SR","Northwave buying committee updated","2h"]
+        ].map((item,index) => (
+          <div className="pulseItem" key={item[1]}>
+            <span className={"activityAvatar av"+index}>{item[0]}</span>
+            <b>{item[1]}</b>
+            <time>{item[2]}</time>
           </div>
         ))}
       </section>

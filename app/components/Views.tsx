@@ -223,14 +223,28 @@ export function OverviewView({
 export function DealsView({
   deals,
   onMove,
-  onSelect
+  onSelect,
+  selectedDealId
 }: {
   deals: Deal[];
   onMove: (id: string, stage: Stage) => void;
   onSelect: (deal: Deal) => void;
+  selectedDealId: string;
 }) {
   const [dragging, setDragging] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [health, setHealth] = useState("All");
   const stages: Stage[] = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
+
+  const filteredDeals = deals.filter((deal) => {
+    const matchesQuery = (deal.company + " " + deal.title).toLowerCase().includes(query.toLowerCase());
+    const matchesHealth = health === "All" || deal.health === health;
+    return matchesQuery && matchesHealth;
+  });
+  const openPipeline = deals.filter((deal) => deal.stage !== "Won").reduce((sum, deal) => sum + deal.value, 0);
+  const weighted = deals.filter((deal) => deal.stage !== "Won").reduce((sum, deal) => sum + deal.value * deal.probability / 100, 0);
+  const atRiskValue = deals.filter((deal) => deal.health !== "Healthy" && deal.stage !== "Won").reduce((sum, deal) => sum + deal.value, 0);
+  const selectedDeal = deals.find((deal) => deal.id === selectedDealId) || deals[0];
 
   function drop(event: DragEvent<HTMLElement>, stage: Stage) {
     event.preventDefault();
@@ -239,40 +253,105 @@ export function DealsView({
   }
 
   return (
-    <div className="dealBoard five">
-      {stages.map((stage) => {
-        const list = deals.filter((deal) => deal.stage === stage);
-        const total = list.reduce((sum, deal) => sum + deal.value, 0);
-        return (
-          <section className={"dealColumn " + (stage === "Won" ? "wonColumn" : "")} key={stage} onDragOver={(event) => event.preventDefault()} onDrop={(event) => drop(event, stage)}>
-            <div className="columnHead">
-              <div><b>{stage}</b><span>{list.length}</span></div>
-              <strong>{money(total, true)}</strong>
-            </div>
-            <div className="dealCards">
-              {list.map((deal) => (
-                <article
-                  className={dragging === deal.id ? "dealCard dragging" : "dealCard"}
-                  key={deal.id}
-                  draggable
-                  onDragStart={() => setDragging(deal.id)}
-                  onDragEnd={() => setDragging(null)}
-                  onClick={() => onSelect(deal)}
-                >
-                  <div className="dealCardTop"><div className={"logo small " + deal.tone}>{deal.company.slice(0, 2).toUpperCase()}</div><Icon name="dots" size={17}/></div>
-                  <div className="dealCopy"><small>{deal.company}</small><b>{deal.title}</b></div>
-                  <div className="dealSignals"><span>{deal.probability}% probability</span><span className={"healthPill " + deal.health.toLowerCase().replace(" ", "")}>{deal.health}</span></div>
-                  <div className="dealBottom"><strong>{money(deal.value)}</strong><div className="avatar mini">{deal.owner}</div></div>
-                  <select className="mobileStage" value={deal.stage} onChange={(event) => { event.stopPropagation(); onMove(deal.id, event.target.value as Stage); }}>
-                    {stages.map((item) => <option value={item} key={item}>{item}</option>)}
-                  </select>
-                </article>
-              ))}
-              {list.length === 0 && <div className="emptyDrop">Drop a deal here</div>}
-            </div>
-          </section>
-        );
-      })}
+    <div className="pipelineStudio">
+      <section className="pipelineStudioHead">
+        <div className="pipelineHeadline">
+          <span className="label">Opportunity system</span>
+          <h2>Pipeline room</h2>
+          <p>Move revenue forward while keeping risk, buying-group coverage and customer context visible.</p>
+        </div>
+
+        <div className="pipelineKpis">
+          <div><span>Open pipeline</span><b>{money(openPipeline,true)}</b><small>{deals.filter((deal) => deal.stage !== "Won").length} live opportunities</small></div>
+          <div><span>Weighted</span><b>{money(Math.round(weighted),true)}</b><small>probability adjusted</small></div>
+          <div className="risk"><span>Needs attention</span><b>{money(atRiskValue,true)}</b><small>{deals.filter((deal) => deal.health !== "Healthy" && deal.stage !== "Won").length} deals</small></div>
+        </div>
+      </section>
+
+      <section className="pipelineControlBar">
+        <label className="pipelineSearch"><Icon name="search" size={14}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search pipeline"/></label>
+        <div className="pipelineHealthFilter">
+          {["All","Healthy","Watch","At risk"].map((item) => <button key={item} className={health === item ? "active" : ""} onClick={() => setHealth(item)}>{item}</button>)}
+        </div>
+        <div className="pipelineSignal"><span className="liveDot"/><span>Drag deals between stages</span></div>
+      </section>
+
+      <section className="pipelineFocusStrip">
+        <div className={"logo " + selectedDeal.tone}>{selectedDeal.company.slice(0,2).toUpperCase()}</div>
+        <div className="pipelineFocusCopy">
+          <span>In focus</span>
+          <b>{selectedDeal.company} · {selectedDeal.title}</b>
+          <small>{selectedDeal.stage} · {selectedDeal.probability}% confidence · closes {selectedDeal.closeDate}</small>
+        </div>
+        <div className="pipelineFocusJourney">
+          {stages.map((stage,index) => {
+            const currentIndex = stages.indexOf(selectedDeal.stage);
+            return <span className={index < currentIndex ? "done" : index === currentIndex ? "active" : ""} key={stage}><i/><small>{stage}</small></span>;
+          })}
+        </div>
+        <button onClick={() => onSelect(selectedDeal)}>Open context <Icon name="arrow" size={13}/></button>
+      </section>
+
+      <div className="dealBoard pipelineBoard five">
+        {stages.map((stage,stageIndex) => {
+          const list = filteredDeals.filter((deal) => deal.stage === stage);
+          const allStageDeals = deals.filter((deal) => deal.stage === stage);
+          const total = allStageDeals.reduce((sum, deal) => sum + deal.value, 0);
+          const avgProbability = allStageDeals.length ? Math.round(allStageDeals.reduce((sum, deal) => sum + deal.probability, 0) / allStageDeals.length) : 0;
+          return (
+            <section
+              className={"dealColumn pipelineColumn " + (stage === "Won" ? "wonColumn " : "") + (dragging ? "dropReady" : "")}
+              key={stage}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => drop(event, stage)}
+            >
+              <div className="pipelineColumnHead">
+                <div className="pipelineStageIdentity"><span>0{stageIndex+1}</span><div><b>{stage}</b><small>{allStageDeals.length} opportunities</small></div></div>
+                <div className="pipelineStageValue"><b>{money(total,true)}</b><small>{avgProbability}% avg.</small></div>
+              </div>
+              <div className="pipelineStageRail"><i style={{width: avgProbability + "%"}}/></div>
+
+              <div className="dealCards pipelineCards">
+                {list.map((deal,index) => (
+                  <article
+                    className={"dealCard pipelineDeal " + (dragging === deal.id ? "dragging " : "") + (selectedDealId === deal.id ? "selected " : "")}
+                    key={deal.id}
+                    draggable
+                    onDragStart={() => setDragging(deal.id)}
+                    onDragEnd={() => setDragging(null)}
+                    onClick={() => onSelect(deal)}
+                  >
+                    <div className="dealCardTop pipelineDealTop">
+                      <div className={"logo small " + deal.tone}>{deal.company.slice(0, 2).toUpperCase()}</div>
+                      <div className="pipelinePeople"><span>{deal.owner}</span><span>{stageIndex < 2 ? "SR" : stageIndex === 2 ? "DK" : "OM"}</span></div>
+                    </div>
+
+                    <div className="dealCopy pipelineDealCopy"><small>{deal.company}</small><b>{deal.title}</b></div>
+
+                    <div className="pipelineDealJourney">
+                      <span className="dealJourneyIcon"><Icon name={stageIndex < 2 ? "people" : stageIndex === 2 ? "mail" : stageIndex === 3 ? "task" : "check"} size={11}/></span>
+                      <div><b>{stageIndex === 0 ? "Buying group forming" : stageIndex === 1 ? "Fit being validated" : stageIndex === 2 ? "Value case in motion" : stageIndex === 3 ? "Approval path active" : "Ready for handoff"}</b><small>{index === 0 ? "Last activity today" : "Last activity 2d ago"}</small></div>
+                    </div>
+
+                    <div className="dealSignals pipelineSignals">
+                      <span>{deal.probability}% confidence</span>
+                      <span className={"healthPill " + deal.health.toLowerCase().replace(" ", "")}>{deal.health}</span>
+                    </div>
+
+                    <div className="pipelineDealProgress"><i style={{width:deal.probability + "%"}}/></div>
+
+                    <div className="dealBottom pipelineDealBottom"><strong>{money(deal.value)}</strong><span>{deal.closeDate}</span></div>
+                    <select className="mobileStage" value={deal.stage} onChange={(event) => { event.stopPropagation(); onMove(deal.id, event.target.value as Stage); }}>
+                      {stages.map((item) => <option value={item} key={item}>{item}</option>)}
+                    </select>
+                  </article>
+                ))}
+                {list.length === 0 && <div className="emptyDrop pipelineEmpty"><span>＋</span><b>{query || health !== "All" ? "No matching deals" : "Drop opportunity here"}</b><small>{query || health !== "All" ? "Try another filter" : "Move the next deal forward"}</small></div>}
+              </div>
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -69,6 +69,20 @@ export function OverviewView({
 
         <div className="ccFlowWrap">
           <div className="ccFlowGrid">
+            <svg className="ccFlowTrace" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden>
+              <path className="ccTraceMain" d="M36 208 C110 154 154 240 214 208 S334 134 392 184 S506 238 562 190 S686 126 742 188 S866 244 964 186"/>
+              <path className="ccTraceBranch" d="M392 184 C416 116 458 95 496 112"/>
+              <path className="ccTraceBranch" d="M562 190 C596 266 638 282 684 256"/>
+              <path className="ccTraceBranch" d="M742 188 C770 112 812 94 850 112"/>
+              {[36,214,392,562,742,964].map((x,index) => <circle className={index < 4 ? "ccTraceDot active" : "ccTraceDot"} cx={x} cy={index === 0 ? 208 : index === 1 ? 208 : index === 2 ? 184 : index === 3 ? 190 : index === 4 ? 188 : 186} r="4" key={x}/>)}
+            </svg>
+
+            <div className="ccHandoffLayer" aria-hidden>
+              <div className="ccHandoff hTech"><span>DK</span><div><b>Technical proof</b><small>validated</small></div></div>
+              <div className="ccHandoff hSecurity"><span>✦</span><div><b>Security review</b><small>2 notes resolved</small></div></div>
+              <div className="ccHandoff hBuyer"><span>OM</span><div><b>Economic buyer</b><small>decision gate</small></div></div>
+            </div>
+
             {flowStages.map((column,columnIndex) => {
               const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
               const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);

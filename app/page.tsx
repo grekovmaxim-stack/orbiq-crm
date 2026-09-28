@@ -161,7 +161,7 @@ export default function Home() {
   }
 
   function renderView() {
-    if (active === "Deals") return <DealsView deals={deals} onMove={moveDeal} onSelect={setSelectedDeal}/>;
+    if (active === "Deals") return <DealsView deals={deals} onMove={moveDeal} onSelect={setSelectedDeal} selectedDealId={selectedDeal.id}/>;
     if (active === "Journeys") return <JourneyView/>;
     if (active === "Contacts") return <ContactsView contacts={contacts} onOpen={(contact) => setDrawer({ kind: "contact", data: contact })}/>;
     if (active === "Companies") return <CompaniesView companies={seedCompanies} onOpen={(company) => setDrawer({ kind: "company", data: company })}/>;

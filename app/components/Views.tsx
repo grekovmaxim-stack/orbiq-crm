@@ -70,7 +70,8 @@ export function OverviewView({
         <div className="ccFlowWrap">
           <div className="ccFlowGrid">
             {flowStages.map((column,columnIndex) => {
-              const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);\n              const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
+              const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
+              const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
               return (
                 <section className="ccStage" key={column.stage}>
                   <div className="ccStageHead">

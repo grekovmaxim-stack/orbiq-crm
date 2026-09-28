@@ -143,34 +143,110 @@ export function DetailDrawer({
 }
 
 export function DealContext({ deal }: { deal: Deal }) {
+  const [tab, setTab] = useState<"summary" | "journey">("summary");
+  const stages = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
+  const stageIndex = Math.max(0, stages.indexOf(deal.stage));
+  const healthTone = deal.health === "Healthy" ? "healthy" : deal.health === "At risk" ? "risk" : "watch";
+
   return (
     <>
-      <div className="contextTop"><span>Focus</span><button><Icon name="dots" size={18}/></button></div>
-      <div className="account">
-        <div className={"logo " + deal.tone}>{deal.company.slice(0, 2).toUpperCase()}</div>
-        <div><small>Selected opportunity</small><h3>{deal.company}</h3><p>{deal.title}</p></div>
+      <div className="contextTop contextTopPro">
+        <div><span className="contextLiveDot"/><span>Opportunity focus</span></div>
+        <button aria-label="More"><Icon name="dots" size={18}/></button>
       </div>
-      <div className="dealValue"><span>Potential value</span><strong>{money(deal.value)}</strong></div>
-      <div className="metaGrid">
-        <div><span>Stage</span><b>{deal.stage}</b></div>
-        <div><span>Owner</span><b>{deal.owner}</b></div>
-        <div><span>Close date</span><b>{deal.closeDate}</b></div>
-        <div><span>Probability</span><b>{deal.probability}%</b></div>
+
+      <div className="account contextAccount">
+        <div className={"logo contextLogo " + deal.tone}>{deal.company.slice(0, 2).toUpperCase()}</div>
+        <div>
+          <div className="contextEyebrow"><small>Selected opportunity</small><span className={"contextHealth " + healthTone}>{deal.health}</span></div>
+          <h3>{deal.company}</h3>
+          <p>{deal.title}</p>
+        </div>
       </div>
-      <div className="probability"><div><span>Deal confidence</span><b>{deal.probability}%</b></div><div className="healthBar"><i style={{ width: deal.probability + "%" }}/></div></div>
-      <div className="insight">
-        <div className="spark">✦</div>
-        <div><small>Smart next step</small><p>Follow up after technical validation. Engagement is strong, but the decision window is narrowing.</p></div>
+
+      <div className="contextValueRow">
+        <div><span>Potential value</span><strong>{money(deal.value)}</strong></div>
+        <div className="contextProbability"><span>Confidence</span><b>{deal.probability}%</b></div>
       </div>
-      <div className="peopleBlock">
-        <div className="sectionTitle"><span>People</span><button>View all</button></div>
-        <div className="person"><div className="avatar">OM</div><div><b>Olivia Martin</b><small>Decision maker</small></div><span>84%</span></div>
-        <div className="person"><div className="avatar pale">DK</div><div><b>Daniel Kim</b><small>Technical lead</small></div><span>67%</span></div>
+
+      <div className="contextJourneyStrip" aria-label="Deal progression">
+        {stages.map((stage,index) => (
+          <span className={index < stageIndex ? "done" : index === stageIndex ? "current" : ""} key={stage}>
+            <i/>
+            <small>{stage}</small>
+          </span>
+        ))}
+      </div>
+
+      <div className="contextTabs">
+        <button className={tab === "summary" ? "active" : ""} onClick={() => setTab("summary")}>Summary</button>
+        <button className={tab === "journey" ? "active" : ""} onClick={() => setTab("journey")}>Journey</button>
+      </div>
+
+      {tab === "summary" ? (
+        <>
+          <div className="contextSignalGrid">
+            <div><span>Owner</span><b>{deal.owner}</b></div>
+            <div><span>Close</span><b>{deal.closeDate}</b></div>
+            <div><span>Engagement</span><b>{deal.probability > 70 ? "High" : deal.probability > 40 ? "Medium" : "Low"}</b></div>
+            <div><span>Buying group</span><b>{deal.stage === "New" ? "2 / 5" : deal.stage === "Qualified" ? "3 / 5" : "4 / 5"}</b></div>
+          </div>
+
+          <div className="contextNextStep">
+            <div className="contextNextIcon">✦</div>
+            <div>
+              <span>Next best action</span>
+              <b>{deal.health === "At risk" ? "Bring the economic buyer into the next touch." : deal.stage === "Negotiation" ? "Confirm commercial path and final approval owner." : "Advance the next stakeholder conversation."}</b>
+              <small>{deal.health === "At risk" ? "Decision coverage is below target." : "Momentum is healthy — keep the sequence tight."}</small>
+            </div>
+          </div>
+
+          <div className="contextMiniSignals">
+            <div><Icon name="mail" size={13}/><span><b>Proposal opened</b><small>12 min ago · 4th view</small></span></div>
+            <div><Icon name="people" size={13}/><span><b>Buying group</b><small>4 stakeholders engaged</small></span></div>
+            <div><Icon name="calendar" size={13}/><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
+          </div>
+
+          <div className="peopleBlock contextPeople">
+            <div className="sectionTitle"><span>Key people</span><button>View all</button></div>
+            <div className="person"><div className="avatar">OM</div><div><b>Olivia Martin</b><small>Decision maker</small></div><span>84%</span></div>
+            <div className="person"><div className="avatar pale">DK</div><div><b>Daniel Kim</b><small>Technical lead</small></div><span>67%</span></div>
+          </div>
+        </>
+      ) : (
+        <div className="contextJourneyView">
+          {[
+            ["Discovery","Problem, urgency and success criteria aligned"],
+            ["Solution","Technical validation and workflow fit"],
+            ["Decision","Commercial case and approval path"],
+            ["Onboarding","Kickoff, workspace and success plan"],
+            ["Retention","Adoption signal and expansion motion"]
+          ].map((item,index) => {
+            const active = index === Math.min(stageIndex, 3);
+            const done = index < Math.min(stageIndex, 4);
+            return (
+              <div className={"contextJourneyItem " + (done ? "done " : "") + (active ? "active" : "")} key={item[0]}>
+                <span className="contextJourneyDot">{done ? "✓" : index + 1}</span>
+                <div><b>{item[0]}</b><small>{item[1]}</small></div>
+                <em>{active ? "Now" : done ? "Done" : "Next"}</em>
+              </div>
+            );
+          })}
+          <div className="contextJourneyNote">
+            <span>✦</span>
+            <p>ORBIQ connects pipeline position with the customer’s actual decision journey, so handoffs happen with context intact.</p>
+          </div>
+        </div>
+      )}
+
+      <div className="contextQuickActions">
+        <button><Icon name="mail" size={13}/> Email</button>
+        <button><Icon name="call" size={13}/> Call</button>
+        <button className="dark"><Icon name="plus" size={13}/> Task</button>
       </div>
     </>
   );
 }
-
 
 export function Notifications({ close }: { close: () => void }) {
   return (

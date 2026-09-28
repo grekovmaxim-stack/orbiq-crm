@@ -5,30 +5,132 @@ import type { Company, Contact, Deal } from "../lib/types";
 
 export function CommandPalette({
   close,
-  navigate
+  navigate,
+  deals,
+  contacts,
+  companies,
+  onDeal,
+  onContact,
+  onCompany,
+  onCreate
 }: {
   close: () => void;
   navigate: (target: string) => void;
+  deals: Deal[];
+  contacts: Contact[];
+  companies: Company[];
+  onDeal: (deal: Deal) => void;
+  onContact: (contact: Contact) => void;
+  onCompany: (company: Company) => void;
+  onCreate: () => void;
 }) {
   const [query, setQuery] = useState("");
-  const options = ["Overview", "Deals", "Journeys", "Contacts", "Companies", "Tasks", "Calendar", "Analytics"];
-  const filtered = options.filter((item) => item.toLowerCase().includes(query.toLowerCase()));
+  const normalized = query.trim().toLowerCase();
+  const pages = [
+    ["Overview","grid","Command center"],
+    ["Deals","deal","Pipeline room"],
+    ["Journeys","journey","Customer lifecycle"],
+    ["Contacts","people","People directory"],
+    ["Companies","company","Accounts"],
+    ["Tasks","task","Team work"],
+    ["Calendar","calendar","Schedule"],
+    ["Analytics","chart","Revenue intelligence"]
+  ];
+  const pageResults = pages.filter((item) => !normalized || (item[0] + " " + item[2]).toLowerCase().includes(normalized)).slice(0,4);
+  const dealResults = normalized ? deals.filter((deal) => (deal.company + " " + deal.title + " " + deal.stage).toLowerCase().includes(normalized)).slice(0,4) : [];
+  const contactResults = normalized ? contacts.filter((contact) => (contact.name + " " + contact.company + " " + contact.role).toLowerCase().includes(normalized)).slice(0,4) : [];
+  const companyResults = normalized ? companies.filter((company) => (company.name + " " + company.industry).toLowerCase().includes(normalized)).slice(0,4) : [];
+  const hasResults = pageResults.length + dealResults.length + contactResults.length + companyResults.length > 0;
+
+  function openPage(target: string) {
+    navigate(target);
+    close();
+  }
 
   return (
     <div className="commandBackdrop" onMouseDown={close}>
-      <div className="command" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="commandSearch">
-          <Icon name="search" size={19}/>
-          <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search pages, people, companies or actions…"/>
+      <div className="command commandPro" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="commandSearch commandSearchPro">
+          <span className="commandSearchGlyph"><Icon name="search" size={18}/></span>
+          <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search ORBIQ… people, companies, deals, actions"/>
           <kbd>esc</kbd>
         </div>
-        <div className="commandGroup">
-          <small>Quick navigation</small>
-          {filtered.map((item) => (
-            <button key={item} onClick={() => navigate(item)}><span>{item}</span><kbd>↵</kbd></button>
-          ))}
+
+        {!normalized && (
+          <div className="commandQuickRow">
+            <button onClick={onCreate}><span className="commandQuickIcon"><Icon name="plus" size={14}/></span><div><b>Create</b><small>Deal, contact or task</small></div></button>
+            <button onClick={() => openPage("Journeys")}><span className="commandQuickIcon"><Icon name="journey" size={14}/></span><div><b>Journey studio</b><small>Open customer lifecycle</small></div></button>
+            <button onClick={() => openPage("Analytics")}><span className="commandQuickIcon"><Icon name="chart" size={14}/></span><div><b>Forecast</b><small>Open revenue intelligence</small></div></button>
+          </div>
+        )}
+
+        <div className="commandResults">
+          {pageResults.length > 0 && (
+            <div className="commandResultGroup">
+              <div className="commandGroupTitle"><span>Workspace</span><small>{pageResults.length}</small></div>
+              {pageResults.map((item) => (
+                <button className="commandResult" key={item[0]} onClick={() => openPage(item[0])}>
+                  <span className="commandResultIcon"><Icon name={item[1]} size={14}/></span>
+                  <span className="commandResultCopy"><b>{item[0]}</b><small>{item[2]}</small></span>
+                  <kbd>↵</kbd>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {dealResults.length > 0 && (
+            <div className="commandResultGroup">
+              <div className="commandGroupTitle"><span>Opportunities</span><small>{dealResults.length}</small></div>
+              {dealResults.map((deal) => (
+                <button className="commandResult" key={deal.id} onClick={() => { onDeal(deal); close(); }}>
+                  <span className={"logo tiny " + deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
+                  <span className="commandResultCopy"><b>{deal.company} · {deal.title}</b><small>{deal.stage} · {money(deal.value,true)} · {deal.probability}%</small></span>
+                  <span className={"commandMiniStatus " + deal.health.toLowerCase().replace(" ","")}>{deal.health}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {contactResults.length > 0 && (
+            <div className="commandResultGroup">
+              <div className="commandGroupTitle"><span>People</span><small>{contactResults.length}</small></div>
+              {contactResults.map((contact) => (
+                <button className="commandResult" key={contact.id} onClick={() => { onContact(contact); close(); }}>
+                  <span className="avatar commandAvatar">{contact.initials}</span>
+                  <span className="commandResultCopy"><b>{contact.name}</b><small>{contact.role} · {contact.company}</small></span>
+                  <span className="commandRelationship">{contact.relationship}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {companyResults.length > 0 && (
+            <div className="commandResultGroup">
+              <div className="commandGroupTitle"><span>Companies</span><small>{companyResults.length}</small></div>
+              {companyResults.map((company) => (
+                <button className="commandResult" key={company.id} onClick={() => { onCompany(company); close(); }}>
+                  <span className={"logo tiny " + company.tone}>{company.name.slice(0,2).toUpperCase()}</span>
+                  <span className="commandResultCopy"><b>{company.name}</b><small>{company.industry} · {company.employees} employees</small></span>
+                  <span className="commandHealthScore">{company.health}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {!hasResults && (
+            <div className="commandEmpty">
+              <span>⌕</span>
+              <b>No signal found</b>
+              <small>Try a company, person, opportunity or workspace name.</small>
+            </div>
+          )}
         </div>
-        <div className="commandFooter"><span><b>↑↓</b> Navigate</span><span><b>↵</b> Open</span><span><b>esc</b> Close</span></div>
+
+        <div className="commandFooter commandFooterPro">
+          <span><b>⌘K</b> Search anywhere</span>
+          <span><b>↵</b> Open result</span>
+          <span><b>esc</b> Close</span>
+        </div>
       </div>
     </div>
   );

@@ -240,7 +240,17 @@ export default function Home() {
         <DealContext deal={selectedDeal}/>
       </aside>
 
-      {searchOpen && <CommandPalette close={() => setSearchOpen(false)} navigate={(target) => { setActive(target); setSearchOpen(false); }}/>}
+      {searchOpen && <CommandPalette
+        close={() => setSearchOpen(false)}
+        navigate={(target) => { setActive(target); setSearchOpen(false); }}
+        deals={deals}
+        contacts={contacts}
+        companies={seedCompanies}
+        onDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); }}
+        onContact={(contact) => { setActive("Contacts"); setDrawer({ kind: "contact", data: contact }); }}
+        onCompany={(company) => { setActive("Companies"); setDrawer({ kind: "company", data: company }); }}
+        onCreate={() => { setSearchOpen(false); setCreateOpen(true); }}
+      />}
       {createOpen && <CreateModal initialType={createType} close={() => setCreateOpen(false)} onCreate={createItem}/>}
       {drawer && <DetailDrawer entity={drawer} close={() => setDrawer(null)}/>}
     </main>

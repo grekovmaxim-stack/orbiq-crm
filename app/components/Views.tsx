@@ -81,7 +81,7 @@ export function OverviewView({
                       const emphasized = deal.health !== "Healthy" || (column.stage === "Negotiation" && index === 0);
                       return (
                         <button
-                          className={"ccDealNode " + (emphasized ? "emphasized " : "") + deal.tone}
+                          className={"ccDealNode " + (emphasized ? "emphasized " : "") + (selectedDealId === deal.id ? "selected " : "") + deal.tone}
                           key={deal.id}
                           onClick={() => onSelectDeal(deal)}
                         >
@@ -99,6 +99,7 @@ export function OverviewView({
                             <span className="ccMiniPeople"><i>{deal.owner}</i><i>{columnIndex === 0 ? "SR" : columnIndex === 1 ? "OM" : columnIndex === 2 ? "DK" : "MC"}</i></span>
                           </div>
                           <span className="ccNodeOwner">{deal.owner}</span>
+                          {selectedDealId === deal.id && <span className="ccFocusTag">in focus</span>}
                         </button>
                       );
                     })}

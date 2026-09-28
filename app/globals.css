@@ -801,3 +801,21 @@ button:focus-visible,input:focus-visible,select:focus-visible{
   .journeyStudioMeta>div{flex:1;min-width:90px}.journeyMap{border-radius:22px}.journeyMapColumns{padding-left:16px;padding-right:16px}
   .journeyFocusDeck{grid-template-columns:1fr}.journeyPulseCard{grid-column:auto}
 }
+
+/* --- Branching traces for Command Center --- */
+.ccFlowTrace{position:absolute;inset:12px 0 0;width:100%;height:330px;z-index:1;pointer-events:none;overflow:visible}
+.ccTraceMain,.ccTraceBranch{fill:none;vector-effect:non-scaling-stroke}
+.ccTraceMain{stroke:#c2d0dc;stroke-width:1.2;stroke-dasharray:4 5;opacity:.9}
+.ccTraceBranch{stroke:#d0dae4;stroke-width:1;stroke-dasharray:3 5;opacity:.8}
+.ccTraceDot{fill:#eaf0f5;stroke:#afc0cf;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.ccTraceDot.active{fill:#17191b;stroke:#17191b}
+.ccHandoffLayer{position:absolute;inset:0;z-index:4;pointer-events:none}
+.ccHandoff{position:absolute;display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:12px;background:rgba(255,255,255,.95);border:1px solid rgba(27,32,38,.055);box-shadow:0 10px 22px rgba(34,41,49,.065);backdrop-filter:blur(12px)}
+.ccHandoff>span{width:24px;height:24px;border-radius:8px;background:#e7edf3;display:grid;place-items:center;font-size:6px;color:#58616a}
+.ccHandoff b,.ccHandoff small{display:block}.ccHandoff b{font-size:7px}.ccHandoff small{font-size:6px;color:#99a0a7;margin-top:2px}
+.ccHandoff.hTech{left:41%;top:54px}.ccHandoff.hSecurity{left:57%;top:254px}.ccHandoff.hBuyer{left:76%;top:47px}
+.ccHandoff.hSecurity>span{background:#e2ece6}.ccHandoff.hBuyer>span{background:#eee7f5}
+.ccFlowGrid>.ccStage{z-index:2}
+@media(max-width:680px){
+  .ccHandoffLayer,.ccFlowTrace{display:none}
+}

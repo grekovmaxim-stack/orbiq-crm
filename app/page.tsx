@@ -169,7 +169,7 @@ export default function Home() {
     if (active === "Calendar") return <CalendarView/>;
     if (active === "Analytics") return <AnalyticsView deals={deals} companies={seedCompanies}/>;
     if (active === "Settings") return <SettingsView onReset={resetDemo}/>;
-    return <OverviewView deals={deals} tasks={tasks} onNavigate={setActive} onSelectDeal={setSelectedDeal}/>;
+    return <OverviewView deals={deals} tasks={tasks} onNavigate={setActive} onSelectDeal={setSelectedDeal} selectedDealId={selectedDeal.id}/>;
   }
 
   return (

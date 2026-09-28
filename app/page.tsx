@@ -78,7 +78,7 @@ export default function Home() {
   const createType = active === "Contacts" ? "contact" : active === "Tasks" ? "task" : "deal";
 
   const subtitle = useMemo(() => {
-    if (active === "Overview") return "Here is what needs your attention across the revenue team.";
+    if (active === "Overview") return "Signals, movement, and the next actions that can change the month.";
     if (active === "Journeys") return "Connected customer work from first discovery through onboarding.";
     if (active === "Analytics") return "Live portfolio intelligence across pipeline, revenue and customers.";
     return "Northstar workspace · Live portfolio demo";
@@ -203,7 +203,7 @@ export default function Home() {
         <header className="topbar">
           <div>
             <p className="eyebrow">NORTHSTAR / REVENUE</p>
-            <h1>{active === "Overview" ? "Good morning, Maya" : active}</h1>
+            <h1>{active === "Overview" ? "Command center" : active}</h1>
             <p className="sub">{subtitle}</p>
           </div>
 

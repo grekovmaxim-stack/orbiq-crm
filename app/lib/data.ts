@@ -43,7 +43,9 @@ export const seedTasks: Task[] = [
 
 export const journeySeed = [
   { label:"Discovery", progress:100, tasks:[["Intro call completed","done","MC"],["Buying committee mapped","done","DL"],["Pain points confirmed","done","SR"]] },
-  { label:"Solution", progress:72, tasks:[["Product workshop","done","MC"],["Technical validation","active","DK"],["ROI model shared","todo","DL"]] },
-  { label:"Decision", progress:28, tasks:[["Proposal review","active","OM"],["Security review","todo","DK"],["Commercial approval","todo","OM"]] },
-  { label:"Onboarding", progress:0, tasks:[["Kickoff","todo","MC"],["Workspace setup","todo","SR"],["Success plan","todo","OM"]] }
+  { label:"Solution", progress:67, tasks:[["Product workshop","done","MC"],["Technical validation","active","DK"],["ROI model shared","todo","DL"]] },
+  { label:"Decision", progress:33, tasks:[["Proposal review","active","OM"],["Security review","todo","DK"],["Commercial approval","todo","OM"]] },
+  { label:"Onboarding", progress:0, tasks:[["Kickoff","todo","MC"],["Workspace setup","todo","SR"],["Success plan","todo","OM"]] },
+  { label:"Adoption", progress:0, tasks:[["Usage baseline","todo","SR"],["Champion check-in","todo","MC"],["Value review","todo","OM"]] },
+  { label:"Retention", progress:0, tasks:[["Health review","todo","MC"],["Renewal path","todo","OM"],["Expansion signal","todo","DL"]] }
 ] as const;

@@ -265,52 +265,164 @@ export function DealsView({
 
 export function JourneyView() {
   const [activeStep, setActiveStep] = useState(1);
+  const [completed, setCompleted] = useState<Record<string, boolean>>(() => {
+    const state: Record<string, boolean> = {};
+    journeySeed.forEach((column) => column.tasks.forEach((task) => { state[column.label + "::" + task[0]] = task[1] === "done"; }));
+    return state;
+  });
+
+  const current = journeySeed[activeStep];
+  const activeTask = current.tasks.find((task) => task[1] === "active") || current.tasks.find((task) => !completed[current.label + "::" + task[0]]) || current.tasks[0];
+
+  function stageProgress(column: (typeof journeySeed)[number]) {
+    const done = column.tasks.filter((task) => completed[column.label + "::" + task[0]]).length;
+    return Math.round(done / column.tasks.length * 100);
+  }
+
+  function toggleJourneyTask(stage: string, task: string) {
+    const key = stage + "::" + task;
+    setCompleted((state) => ({ ...state, [key]: !state[key] }));
+  }
 
   return (
-    <div className="journeyCanvas">
-      <div className="journeyHero">
-        <div><span className="label">Enterprise expansion</span><h2>Everline customer journey</h2><p>Map every commercial and customer-success interaction in one connected workspace.</p></div>
-        <div className="journeyStats"><div><span>Potential value</span><b>$31.8K</b></div><div><span>Health score</span><b>84%</b></div><div><span>Days active</span><b>19</b></div></div>
-      </div>
-
-      <div className="journeyTimeline">
-        <div className="journeyTimelineFill" style={{ width: activeStep * 31 + 7 + "%" }}/>
-        {journeySeed.map((column, index) => (
-          <button key={column.label} className={activeStep === index ? "journeyNode active" : "journeyNode"} onClick={() => setActiveStep(index)}>
-            <i>{index < activeStep ? <Icon name="check" size={12}/> : "0" + (index + 1)}</i><span>{column.label}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="journeyFlow">
-        {journeySeed.map((column, columnIndex) => (
-          <section className={activeStep === columnIndex ? "journeyColumn selected" : "journeyColumn"} key={column.label} onClick={() => setActiveStep(columnIndex)}>
-            <div className="journeyColumnHead">
-              <div><span>0{columnIndex + 1}</span><h3>{column.label}</h3></div><em>{column.progress}%</em>
+    <div className="journeyStudio">
+      <section className="journeyStudioTop">
+        <div className="journeyStudioTitle">
+          <span className="label">Customer lifecycle studio</span>
+          <div className="journeyStudioHeading">
+            <div>
+              <h2>Everline · Enterprise expansion</h2>
+              <p>A connected view of people, decisions, value moments and post-sale adoption.</p>
             </div>
-            <div className="journeyTasks">
-              {column.tasks.map((task) => (
-                <div className={"journeyTask " + task[1]} key={task[0]}>
-                  <div className="taskStatus">{task[1] === "done" ? <Icon name="check" size={14}/> : <span/>}</div>
-                  <div><b>{task[0]}</b><small>{task[1] === "done" ? "Completed" : task[1] === "active" ? "In progress" : "Not started"}</small></div>
-                  <div className="avatar mini">{task[2]}</div>
-                </div>
-              ))}
+            <div className="journeyStudioHealth">
+              <span>Health</span>
+              <b>84</b>
+              <small>healthy</small>
             </div>
-            <button className="addStep"><Icon name="plus" size={15}/> Add step</button>
-            {columnIndex < journeySeed.length - 1 && <div className="flowConnector"><i/></div>}
-          </section>
-        ))}
-      </div>
-
-      <div className="journeyDetail">
-        <div>
-          <span className="label">Selected stage</span>
-          <h3>{journeySeed[activeStep].label}</h3>
-          <p>{activeStep === 1 ? "Technical validation is the current dependency. Once approved, the ROI model can be shared and the journey moves into commercial decision." : "This stage contains the key work required to keep the account moving without losing context."}</p>
+          </div>
         </div>
-        <div className="journeyDetailActions"><button className="softBtn">Add note</button><button className="primary">Create task</button></div>
-      </div>
+
+        <div className="journeyStudioMeta">
+          <div><span>Potential value</span><b>$31.8K</b></div>
+          <div><span>Journey age</span><b>19 days</b></div>
+          <div><span>Stakeholders</span><b>5 active</b></div>
+          <button><Icon name="dots" size={16}/></button>
+        </div>
+      </section>
+
+      <section className="journeyMap">
+        <div className="journeyMapRail" aria-hidden>
+          <span/>
+          <i className="jmBranch b1"/>
+          <i className="jmBranch b2"/>
+          <i className="jmBranch b3"/>
+        </div>
+
+        <div className="journeyMapColumns">
+          {journeySeed.map((column, columnIndex) => {
+            const progress = stageProgress(column);
+            const active = activeStep === columnIndex;
+            return (
+              <section
+                className={"journeyLane " + (active ? "active " : "") + (columnIndex < activeStep ? "passed " : "") + "lane" + columnIndex}
+                key={column.label}
+                onClick={() => setActiveStep(columnIndex)}
+              >
+                <div className="journeyLaneHead">
+                  <div className="journeyLaneNumber">{columnIndex < activeStep ? <Icon name="check" size={12}/> : "0" + (columnIndex + 1)}</div>
+                  <div>
+                    <span>{columnIndex < 3 ? "Revenue journey" : "Customer journey"}</span>
+                    <h3>{column.label}</h3>
+                  </div>
+                  <em>{progress}%</em>
+                </div>
+
+                <div className="journeyLaneProgress"><i style={{ width: progress + "%" }}/></div>
+
+                <div className="journeyLaneCards">
+                  {column.tasks.map((task, taskIndex) => {
+                    const key = column.label + "::" + task[0];
+                    const isDone = completed[key];
+                    const isActive = !isDone && task[1] === "active";
+                    const iconName = taskIndex === 0 ? "people" : taskIndex === 1 ? "task" : "mail";
+                    return (
+                      <button
+                        className={"journeyWorkCard " + (isDone ? "done " : "") + (isActive ? "working " : "")}
+                        key={task[0]}
+                        onClick={(event) => { event.stopPropagation(); setActiveStep(columnIndex); toggleJourneyTask(column.label, task[0]); }}
+                      >
+                        <span className="journeyWorkIcon"><Icon name={iconName} size={12}/></span>
+                        <span className="journeyWorkCopy">
+                          <b>{task[0]}</b>
+                          <small>{isDone ? "Completed" : isActive ? "In progress" : taskIndex === 0 ? "Next touchpoint" : "Not started"}</small>
+                        </span>
+                        <span className="journeyWorkOwner">{task[2]}</span>
+                        <span className="journeyWorkState">{isDone ? <Icon name="check" size={11}/> : isActive ? "•••" : "○"}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {columnIndex === 1 && (
+                  <div className="journeyMicroNode tech">
+                    <span>DK</span><div><b>Technical proof</b><small>Validation in progress</small></div>
+                  </div>
+                )}
+                {columnIndex === 2 && (
+                  <div className="journeyMicroNode decision">
+                    <span>OM</span><div><b>Decision gate</b><small>Economic buyer required</small></div>
+                  </div>
+                )}
+                {columnIndex === 4 && (
+                  <div className="journeyMicroNode value">
+                    <span>✦</span><div><b>Value moment</b><small>Usage signal expected</small></div>
+                  </div>
+                )}
+
+                {columnIndex < journeySeed.length - 1 && <div className="journeyLaneConnector"><span/><i/></div>}
+              </section>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="journeyFocusDeck">
+        <div className="journeyFocusNarrative">
+          <div className="journeyFocusKicker"><span>Focus stage</span><em>0{activeStep + 1} / 0{journeySeed.length}</em></div>
+          <h3>{current.label}</h3>
+          <p>
+            {activeStep === 0 && "Align the problem, urgency and buying group before solution work begins."}
+            {activeStep === 1 && "Technical validation is the dependency. Once it clears, the ROI model can move into the buying conversation."}
+            {activeStep === 2 && "The solution is understood; the work now is reducing approval friction and clarifying the commercial path."}
+            {activeStep === 3 && "Protect the handoff. Preserve context from the sale and turn promises into an explicit launch plan."}
+            {activeStep === 4 && "Translate product usage into visible customer value before the relationship becomes passive."}
+            {activeStep === 5 && "Use health, adoption and stakeholder signals to make renewal and expansion a continuation, not a restart."}
+          </p>
+          <button className="journeyPrimaryAction"><Icon name="plus" size={13}/> Add journey step</button>
+        </div>
+
+        <div className="journeyFocusCard">
+          <div className="journeyFocusCardTop">
+            <span className="journeyFocusAvatar">{activeTask[2]}</span>
+            <div><small>Current dependency</small><b>{activeTask[0]}</b></div>
+            <span className="journeyFocusStatus">{completed[current.label + "::" + activeTask[0]] ? "done" : "active"}</span>
+          </div>
+          <div className="journeyFocusSignals">
+            <div><Icon name="people" size={13}/><span><b>5 stakeholders</b><small>4 engaged this week</small></span></div>
+            <div><Icon name="calendar" size={13}/><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
+            <div><Icon name="mail" size={13}/><span><b>Proposal viewed</b><small>4 times · latest 12m ago</small></span></div>
+          </div>
+        </div>
+
+        <div className="journeyPulseCard">
+          <div className="journeyPulseHead"><span>Lifecycle pulse</span><b>84 / 100</b></div>
+          <div className="journeyPulseLine">
+            {[62,66,64,72,75,73,79,82,80,84].map((point,index) => <i key={index} style={{height:point + "%"}}/> )}
+          </div>
+          <div className="journeyPulseLegend"><span>Discovery</span><span>Now</span></div>
+          <div className="journeyPulseInsight"><span>✦</span><p>Momentum is positive, but decision coverage is the strongest predictor of whether the next stage lands on time.</p></div>
+        </div>
+      </section>
     </div>
   );
 }

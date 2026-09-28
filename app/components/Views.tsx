@@ -68,12 +68,12 @@ export function OverviewView({
         <div className="ccFlowWrap">
           <div className="ccFlowGrid">
             {flowStages.map((column,columnIndex) => {
-              const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
+              const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);\n              const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
               return (
                 <section className="ccStage" key={column.stage}>
                   <div className="ccStageHead">
                     <div><span>0{columnIndex+1}</span><b>{column.label}</b></div>
-                    <small>{column.note}</small>
+                    <div className="ccStageSummary"><small>{column.note}</small><em>{stageDeals.length} · {money(stageValue,true)}</em></div>
                   </div>
 
                   <div className="ccStageCards">
@@ -93,6 +93,11 @@ export function OverviewView({
                             <span>{money(deal.value,true)}</span>
                             <em>{deal.probability}%</em>
                           </div>
+                          <div className="ccNodeSignals">
+                            <span title="Activity"><Icon name={columnIndex < 2 ? "call" : columnIndex === 2 ? "mail" : columnIndex === 3 ? "task" : "check"} size={10}/></span>
+                            <span title="Next touch"><Icon name={columnIndex % 2 === 0 ? "people" : "calendar"} size={10}/></span>
+                            <span className="ccMiniPeople"><i>{deal.owner}</i><i>{columnIndex === 0 ? "SR" : columnIndex === 1 ? "OM" : columnIndex === 2 ? "DK" : "MC"}</i></span>
+                          </div>
                           <span className="ccNodeOwner">{deal.owner}</span>
                         </button>
                       );
@@ -109,12 +114,19 @@ export function OverviewView({
                   {columnIndex < flowStages.length-1 && (
                     <div className="ccConnector" aria-hidden>
                       <i/><i/><i/>
+                      {(columnIndex === 1 || columnIndex === 2) && <span>{columnIndex === 1 ? "validated" : "decision path"}</span>}
                     </div>
                   )}
                 </section>
               );
             })}
           </div>
+        </div>
+
+        <div className="ccBoardStory">
+          <span className="ccStoryMark">✦</span>
+          <div><b>Pipeline stage + customer journey, in one view.</b><small>See not only where revenue sits, but what has to happen next to move it.</small></div>
+          <button onClick={() => onNavigate("Journeys")}>Open journey map <Icon name="arrow" size={13}/></button>
         </div>
 
         <div className="ccBoardFoot">

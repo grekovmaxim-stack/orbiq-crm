@@ -1100,3 +1100,101 @@ html,body{
 @media(max-width:680px){
   html,body{background:linear-gradient(180deg,#f1f5fa 0%,#e9eff6 100%)}
 }
+
+/* --- People Studio --- */
+.peopleStudio,.accountsStudio{display:flex;flex-direction:column;gap:14px}
+.peopleHero{
+  display:grid;
+  grid-template-columns:minmax(0,.78fr) minmax(420px,1.22fr);
+  min-height:330px;
+  border-radius:28px;
+  overflow:hidden;
+  border:1px solid rgba(84,103,128,.07);
+  background:
+    radial-gradient(circle at 72% 14%,rgba(210,222,249,.7),transparent 24%),
+    linear-gradient(135deg,#f7faff,#edf3fa);
+  box-shadow:0 16px 42px rgba(56,72,93,.055);
+}
+.peopleHeroCopy{padding:26px 26px 22px;display:flex;flex-direction:column;justify-content:center}
+.peopleHeroCopy h2{font-size:34px;line-height:1;letter-spacing:-1.35px;margin:11px 0 10px;color:#2f3d53}
+.peopleHeroCopy p{font-size:10px;line-height:1.6;color:#8792a2;max-width:430px;margin:0}
+.peopleHeroStats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:24px}
+.peopleHeroStats>div{padding:11px;border-radius:14px;background:rgba(255,255,255,.68);border:1px solid rgba(76,95,120,.05)}
+.peopleHeroStats span,.peopleHeroStats b{display:block}.peopleHeroStats span{font-size:7px;color:#98a0ab}.peopleHeroStats b{font-size:15px;margin-top:4px}
+
+.peopleNetwork{position:relative;min-height:330px;overflow:hidden}
+.peopleNetwork:before,.peopleNetwork:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(108,129,160,.12);left:50%;top:50%;transform:translate(-50%,-50%)}
+.peopleNetwork:before{width:250px;height:250px}.peopleNetwork:after{width:390px;height:390px}
+.peopleNetworkCore{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:126px;height:126px;border-radius:50%;background:linear-gradient(145deg,#6d83d1,#937ac8);color:#fff;display:grid;place-content:center;text-align:center;box-shadow:0 20px 40px rgba(92,106,185,.22);z-index:3}
+.peopleNetworkCore span,.peopleNetworkCore small{font-size:6px;text-transform:uppercase;letter-spacing:.07em;color:#d8def0}.peopleNetworkCore b{font-size:12px;margin:4px 0}
+.peopleNode{position:absolute;z-index:4;display:flex;align-items:center;gap:7px;border:1px solid rgba(79,96,121,.07);background:rgba(255,255,255,.9);border-radius:14px;padding:7px 9px;text-align:left;box-shadow:0 10px 22px rgba(48,61,80,.065);cursor:pointer;transition:.18s}
+.peopleNode:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(48,61,80,.1)}
+.peopleNode b,.peopleNode small{display:block}.peopleNode b{font-size:8px;color:#344156}.peopleNode small{font-size:6px;color:#98a0aa;margin-top:2px}
+.peopleNode.node0{left:8%;top:18%}.peopleNode.node1{right:8%;top:14%}.peopleNode.node2{left:4%;bottom:18%}.peopleNode.node3{right:4%;bottom:19%}.peopleNode.node4{left:32%;top:7%}.peopleNode.node5{right:30%;bottom:6%}
+.peopleLine{position:absolute;z-index:1;height:1px;background:linear-gradient(90deg,transparent,#bccadd,transparent);transform-origin:left center}
+.peopleLine.line1{left:20%;top:34%;width:34%;transform:rotate(18deg)}.peopleLine.line2{left:49%;top:31%;width:32%;transform:rotate(-20deg)}.peopleLine.line3{left:18%;top:65%;width:38%;transform:rotate(-15deg)}.peopleLine.line4{left:49%;top:65%;width:34%;transform:rotate(17deg)}
+
+.peopleControls{display:grid;grid-template-columns:minmax(220px,.7fr) 1fr;gap:10px;align-items:center;padding:10px;border-radius:16px;background:rgba(249,251,255,.8);border:1px solid rgba(80,99,123,.06)}
+.peopleSearch{height:36px;display:flex;align-items:center;gap:7px;padding:0 10px;border-radius:10px;background:#f1f5fa;color:#7f8a99}.peopleSearch input{width:100%;border:0;outline:0;background:transparent;font-size:9px}
+.peopleFilters{display:flex;gap:4px;justify-content:flex-end;overflow:auto}.peopleFilters button{height:30px;padding:0 9px;border:0;border-radius:9px;background:transparent;color:#8993a1;font-size:7px;white-space:nowrap;cursor:pointer}.peopleFilters button.active{background:#7285cf;color:#fff;box-shadow:0 6px 14px rgba(96,114,192,.16)}
+
+.peopleHighlights{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px}
+.personFeature{min-height:210px;border:1px solid rgba(77,96,122,.06);border-radius:23px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;transition:.18s;box-shadow:0 10px 28px rgba(50,64,84,.04)}
+.personFeature.pf0{background:linear-gradient(150deg,#e8f2ff,#dfe9fb)}
+.personFeature.pf1{background:linear-gradient(150deg,#f1ecfb,#e8e1f6)}
+.personFeature.pf2{background:linear-gradient(150deg,#eef8f4,#e2f0e8)}
+.personFeature:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(54,69,90,.09)}
+.personFeatureTop{display:flex;align-items:center;justify-content:space-between}.avatar.large{width:48px;height:48px;font-size:10px}.personFeatureArrow{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.72);display:grid;place-items:center;color:#66748a}
+.personFeatureCopy{margin-top:auto}.personFeatureCopy>span{font-size:7px;color:#8e98a6}.personFeatureCopy h3{font-size:18px;letter-spacing:-.5px;margin:4px 0 2px}.personFeatureCopy p{margin:0;font-size:8px;color:#7e8999}
+.personFeatureFoot{display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding-top:10px;border-top:1px solid rgba(77,96,122,.08)}.personFeatureFoot span{font-size:7px;padding:4px 6px;border-radius:999px;background:rgba(255,255,255,.65)}.personFeatureFoot small{font-size:7px;color:#8f99a7}
+
+.peopleDirectory{border-radius:23px;background:rgba(251,252,255,.88);border:1px solid rgba(80,99,123,.06);overflow:hidden;box-shadow:0 10px 30px rgba(49,63,82,.035)}
+.peopleDirectoryHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:17px 18px;border-bottom:1px solid var(--line)}.peopleDirectoryHead h2{margin:4px 0 0;font-size:15px}.peopleDirectoryHint{font-size:7px;color:#9ba3ad}
+.peopleDirectoryTable .contactButton{background:rgba(255,255,255,.5)}.peopleDirectoryTable .contactButton:hover{background:#f0f5fb}
+
+/* Accounts Studio */
+.accountsHero{
+  display:grid;
+  grid-template-columns:minmax(0,.76fr) minmax(480px,1.24fr);
+  min-height:350px;
+  overflow:hidden;
+  border-radius:28px;
+  border:1px solid rgba(82,101,127,.07);
+  background:
+    radial-gradient(circle at 68% 18%,rgba(218,225,248,.72),transparent 25%),
+    radial-gradient(circle at 88% 82%,rgba(227,218,244,.42),transparent 28%),
+    linear-gradient(135deg,#f7faff,#edf3f9);
+}
+.accountsHeroLead{padding:28px;display:flex;flex-direction:column;justify-content:center}.accountsHeroLead h2{font-size:34px;line-height:1;letter-spacing:-1.3px;margin:11px 0 10px}.accountsHeroLead p{font-size:10px;line-height:1.6;color:#8791a0;max-width:430px;margin:0}
+.accountsHeroButton{margin-top:20px;width:max-content;height:36px;border:0;border-radius:11px;background:linear-gradient(135deg,#667dca,#8775c5);color:#fff;padding:0 12px;display:flex;align-items:center;gap:7px;font-size:7px;cursor:pointer;box-shadow:0 8px 18px rgba(94,111,190,.17)}
+
+.accountsLandscape{position:relative;min-height:350px;overflow:hidden}
+.accountsLandscape:before,.accountsLandscape:after{content:"";position:absolute;border-radius:50%;left:56%;top:50%;transform:translate(-50%,-50%);border:1px solid rgba(102,124,154,.11)}.accountsLandscape:before{width:280px;height:280px}.accountsLandscape:after{width:430px;height:430px}
+.accountOrbitLabel{position:absolute;left:56%;top:50%;transform:translate(-50%,-50%);width:126px;height:126px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-content:center;text-align:center;box-shadow:0 16px 34px rgba(55,70,91,.1);z-index:2}.accountOrbitLabel span,.accountOrbitLabel small{font-size:6px;color:#8f99a7}.accountOrbitLabel b{font-size:19px;letter-spacing:-.7px;margin:4px 0}
+.accountBubble{position:absolute;z-index:3;display:flex;align-items:center;gap:7px;border:1px solid rgba(73,92,117,.06);background:rgba(255,255,255,.88);border-radius:999px;padding:7px 10px 7px 7px;cursor:pointer;box-shadow:0 10px 22px rgba(49,63,83,.06);transition:.18s}.accountBubble:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(49,63,83,.1)}
+.accountBubble>span{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:7px;font-weight:800}.accountBubble.blue>span{background:#dce8ff;color:#355b9c}.accountBubble.mint>span{background:#dff2ea;color:#3e7660}.accountBubble.violet>span{background:#e7e1f7;color:#695b9a}.accountBubble.coral>span{background:#f6dfdd;color:#9d5650}.accountBubble.amber>span{background:#f5ead6;color:#8e6b33}
+.accountBubble b,.accountBubble small{display:block}.accountBubble b{font-size:8px}.accountBubble small{font-size:6px;color:#98a1ab;margin-top:2px}
+.accountBubble.bubble0{left:5%;top:19%}.accountBubble.bubble1{right:6%;top:14%}.accountBubble.bubble2{left:8%;bottom:18%}.accountBubble.bubble3{right:2%;bottom:22%}.accountBubble.bubble4{left:35%;top:6%}.accountBubble.bubble5{right:27%;bottom:5%}
+
+.accountSignals{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.accountSignals>div{padding:13px 14px;border-radius:16px;border:1px solid rgba(77,96,122,.055);background:rgba(250,252,255,.85)}.accountSignals>div:nth-child(1){background:#edf4ff}.accountSignals>div:nth-child(2){background:#eef8f3}.accountSignals>div:nth-child(3){background:#f2eefb}.accountSignals>div:nth-child(4){background:#fff4ee}.accountSignals span,.accountSignals b,.accountSignals small{display:block}.accountSignals span{font-size:7px;color:#939dab}.accountSignals b{font-size:14px;margin-top:4px}.accountSignals small{font-size:6px;color:#a0a8b1;margin-top:3px}
+
+.accountMosaic{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.accountTile{min-height:215px;border:1px solid rgba(76,95,120,.06);border-radius:22px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;transition:.18s;box-shadow:0 10px 28px rgba(50,64,84,.035)}
+.accountTile:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(54,69,90,.085)}
+.accountTile.at0{grid-column:span 5;background:linear-gradient(145deg,#eaf4ff,#e1edf9)}.accountTile.at1{grid-column:span 4;background:linear-gradient(145deg,#f0edfb,#e8e2f6)}.accountTile.at2{grid-column:span 3;background:linear-gradient(145deg,#eef8f4,#e2f0e8)}.accountTile.at3{grid-column:span 4;background:linear-gradient(145deg,#fff2ec,#f7e7e2)}.accountTile.at4{grid-column:span 4;background:linear-gradient(145deg,#fbf5e7,#f3ead6)}.accountTile.at5{grid-column:span 4;background:linear-gradient(145deg,#ebf3ff,#e0eaf9)}
+.accountTileTop{display:flex;align-items:center;justify-content:space-between}.accountTileArrow{width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.68);display:grid;place-items:center;color:#66758b}
+.accountTileCopy{margin-top:18px}.accountTileCopy>span{font-size:7px;color:#8f99a6}.accountTileCopy h3{margin:4px 0 3px;font-size:19px;letter-spacing:-.55px}.accountTileCopy p{margin:0;font-size:7px;color:#7e8997}
+.accountTileBottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:18px}.accountTileBottom>div:first-child span,.accountTileBottom>div:first-child b{display:block}.accountTileBottom>div:first-child span{font-size:7px;color:#8c96a4}.accountTileBottom>div:first-child b{font-size:15px;margin-top:4px}
+.accountHealthDial{width:46px;height:46px;border-radius:50%;background:conic-gradient(#7d91d4 0 calc(var(--health)*1%),rgba(255,255,255,.6) calc(var(--health)*1%));display:grid;place-items:center;position:relative}.accountHealthDial:before{content:"";position:absolute;inset:6px;border-radius:50%;background:rgba(248,251,255,.94)}.accountHealthDial span{position:relative;z-index:2;font-size:8px;font-weight:750}
+
+@media(max-width:1100px){
+  .peopleHero,.accountsHero{grid-template-columns:1fr}.peopleNetwork,.accountsLandscape{min-height:310px}
+  .peopleHighlights{grid-template-columns:1fr 1fr}.personFeature.pf0{grid-column:1/-1}
+  .accountSignals{grid-template-columns:1fr 1fr}.accountTile.at0,.accountTile.at1,.accountTile.at2,.accountTile.at3,.accountTile.at4,.accountTile.at5{grid-column:span 6}
+}
+@media(max-width:720px){
+  .peopleHeroCopy,.accountsHeroLead{padding:20px}.peopleHeroCopy h2,.accountsHeroLead h2{font-size:28px}
+  .peopleControls{grid-template-columns:1fr}.peopleFilters{justify-content:flex-start}
+  .peopleHighlights{grid-template-columns:1fr}.personFeature.pf0{grid-column:auto}.peopleDirectory{overflow:auto}.peopleDirectoryTable{min-width:760px}
+  .accountSignals{grid-template-columns:1fr 1fr}.accountMosaic{grid-template-columns:1fr}.accountTile.at0,.accountTile.at1,.accountTile.at2,.accountTile.at3,.accountTile.at4,.accountTile.at5{grid-column:auto}
+}

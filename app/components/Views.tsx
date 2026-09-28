@@ -23,116 +23,156 @@ export function OverviewView({
   const wonValue = deals.filter((deal) => deal.stage === "Won").reduce((sum, deal) => sum + deal.value, 0);
   const attention = deals.filter((deal) => deal.health !== "Healthy").slice(0, 3);
   const dueTasks = tasks.filter((task) => !task.done).slice(0, 4);
-  const flowStages: Array<{label:string; stage:Stage; note:string}> = [
-    { label:"Intake", stage:"New", note:"New signal" },
-    { label:"Qualify", stage:"Qualified", note:"Buying fit" },
-    { label:"Shape", stage:"Proposal", note:"Value case" },
-    { label:"Commit", stage:"Negotiation", note:"Decision" },
-    { label:"Close", stage:"Won", note:"Outcome" }
+
+  const flowStages: Array<{
+    label:string;
+    stage:Stage;
+    note:string;
+    objective:string;
+    gate:string;
+    signal:string;
+    threshold:number;
+  }> = [
+    { label:"Signal", stage:"New", note:"New opportunity", objective:"Confirm a real problem, urgency and sponsor.", gate:"Discovery booked", signal:"Problem + sponsor", threshold:20 },
+    { label:"Qualify", stage:"Qualified", note:"Buying fit", objective:"Map budget, timing and the buying committee.", gate:"Champion confirmed", signal:"3 / 5 people mapped", threshold:40 },
+    { label:"Value", stage:"Proposal", note:"Business case", objective:"Prove workflow fit and make the ROI visible.", gate:"Value case accepted", signal:"Proof + ROI", threshold:60 },
+    { label:"Decision", stage:"Negotiation", note:"Approval path", objective:"Clear security, commercials and final approval.", gate:"Approver aligned", signal:"0 critical blockers", threshold:75 },
+    { label:"Handoff", stage:"Won", note:"Customer launch", objective:"Carry sales context into a clean onboarding.", gate:"Kickoff scheduled", signal:"Launch ≤ 3 days", threshold:100 }
   ];
 
+  const blockerCount = openDeals.filter((deal) => deal.health !== "Healthy").length;
+  const atRiskValue = openDeals.filter((deal) => deal.health !== "Healthy").reduce((sum, deal) => sum + deal.value, 0);
+
+  function nextAction(stageIndex:number) {
+    return [
+      "Book discovery with a sponsor",
+      "Map budget + buying committee",
+      "Complete proof + ROI case",
+      "Clear approval + commercials",
+      "Schedule kickoff + success plan"
+    ][stageIndex];
+  }
+
+  function dealSignal(deal:Deal) {
+    if (deal.health === "At risk") return "Decision-maker missing";
+    if (deal.health === "Watch") return "Momentum cooling";
+    return "Gate evidence on track";
+  }
+
   return (
-    <div className="ccPage">
-      <section className="ccBoard">
-        <div className="ccBoardTop">
-          <div className="ccTitle">
-            <span className="label">Revenue orchestration</span>
+    <div className="ccPage ccV3">
+      <section className="ccBoard ccLogicBoard">
+        <div className="ccBoardTop ccLogicTop">
+          <div className="ccTitle ccLogicTitle">
+            <span className="label">Revenue operating system</span>
             <div className="ccTitleRow">
               <h2>Northstar command flow</h2>
               <span className="ccLive"><i/> live</span>
             </div>
+            <p>A deal advances only when the exit gate is satisfied. The board shows what is moving, what is blocked, and what the team should do next.</p>
           </div>
 
-          <div className="ccTeam">
-            <div className="ccTeamStack">
-              {[
-                ["MC","Maya Chen","mint"],
-                ["DL","Daniel Lewis","blue"],
-                ["SR","Sofia Reed","violet"],
-                ["OR","Owen Reed","coral"],
-                ["OM","Olivia Martin","amber"]
-              ].map((person,index) => (
-                <button className={"ccPerson " + person[2]} style={{zIndex:10-index}} key={person[0]} title={person[1]}>
-                  {person[0]}<span>{index<4 ? index+2 : "•"}</span>
-                </button>
-              ))}
-            </div>
-            <div className="ccTeamCopy"><b>Active room</b><span>5 people touching revenue today</span></div>
+          <div className="ccLogicSummary">
+            <div><span>Live opportunities</span><b>{openDeals.length}</b></div>
+            <div className={blockerCount ? "attention" : ""}><span>Blocked / watch</span><b>{blockerCount}</b></div>
+            <div><span>Value exposed</span><b>{money(atRiskValue,true)}</b></div>
           </div>
 
           <div className="ccTools">
-            <button aria-label="Add"><Icon name="plus" size={15}/></button>
-            <button aria-label="Filter"><Icon name="filter" size={15}/></button>
-            <button aria-label="Calendar"><Icon name="calendar" size={15}/></button>
+            <button aria-label="Add"><Icon name="plus" size={16}/></button>
+            <button aria-label="Filter"><Icon name="filter" size={16}/></button>
+            <button aria-label="Calendar"><Icon name="calendar" size={16}/></button>
           </div>
         </div>
 
+        <div className="ccLogicLegend">
+          <span><i className="healthy"/>Ready for next gate</span>
+          <span><i className="watch"/>Needs attention</span>
+          <span><i className="risk"/>Blocked</span>
+          <em>Flow rule: stage → evidence → exit gate → handoff</em>
+        </div>
+
         <div className="ccFlowWrap">
-          <div className="ccFlowGrid">
-            <svg className="ccFlowTrace" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden>
-              <path className="ccTraceMain" d="M36 208 C110 154 154 240 214 208 S334 134 392 184 S506 238 562 190 S686 126 742 188 S866 244 964 186"/>
-              <path className="ccTraceBranch" d="M392 184 C416 116 458 95 496 112"/>
-              <path className="ccTraceBranch" d="M562 190 C596 266 638 282 684 256"/>
-              <path className="ccTraceBranch" d="M742 188 C770 112 812 94 850 112"/>
-              {[36,214,392,562,742,964].map((x,index) => <circle className={index < 4 ? "ccTraceDot active" : "ccTraceDot"} cx={x} cy={index === 0 ? 208 : index === 1 ? 208 : index === 2 ? 184 : index === 3 ? 190 : index === 4 ? 188 : 186} r="4" key={x}/>)}
-            </svg>
-
-            <div className="ccHandoffLayer" aria-hidden>
-              <div className="ccHandoff hTech"><span>DK</span><div><b>Technical proof</b><small>validated</small></div></div>
-              <div className="ccHandoff hSecurity"><span>✦</span><div><b>Security review</b><small>2 notes resolved</small></div></div>
-              <div className="ccHandoff hBuyer"><span>OM</span><div><b>Economic buyer</b><small>decision gate</small></div></div>
-            </div>
-
+          <div className="ccFlowGrid ccLogicGrid">
             {flowStages.map((column,columnIndex) => {
               const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
               const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
+              const ready = stageDeals.filter((deal) => deal.health === "Healthy" && deal.probability >= column.threshold).length;
+
               return (
-                <section className="ccStage" key={column.stage}>
-                  <div className="ccStageHead">
-                    <div><span>0{columnIndex+1}</span><b>{column.label}</b></div>
-                    <div className="ccStageSummary"><small>{column.note}</small><em>{stageDeals.length} · {money(stageValue,true)}</em></div>
+                <section className={"ccStage ccLogicStage stage"+columnIndex} key={column.stage}>
+                  <div className="ccLogicStageHead">
+                    <div className="ccStageIndex">0{columnIndex+1}</div>
+                    <div className="ccStageIdentity">
+                      <span>{column.note}</span>
+                      <h3>{column.label}</h3>
+                    </div>
+                    <div className="ccStageValue"><b>{money(stageValue,true)}</b><small>{stageDeals.length} deals</small></div>
                   </div>
 
-                  <div className="ccStageCards">
-                    {stageDeals.map((deal,index) => {
-                      const emphasized = deal.health !== "Healthy" || (column.stage === "Negotiation" && index === 0);
+                  <div className="ccStageObjective">
+                    <span>Objective</span>
+                    <p>{column.objective}</p>
+                  </div>
+
+                  <div className="ccStageCards ccLogicCards">
+                    {stageDeals.map((deal) => {
+                      const selected = selectedDealId === deal.id;
+                      const stateClass = deal.health === "At risk" ? "blocked" : deal.health === "Watch" ? "watching" : "healthy";
                       return (
                         <button
-                          className={"ccDealNode " + (emphasized ? "emphasized " : "") + (selectedDealId === deal.id ? "selected " : "") + deal.tone}
+                          className={"ccDealNode ccLogicDeal "+stateClass+" "+(selected ? "selected " : "")+deal.tone}
                           key={deal.id}
                           onClick={() => onSelectDeal(deal)}
                         >
-                          <div className="ccNodeMain">
-                            <span className={"logo tiny " + deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
-                            <div><b>{deal.company}</b><small>{deal.title}</small></div>
+                          <div className="ccLogicDealTop">
+                            <span className={"logo tiny "+deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
+                            <div className="ccLogicDealTitle"><b>{deal.company}</b><small>{deal.title}</small></div>
+                            <span className="ccLogicProbability">{deal.probability}%</span>
                           </div>
-                          <div className="ccNodeMeta">
+
+                          <div className="ccLogicDealMeta">
                             <span>{money(deal.value,true)}</span>
-                            <em>{deal.probability}%</em>
+                            <span>{deal.closeDate}</span>
+                            <span>{deal.owner}</span>
                           </div>
-                          <div className="ccNodeSignals">
-                            <span title="Activity"><Icon name={columnIndex < 2 ? "call" : columnIndex === 2 ? "mail" : columnIndex === 3 ? "task" : "check"} size={10}/></span>
-                            <span title="Next touch"><Icon name={columnIndex % 2 === 0 ? "people" : "calendar"} size={10}/></span>
-                            <span className="ccMiniPeople"><i>{deal.owner}</i><i>{columnIndex === 0 ? "SR" : columnIndex === 1 ? "OM" : columnIndex === 2 ? "DK" : "MC"}</i></span>
+
+                          <div className="ccLogicNext">
+                            <span className="ccLogicNextIcon"><Icon name={columnIndex < 2 ? "people" : columnIndex === 2 ? "mail" : columnIndex === 3 ? "task" : "check"} size={12}/></span>
+                            <div><small>Next move</small><b>{nextAction(columnIndex)}</b></div>
                           </div>
-                          <span className="ccNodeOwner">{deal.owner}</span>
-                          {selectedDealId === deal.id && <span className="ccFocusTag">in focus</span>}
+
+                          <div className="ccLogicSignal">
+                            <span className={"signalDot "+stateClass}/>
+                            <b>{dealSignal(deal)}</b>
+                          </div>
+
+                          {selected && <span className="ccFocusTag">in focus</span>}
                         </button>
                       );
                     })}
 
+                    {stageDeals.length === 0 && (
+                      <div className="ccLogicEmpty"><span>○</span><b>No opportunities</b><small>Nothing is waiting at this gate.</small></div>
+                    )}
+
                     {column.stage === "Won" && (
-                      <div className="ccOutcomeTiles">
-                        <button><span>↗</span><b>Expansion</b><small>2 accounts</small></button>
-                        <button><span>✦</span><b>Onboarding</b><small>1 ready</small></button>
+                      <div className="ccOutcomeTiles ccLogicOutcomes">
+                        <button onClick={() => onNavigate("Journeys")}><span>↗</span><b>Onboarding</b><small>Preserve deal context</small></button>
+                        <button onClick={() => onNavigate("Companies")}><span>✦</span><b>Expansion</b><small>Watch adoption signals</small></button>
                       </div>
                     )}
                   </div>
 
+                  <div className="ccLogicGate">
+                    <div><span>Exit gate</span><b>{column.gate}</b></div>
+                    <div className="ccGateEvidence"><span>{column.signal}</span><b>{ready}/{stageDeals.length || 0} ready</b></div>
+                  </div>
+
                   {columnIndex < flowStages.length-1 && (
-                    <div className="ccConnector" aria-hidden>
-                      <i/><i/><i/>
-                      {(columnIndex === 1 || columnIndex === 2) && <span>{columnIndex === 1 ? "validated" : "decision path"}</span>}
+                    <div className="ccLogicConnector" aria-hidden>
+                      <span><Icon name="arrow" size={13}/></span>
+                      <small>{column.gate}</small>
                     </div>
                   )}
                 </section>
@@ -141,33 +181,34 @@ export function OverviewView({
           </div>
         </div>
 
-        <div className="ccBoardStory">
+        <div className="ccBoardStory ccLogicStory">
           <span className="ccStoryMark">✦</span>
-          <div><b>Pipeline stage + customer journey, in one view.</b><small>See not only where revenue sits, but what has to happen next to move it.</small></div>
-          <button onClick={() => onNavigate("Journeys")}>Open journey map <Icon name="arrow" size={13}/></button>
+          <div>
+            <b>{blockerCount ? blockerCount+" opportunities are slowing the month." : "The flow is clear."}</b>
+            <small>{blockerCount ? money(atRiskValue,true)+" is waiting on stakeholder coverage, activity or decision evidence." : "No critical blockers are currently visible in the pipeline."}</small>
+          </div>
+          <button onClick={() => onNavigate("Deals")}>Review blockers <Icon name="arrow" size={14}/></button>
         </div>
 
-        <div className="ccBoardFoot">
+        <div className="ccBoardFoot ccLogicFoot">
           <div><span>Live pipeline</span><b>{money(pipeline,true)}</b></div>
-          <div><span>Weighted</span><b>{money(Math.round(weighted),true)}</b></div>
-          <div><span>Closed</span><b>{money(wonValue,true)}</b></div>
-          <div className="ccBoardFootAction">
-            <button onClick={() => onNavigate("Deals")}>Open full pipeline <Icon name="arrow" size={14}/></button>
-          </div>
+          <div><span>Weighted forecast</span><b>{money(Math.round(weighted),true)}</b></div>
+          <div><span>Closed this month</span><b>{money(wonValue,true)}</b></div>
+          <div className="ccBoardFootAction"><button onClick={() => onNavigate("Deals")}>Open Pipeline Room <Icon name="arrow" size={15}/></button></div>
         </div>
       </section>
 
-      <section className="ccLowerGrid">
+      <section className="ccLowerGrid ccLogicLower">
         <div className="ccActionPanel">
           <div className="ccSectionHead">
-            <div><span className="label">Suggested actions</span><h2>What changes the outcome</h2></div>
-            <button className="ccCircleBtn"><Icon name="plus" size={14}/></button>
+            <div><span className="label">Priority interventions</span><h2>What changes the outcome</h2></div>
+            <span className="ccSectionMeta">{attention.length} signals</span>
           </div>
 
           <div className="ccActionList">
             {attention.map((deal,index) => (
               <button className="ccActionRow" key={deal.id} onClick={() => onSelectDeal(deal)}>
-                <span className="ccStar">☆</span>
+                <span className="ccPriorityIndex">0{index+1}</span>
                 <span className="ccActionSubject">
                   <b>{deal.company}</b>
                   <small>{deal.health === "At risk" ? "Add the decision maker before the next commercial step." : "Re-open the buying thread before momentum cools."}</small>
@@ -175,7 +216,7 @@ export function OverviewView({
                 <span className={"ccStatus " + (deal.health === "At risk" ? "risk" : "watch")}>{deal.health}</span>
                 <span className="ccActionValue">{money(deal.value,true)}</span>
                 <span className="avatar mini">{deal.owner}</span>
-                <Icon name="chevron" size={14}/>
+                <Icon name="chevron" size={15}/>
               </button>
             ))}
           </div>
@@ -183,8 +224,8 @@ export function OverviewView({
 
         <div className="ccForecastPanel">
           <div className="ccSectionHead">
-            <div><span className="label">Forecast journey</span><h2>Coverage to target</h2></div>
-            <button className="ccCircleBtn"><Icon name="dots" size={15}/></button>
+            <div><span className="label">Forecast coverage</span><h2>Target confidence</h2></div>
+            <span className="ccSectionMeta">Sep</span>
           </div>
 
           <div className="ccForecastBody">
@@ -201,14 +242,14 @@ export function OverviewView({
 
         <div className="ccTasksPanel">
           <div className="ccSectionHead">
-            <div><span className="label">Team pulse</span><h2>Today’s handoffs</h2></div>
-            <button className="textBtn" onClick={() => onNavigate("Tasks")}>All tasks <Icon name="arrow" size={13}/></button>
+            <div><span className="label">Team handoffs</span><h2>What happens today</h2></div>
+            <button className="textBtn" onClick={() => onNavigate("Tasks")}>All tasks <Icon name="arrow" size={14}/></button>
           </div>
 
           <div className="ccTaskStack">
             {dueTasks.map((task,index) => (
               <div className="ccTaskItem" key={task.id}>
-                <span className={"ccTaskGlyph g"+index}>{task.type === "Call" ? <Icon name="call" size={13}/> : task.type === "Email" ? <Icon name="mail" size={13}/> : <Icon name="calendar" size={13}/>}</span>
+                <span className={"ccTaskGlyph g"+index}>{task.type === "Call" ? <Icon name="call" size={14}/> : task.type === "Email" ? <Icon name="mail" size={14}/> : <Icon name="calendar" size={14}/>}</span>
                 <div><b>{task.title}</b><small>{task.company} · {task.due}</small></div>
                 <span className="avatar mini">{task.owner}</span>
               </div>

@@ -863,3 +863,21 @@ button:focus-visible,input:focus-visible,select:focus-visible{
   .pipelineStudioHead{padding:16px}.pipelineKpis{grid-template-columns:1fr 1fr}.pipelineKpis>div:last-child{grid-column:1/-1}
   .pipelineControlBar{grid-template-columns:1fr}.pipelineHealthFilter{overflow:auto}.pipelineSignal{display:none}
 }
+
+/* --- Global CRM search --- */
+.commandPro{width:min(680px,calc(100vw - 30px));border-radius:26px;background:rgba(255,255,255,.96);box-shadow:0 38px 110px rgba(12,15,18,.22);backdrop-filter:blur(22px)}
+.commandSearchPro{height:68px;padding:0 18px;background:linear-gradient(180deg,#fff,#fbfcfd)}
+.commandSearchGlyph{width:34px;height:34px;border-radius:11px;background:#f0f3f6;display:grid;place-items:center;color:#697078}
+.commandSearchPro input{font-size:13px!important}.commandSearchPro kbd{font-size:8px;background:#eef1f4;border-radius:7px;padding:4px 7px;color:#8e949a}
+.commandQuickRow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px 5px}
+.commandQuickRow button{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center;border:1px solid rgba(22,26,31,.05);background:#f7f9fa;border-radius:14px;padding:10px;text-align:left;cursor:pointer}.commandQuickRow button:hover{background:#f1f4f6}
+.commandQuickIcon{width:29px;height:29px;border-radius:9px;background:#fff;display:grid;place-items:center;color:#6d747b}.commandQuickRow b,.commandQuickRow small{display:block}.commandQuickRow b{font-size:8px}.commandQuickRow small{font-size:6px;color:#9ca1a6;margin-top:2px}
+.commandResults{max-height:520px;overflow:auto;padding:6px 12px 10px}
+.commandResultGroup{padding-top:6px}.commandGroupTitle{display:flex;align-items:center;justify-content:space-between;padding:7px 6px;color:#9aa0a6}.commandGroupTitle span{font-size:7px;text-transform:uppercase;letter-spacing:.07em}.commandGroupTitle small{font-size:7px}
+.commandResult{width:100%;min-height:50px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border:0;border-radius:12px;background:transparent;padding:7px 8px;text-align:left;cursor:pointer;color:#17191b}.commandResult:hover{background:#f3f6f8}.commandResultIcon{width:30px;height:30px;border-radius:9px;background:#eef2f5;display:grid;place-items:center;color:#717880}.commandResultCopy b,.commandResultCopy small{display:block}.commandResultCopy b{font-size:9px}.commandResultCopy small{font-size:7px;color:#9aa0a6;margin-top:3px}.commandResult kbd{font-size:8px;background:#eef1f4;border-radius:6px;padding:3px 6px;color:#888}
+.commandAvatar{width:30px;height:30px;border-radius:9px;font-size:7px}.commandMiniStatus,.commandRelationship{font-size:6px;padding:4px 6px;border-radius:999px;background:#eef1f3;color:#747a80;white-space:nowrap}.commandMiniStatus.watch{background:#f2ecd9;color:#886f3c}.commandMiniStatus.atrisk{background:#f3e3e0;color:#925d57}.commandRelationship{background:#f2f3f5}.commandHealthScore{width:28px;height:28px;border-radius:9px;background:#edf2ef;color:#4f755f;display:grid;place-items:center;font-size:7px;font-weight:700}
+.commandEmpty{min-height:190px;display:grid;place-items:center;align-content:center;text-align:center;color:#a0a5aa}.commandEmpty>span{font-size:26px;margin-bottom:8px}.commandEmpty b{font-size:10px;color:#6d737a}.commandEmpty small{font-size:7px;margin-top:4px}
+.commandFooterPro{justify-content:space-between;padding:0 18px}
+@media(max-width:680px){
+  .commandBackdrop{padding-top:70px}.commandQuickRow{grid-template-columns:1fr}.commandResults{max-height:58vh}.commandFooterPro span:nth-child(2){display:none}
+}

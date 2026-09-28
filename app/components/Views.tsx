@@ -533,28 +533,73 @@ export function ContactsView({
     const matchesQuery = (contact.name + contact.company + contact.role).toLowerCase().includes(query.toLowerCase());
     return matchesQuery && (relationship === "All" || contact.relationship === relationship);
   });
+  const decisionMakers = contacts.filter((contact) => contact.relationship === "Decision maker" || contact.relationship === "Economic buyer").length;
+  const champions = contacts.filter((contact) => contact.relationship === "Champion").length;
 
   return (
-    <section className="panel contactsPanel">
-      <div className="contactsToolbar">
-        <div><span className="label">People</span><h2>{filtered.length} contacts</h2></div>
-        <div className="tableActions">
-          <label className="inlineSearch"><Icon name="search" size={15}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search contacts"/></label>
-          <select className="filterSelect" value={relationship} onChange={(event) => setRelationship(event.target.value)}>
-            <option>All</option><option>Decision maker</option><option>Champion</option><option>Evaluator</option><option>Economic buyer</option><option>Technical lead</option>
-          </select>
+    <div className="peopleStudio">
+      <section className="peopleHero">
+        <div className="peopleHeroCopy">
+          <span className="label">Relationship intelligence</span>
+          <h2>People, not rows.</h2>
+          <p>See who is involved, who is influential, and where the buying group still has gaps.</p>
+          <div className="peopleHeroStats">
+            <div><span>Active people</span><b>{contacts.length}</b></div>
+            <div><span>Decision coverage</span><b>{decisionMakers}</b></div>
+            <div><span>Champions</span><b>{champions}</b></div>
+          </div>
         </div>
-      </div>
-      <div className="contactTable">
-        <div className="contactRow header"><span>Name</span><span>Company</span><span>Role</span><span>Relationship</span><span>Last activity</span></div>
-        {filtered.map((contact, index) => (
-          <button className="contactRow contactButton" key={contact.id} onClick={() => onOpen(contact)}>
-            <span className="contactName"><div className={"avatar c" + (index % 4)}>{contact.initials}</div><b>{contact.name}</b></span>
-            <span>{contact.company}</span><span>{contact.role}</span><span><i className="relationshipDot"/> {contact.relationship}</span><span>{contact.lastActivity}</span>
+
+        <div className="peopleNetwork">
+          <div className="peopleNetworkCore"><span>ORBIQ</span><b>Buying group</b><small>Northstar portfolio</small></div>
+          {contacts.slice(0,6).map((contact,index) => (
+            <button className={"peopleNode node"+index} key={contact.id} onClick={() => onOpen(contact)}>
+              <span className={"avatar c"+(index%4)}>{contact.initials}</span>
+              <div><b>{contact.name}</b><small>{contact.relationship}</small></div>
+            </button>
+          ))}
+          <i className="peopleLine line1"/><i className="peopleLine line2"/><i className="peopleLine line3"/><i className="peopleLine line4"/>
+        </div>
+      </section>
+
+      <section className="peopleControls">
+        <label className="peopleSearch"><Icon name="search" size={14}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search people, roles or companies"/></label>
+        <div className="peopleFilters">
+          {["All","Decision maker","Champion","Evaluator","Economic buyer","Technical lead"].map((item) => (
+            <button key={item} className={relationship === item ? "active" : ""} onClick={() => setRelationship(item)}>{item}</button>
+          ))}
+        </div>
+      </section>
+
+      <section className="peopleHighlights">
+        {filtered.slice(0,3).map((contact,index) => (
+          <button className={"personFeature pf"+index} key={contact.id} onClick={() => onOpen(contact)}>
+            <div className="personFeatureTop">
+              <span className={"avatar large c"+(index%4)}>{contact.initials}</span>
+              <span className="personFeatureArrow"><Icon name="arrow" size={14}/></span>
+            </div>
+            <div className="personFeatureCopy"><span>{contact.company}</span><h3>{contact.name}</h3><p>{contact.role}</p></div>
+            <div className="personFeatureFoot"><span>{contact.relationship}</span><small>{contact.lastActivity}</small></div>
           </button>
         ))}
-      </div>
-    </section>
+      </section>
+
+      <section className="peopleDirectory">
+        <div className="peopleDirectoryHead">
+          <div><span className="label">Directory</span><h2>{filtered.length} people in view</h2></div>
+          <span className="peopleDirectoryHint">Click a person to open relationship context</span>
+        </div>
+        <div className="peopleDirectoryTable">
+          <div className="contactRow header"><span>Name</span><span>Company</span><span>Role</span><span>Relationship</span><span>Last activity</span></div>
+          {filtered.map((contact, index) => (
+            <button className="contactRow contactButton" key={contact.id} onClick={() => onOpen(contact)}>
+              <span className="contactName"><div className={"avatar c" + (index % 4)}>{contact.initials}</div><b>{contact.name}</b></span>
+              <span>{contact.company}</span><span>{contact.role}</span><span><i className="relationshipDot"/> {contact.relationship}</span><span>{contact.lastActivity}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -566,26 +611,57 @@ export function CompaniesView({
   onOpen: (company: Company) => void;
 }) {
   const totalArr = companies.reduce((sum, company) => sum + company.arr, 0);
+  const healthiest = [...companies].sort((a,b) => b.health - a.health)[0];
+  const largest = [...companies].sort((a,b) => b.arr - a.arr)[0];
 
   return (
-    <div className="companiesWrap">
-      <div className="companySummary">
-        <div><span>Portfolio ARR</span><b>{money(totalArr, true)}</b></div>
-        <div><span>Healthy accounts</span><b>{companies.filter((company) => company.health >= 75).length}/{companies.length}</b></div>
-        <div><span>Expansion potential</span><b>$214K</b></div>
-      </div>
-      <div className="companyGrid">
-        {companies.map((company) => (
-          <button className="companyCard" key={company.id} onClick={() => onOpen(company)}>
-            <div className="companyCardTop"><div className={"logo " + company.tone}>{company.name.slice(0, 2).toUpperCase()}</div><Icon name="chevron" size={17}/></div>
-            <div className="companyTitle"><h3>{company.name}</h3><span>{company.industry}</span></div>
-            <div className="companyMeta"><span>{company.employees} employees</span><span>{company.openDeals} open deals</span></div>
-            <div className="healthHeader"><span>Account health</span><b>{company.health}%</b></div>
-            <div className="healthBar"><i style={{ width: company.health + "%" }}/></div>
-            <div className="companyArr"><span>Annual value</span><strong>{money(company.arr, true)}</strong></div>
+    <div className="accountsStudio">
+      <section className="accountsHero">
+        <div className="accountsHeroLead">
+          <span className="label">Customer portfolio</span>
+          <h2>Accounts as a living landscape.</h2>
+          <p>Revenue, health and expansion context in one place — designed to surface where attention creates the most value.</p>
+          <button className="accountsHeroButton">Review portfolio <Icon name="arrow" size={13}/></button>
+        </div>
+
+        <div className="accountsLandscape">
+          {companies.map((company,index) => (
+            <button
+              className={"accountBubble bubble"+index+" "+company.tone}
+              key={company.id}
+              onClick={() => onOpen(company)}
+              style={{"--health":company.health} as React.CSSProperties}
+            >
+              <span>{company.name.slice(0,2).toUpperCase()}</span>
+              <div><b>{company.name}</b><small>{company.health}% health</small></div>
+            </button>
+          ))}
+          <div className="accountOrbitLabel"><span>Portfolio pulse</span><b>{money(totalArr,true)}</b><small>annual value</small></div>
+        </div>
+      </section>
+
+      <section className="accountSignals">
+        <div><span>Portfolio ARR</span><b>{money(totalArr, true)}</b><small>6 strategic accounts</small></div>
+        <div><span>Health leader</span><b>{healthiest.name}</b><small>{healthiest.health}% health</small></div>
+        <div><span>Largest account</span><b>{largest.name}</b><small>{money(largest.arr,true)} annual value</small></div>
+        <div><span>Expansion potential</span><b>$214K</b><small>across 4 accounts</small></div>
+      </section>
+
+      <section className="accountMosaic">
+        {companies.map((company,index) => (
+          <button className={"accountTile at"+index} key={company.id} onClick={() => onOpen(company)}>
+            <div className="accountTileTop">
+              <div className={"logo " + company.tone}>{company.name.slice(0,2).toUpperCase()}</div>
+              <span className="accountTileArrow"><Icon name="arrow" size={14}/></span>
+            </div>
+            <div className="accountTileCopy"><span>{company.industry}</span><h3>{company.name}</h3><p>{company.employees} employees · {company.openDeals} open deals</p></div>
+            <div className="accountTileBottom">
+              <div><span>Annual value</span><b>{money(company.arr,true)}</b></div>
+              <div className="accountHealthDial"><span>{company.health}</span></div>
+            </div>
           </button>
         ))}
-      </div>
+      </section>
     </div>
   );
 }

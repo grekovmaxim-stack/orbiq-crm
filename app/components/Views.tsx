@@ -1,4 +1,4 @@
-import { useMemo, useState, type DragEvent } from "react";
+import { useMemo, useState, type CSSProperties, type DragEvent } from "react";
 import Icon from "./Icon";
 import { journeySeed } from "../lib/data";
 import { money } from "../lib/format";
@@ -630,7 +630,7 @@ export function CompaniesView({
               className={"accountBubble bubble"+index+" "+company.tone}
               key={company.id}
               onClick={() => onOpen(company)}
-              style={{"--health":company.health} as React.CSSProperties}
+              style={{"--health":company.health} as CSSProperties}
             >
               <span>{company.name.slice(0,2).toUpperCase()}</span>
               <div><b>{company.name}</b><small>{company.health}% health</small></div>

@@ -8,12 +8,14 @@ export function OverviewView({
   deals,
   tasks,
   onNavigate,
-  onSelectDeal
+  onSelectDeal,
+  selectedDealId
 }: {
   deals: Deal[];
   tasks: Task[];
   onNavigate: (view: string) => void;
   onSelectDeal: (deal: Deal) => void;
+  selectedDealId: string;
 }) {
   const openDeals = deals.filter((deal) => deal.stage !== "Won");
   const pipeline = openDeals.reduce((sum, deal) => sum + deal.value, 0);

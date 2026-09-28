@@ -394,3 +394,111 @@ button:focus-visible,input:focus-visible,select:focus-visible{
 .teamRow:first-of-type{border-top:0}.rank{font-size:8px;color:#b0b3b7}.teamAvatar{width:31px;height:31px}.teamName b{display:block;font-size:10px}.teamName span{display:block;font-size:8px;color:#999;margin-top:3px}.teamRow strong{font-size:11px;text-align:right}.teamRow em{font-size:9px;font-style:normal;color:#4c775e;text-align:right}
 @media(max-width:900px){.forecastPanel{grid-template-columns:1fr}.forecastMiniGrid{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:680px){.forecastMiniGrid{grid-template-columns:1fr}.teamRow{grid-template-columns:24px auto 1fr auto}.teamRow em{display:none}}
+
+/* --- Creative Overview / Revenue Command Center --- */
+.overviewExperience{display:flex;flex-direction:column;gap:14px}
+.briefingHero{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(340px,.8fr);
+  gap:18px;
+  min-height:430px;
+  padding:28px;
+  border:1px solid rgba(18,20,23,.06);
+  border-radius:30px;
+  overflow:hidden;
+  position:relative;
+  background:
+    radial-gradient(circle at 75% 25%,rgba(210,220,232,.45),transparent 24%),
+    linear-gradient(135deg,rgba(255,255,255,.92),rgba(244,246,248,.78));
+  box-shadow:0 22px 60px rgba(22,27,33,.06),inset 0 1px 0 rgba(255,255,255,.85);
+}
+.briefingHero:after{
+  content:"";
+  position:absolute;
+  inset:auto -7% -45% 44%;
+  height:80%;
+  border-radius:50%;
+  border:1px solid rgba(20,22,25,.055);
+  box-shadow:0 0 0 45px rgba(20,22,25,.02),0 0 0 95px rgba(20,22,25,.012);
+  pointer-events:none;
+}
+.briefingCopy{position:relative;z-index:2;display:flex;flex-direction:column}
+.briefingKicker{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#71767c}
+.briefingKicker em{font-style:normal;color:#a0a4a9;margin-left:4px}
+.liveDot{width:7px;height:7px;border-radius:50%;background:#151719;box-shadow:0 0 0 5px rgba(21,23,25,.06);flex:0 0 auto}
+.briefingCopy h2{max-width:700px;margin:34px 0 14px;font-size:44px;line-height:1.01;letter-spacing:-2.2px;font-weight:530}
+.briefingCopy h2 span{color:#8a8f96;font-weight:470}.briefingCopy h2 strong{font-weight:760}
+.briefingCopy>p{max-width:610px;margin:0;color:#777c83;font-size:12px;line-height:1.65}
+.briefingActions{display:flex;align-items:center;gap:11px;margin-top:24px}
+.commandPrimary{height:44px;border-radius:14px;padding:0 16px}
+.quietAction{border:0;background:transparent;display:flex;align-items:center;gap:6px;color:#646970;font-size:10px;cursor:pointer;padding:8px 3px}
+.quietAction:hover{color:#111}
+.signalMetrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:auto;padding-top:28px}
+.signalMetrics>div{padding:13px 14px;border-left:1px solid var(--line)}
+.signalMetrics>div:first-child{padding-left:0;border-left:0}
+.signalMetrics span,.signalMetrics em{display:block}.signalMetrics span{font-size:8px;color:#9a9ea4;text-transform:uppercase;letter-spacing:.05em}.signalMetrics b{display:block;margin:5px 0 4px;font-size:18px;letter-spacing:-.6px}.signalMetrics em{font-style:normal;font-size:8px;color:#777c82}
+
+.orbitPanel{position:relative;z-index:2;background:#17191b;border-radius:25px;padding:16px;color:#fff;min-height:370px;box-shadow:0 24px 55px rgba(15,17,20,.18);overflow:hidden}
+.orbitMeta{display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#9ca1a7;position:relative;z-index:4}.orbitMeta b{font-size:10px;color:#dce8df;background:#27352d;border-radius:999px;padding:5px 8px}
+.orbitGraphic{position:absolute;inset:48px 9px 46px}
+.orbitRing{position:absolute;left:50%;top:50%;border:1px solid rgba(255,255,255,.08);border-radius:50%;transform:translate(-50%,-50%)}
+.ringOuter{width:94%;aspect-ratio:1/1}.ringMid{width:68%;aspect-ratio:1/1}.ringInner{width:42%;aspect-ratio:1/1}
+.orbitCenter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#3a3d41,#1c1e21 70%);display:grid;place-content:center;text-align:center;box-shadow:0 18px 34px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.06)}
+.orbitCenter small,.orbitCenter span{font-size:7px;color:#92979d;text-transform:uppercase;letter-spacing:.06em}.orbitCenter strong{font-size:33px;letter-spacing:-1.5px;line-height:1;margin:5px 0}
+.orbitNode{position:absolute;display:flex;align-items:center;gap:7px;border:0;background:rgba(255,255,255,.06);color:#fff;border-radius:13px;padding:7px 9px 7px 7px;backdrop-filter:blur(12px);cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.18);transition:.2s}
+.orbitNode:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.orbitNode>i{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-style:normal;font-size:8px;font-weight:800;color:#111}
+.orbitNode>i.mint{background:#dceee6}.orbitNode>i.blue{background:#dce7f8}.orbitNode>i.coral{background:#f0ddda}
+.orbitNode span b,.orbitNode span small{display:block}.orbitNode span b{font-size:9px}.orbitNode span small{font-size:7px;color:#a7abb0;margin-top:2px}
+.orbitOne{left:4%;top:19%}.orbitTwo{right:3%;top:34%}.orbitThree{left:10%;bottom:8%}
+.orbitPulse{position:absolute;border-radius:50%;background:#fff;box-shadow:0 0 0 7px rgba(255,255,255,.05)}
+.pulseA{width:5px;height:5px;right:24%;top:12%}.pulseB{width:4px;height:4px;right:12%;bottom:18%}
+.orbitFooter{position:absolute;left:16px;right:16px;bottom:13px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;font-size:7px;color:#93989e}.orbitFooter>div{height:3px;background:#2b2e32;border-radius:99px;overflow:hidden}.orbitFooter i{display:block;height:100%;background:#f4f5f6}.orbitFooter b{font-size:8px;color:#c9cdd1}
+
+.momentumBoard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(310px,.55fr);gap:14px}
+.momentumMain,.interventionPanel,.journeyFeature,.activityRibbon{border:1px solid rgba(18,20,23,.055);background:rgba(255,255,255,.78);box-shadow:0 12px 38px rgba(22,27,33,.04);backdrop-filter:blur(18px)}
+.momentumMain{border-radius:25px;padding:20px}
+.sectionEditorial{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.sectionEditorial h2,.interventionTop h2{font-size:17px;letter-spacing:-.5px;margin:5px 0 0}
+.stageLegend{display:grid;grid-template-columns:repeat(5,1fr);margin:0 20px 7px 162px;color:#a1a4a9;font-size:7px;text-transform:uppercase;letter-spacing:.04em}.stageLegend span{text-align:center}
+.momentumRows{display:flex;flex-direction:column}
+.momentumRow{display:grid;grid-template-columns:auto 110px minmax(160px,1fr) auto;align-items:center;gap:10px;width:100%;min-height:58px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;color:#111;padding:0 4px}
+.momentumRow:hover{background:#fafbfb}
+.momentumName b,.momentumName small{display:block}.momentumName b{font-size:10px}.momentumName small{font-size:8px;color:#9ca0a5;margin-top:3px}
+.momentumTrack{height:1px;background:#e1e4e7;position:relative;margin:0 18px}.momentumTrack>i{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(90deg,#232629 0 54%,#e1e4e7 54%)}
+.momentumTrack>em{position:absolute;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;background:#17191b;box-shadow:0 0 0 5px #f5f6f7;font-style:normal}.momentumTrack>em span{position:absolute;left:50%;bottom:13px;transform:translateX(-50%);font-size:7px;color:#666c72;white-space:nowrap}
+
+.interventionPanel{border-radius:25px;padding:20px;display:flex;flex-direction:column}
+.interventionTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.interventionTop .count{margin-top:1px}
+.interventionStack{margin-top:10px}
+.interventionCard{width:100%;display:grid;grid-template-columns:28px 1fr auto;align-items:start;gap:9px;border:0;border-top:1px solid var(--line);background:transparent;text-align:left;padding:13px 0;cursor:pointer}.interventionCard:hover p{color:#555}
+.interventionIndex{font-size:8px;color:#b1b4b8;padding-top:2px}.interventionCompany{display:flex;align-items:center;justify-content:space-between;gap:12px}.interventionCompany b{font-size:10px}.interventionCompany span{font-size:9px;color:#7b8086}.interventionCard p{margin:5px 0 0;color:#989ca1;font-size:8px;line-height:1.45;transition:.16s}
+.interventionInsight{display:flex;gap:9px;margin-top:auto;background:#17191b;color:#fff;border-radius:16px;padding:12px}.interventionInsight>span{width:25px;height:25px;border-radius:8px;background:#292c30;display:grid;place-items:center;flex:0 0 auto}.interventionInsight p{margin:0;font-size:8px;line-height:1.5;color:#c5c8cb}.interventionInsight b{color:#fff}
+
+.journeyFeature{border-radius:28px;padding:24px;display:grid;grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr);gap:30px;background:linear-gradient(135deg,#17191b,#24272b);color:#fff;overflow:hidden;position:relative}
+.journeyFeature:after{content:"";position:absolute;width:340px;height:340px;border-radius:50%;right:-130px;top:-155px;border:1px solid rgba(255,255,255,.05);box-shadow:0 0 0 55px rgba(255,255,255,.02),0 0 0 110px rgba(255,255,255,.012)}
+.journeyFeatureLead{position:relative;z-index:2}.journeyFeatureLead .label{color:#777d84}.journeyFeatureLead h2{font-size:25px;line-height:1.08;letter-spacing:-.85px;margin:11px 0 10px;max-width:430px}.journeyFeatureLead p{max-width:440px;margin:0;color:#9ba0a6;font-size:9px;line-height:1.65}.darkQuiet{margin-top:17px;color:#fff;padding-left:0}
+.journeyFeatureFlow{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);align-content:center;gap:0;padding:26px 0 50px}
+.featureStage{position:relative;display:flex;align-items:center;gap:8px;min-width:0}.featureStageNum{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#2c2f33;color:#9ea3a9;font-size:8px;flex:0 0 auto}.featureStage.done .featureStageNum{background:#f2f3f4;color:#111}.featureStage.active .featureStageNum{background:#dceae2;color:#22362b;box-shadow:0 0 0 6px rgba(220,234,226,.07)}
+.featureStage b,.featureStage small{display:block}.featureStage b{font-size:9px}.featureStage small{font-size:7px;color:#81868c;margin-top:2px}.featureConnector{height:1px;background:#3a3e43;position:absolute;left:96px;right:7px;top:15px}
+.journeyCallout{position:absolute;left:22%;right:3%;bottom:2px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:9px 11px;backdrop-filter:blur(10px)}.journeyCallout b,.journeyCallout small{display:block}.journeyCallout b{font-size:9px}.journeyCallout small{font-size:7px;color:#8f949a;margin-top:2px}.journeyCalloutTime{font-size:7px;color:#7f848a}
+
+.activityRibbon{border-radius:20px;min-height:66px;padding:10px 13px;display:grid;grid-template-columns:1.25fr repeat(3,1fr);gap:7px;align-items:center}
+.activityRibbonTitle{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px}.activityRibbonTitle b{font-size:9px}.activityRibbonTitle small{font-size:8px;color:#9a9ea3}
+.pulseItem{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:8px 10px;border-left:1px solid var(--line)}.pulseItem b{font-size:8px;font-weight:560}.pulseItem time{font-size:7px;color:#aaa}.pulseItem .activityAvatar{width:29px;height:29px;border-radius:9px}
+
+@media(max-width:1180px){
+  .briefingHero{grid-template-columns:1fr}.orbitPanel{min-height:330px}.briefingCopy h2{font-size:39px}
+  .momentumBoard{grid-template-columns:1fr}.interventionInsight{margin-top:16px}
+}
+@media(max-width:900px){
+  .briefingHero{padding:22px}.signalMetrics{grid-template-columns:1fr 1fr;row-gap:8px}.signalMetrics>div:nth-child(3){border-left:0;padding-left:0}
+  .journeyFeature{grid-template-columns:1fr}.journeyFeatureFlow{padding-top:8px}.activityRibbon{grid-template-columns:1fr 1fr}.activityRibbonTitle{grid-column:1/-1}
+}
+@media(max-width:680px){
+  .briefingHero{padding:18px;border-radius:22px;min-height:auto}.briefingCopy h2{font-size:34px;letter-spacing:-1.5px;margin-top:26px}.briefingActions{align-items:flex-start;flex-direction:column}.commandPrimary{width:100%}
+  .orbitPanel{min-height:300px}.orbitNode span{display:none}.orbitNode{padding:6px}.orbitOne{left:8%}.orbitTwo{right:7%}.orbitThree{left:12%}
+  .signalMetrics{margin-top:22px}.signalMetrics b{font-size:16px}
+  .momentumMain,.interventionPanel{padding:16px;border-radius:20px}.stageLegend{display:none}.momentumRow{grid-template-columns:auto 92px 1fr auto}.momentumTrack{margin:0 8px}.momentumTrack>em span{display:none}
+  .journeyFeature{padding:18px;border-radius:22px}.journeyFeatureLead h2{font-size:22px}.journeyFeatureFlow{grid-template-columns:1fr 1fr;gap:15px}.featureConnector{display:none}.journeyCallout{position:relative;left:auto;right:auto;bottom:auto;grid-column:1/-1;margin-top:4px}
+  .activityRibbon{grid-template-columns:1fr}.pulseItem{border-left:0;border-top:1px solid var(--line)}
+}

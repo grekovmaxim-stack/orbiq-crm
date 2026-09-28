@@ -18,152 +18,173 @@ export function OverviewView({
   const openDeals = deals.filter((deal) => deal.stage !== "Won");
   const pipeline = openDeals.reduce((sum, deal) => sum + deal.value, 0);
   const weighted = openDeals.reduce((sum, deal) => sum + deal.value * (deal.probability / 100), 0);
-  const openTasks = tasks.filter((task) => !task.done).length;
+  const wonValue = deals.filter((deal) => deal.stage === "Won").reduce((sum, deal) => sum + deal.value, 0);
   const attention = deals.filter((deal) => deal.health !== "Healthy").slice(0, 3);
-  const attentionValue = attention.reduce((sum, deal) => sum + deal.value, 0);
-  const spotlightDeals = [...openDeals].sort((a,b) => b.value - a.value).slice(0, 5);
-  const stages: Stage[] = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
+  const dueTasks = tasks.filter((task) => !task.done).slice(0, 4);
+  const flowStages: Array<{label:string; stage:Stage; note:string}> = [
+    { label:"Intake", stage:"New", note:"New signal" },
+    { label:"Qualify", stage:"Qualified", note:"Buying fit" },
+    { label:"Shape", stage:"Proposal", note:"Value case" },
+    { label:"Commit", stage:"Negotiation", note:"Decision" },
+    { label:"Close", stage:"Won", note:"Outcome" }
+  ];
 
   return (
-    <div className="overviewExperience">
-      <section className="briefingHero">
-        <div className="briefingCopy">
-          <div className="briefingKicker"><span className="liveDot"/><span>Live revenue briefing</span><em>Updated now</em></div>
-          <h2><span>{attention.length} moves</span> can unlock <strong>{money(attentionValue, true)}</strong> before month close.</h2>
-          <p>Northstar is ahead on velocity, but the next gain is not more activity — it is removing friction from the right accounts.</p>
-
-          <div className="briefingActions">
-            <button className="primary commandPrimary" onClick={() => onNavigate("Deals")}>Open priority pipeline <Icon name="arrow" size={15}/></button>
-            <button className="quietAction" onClick={() => onNavigate("Journeys")}>Follow Everline journey</button>
+    <div className="ccPage">
+      <section className="ccBoard">
+        <div className="ccBoardTop">
+          <div className="ccTitle">
+            <span className="label">Revenue orchestration</span>
+            <div className="ccTitleRow">
+              <h2>Northstar command flow</h2>
+              <span className="ccLive"><i/> live</span>
+            </div>
           </div>
 
-          <div className="signalMetrics">
-            <div><span>Revenue</span><b>$284.6K</b><em>+18.4%</em></div>
-            <div><span>Weighted forecast</span><b>{money(Math.round(weighted), true)}</b><em>92% target</em></div>
-            <div><span>Pipeline</span><b>{money(pipeline, true)}</b><em>{openDeals.length} active deals</em></div>
-            <div><span>Focus load</span><b>{openTasks}</b><em>open tasks</em></div>
-          </div>
-        </div>
-
-        <div className="orbitPanel" aria-label="Revenue momentum signal map">
-          <div className="orbitMeta"><span>Momentum map</span><b>+14.2%</b></div>
-          <div className="orbitGraphic">
-            <div className="orbitRing ringOuter"/>
-            <div className="orbitRing ringMid"/>
-            <div className="orbitRing ringInner"/>
-            <div className="orbitCenter"><small>Revenue pulse</small><strong>84</strong><span>healthy</span></div>
-
-            <button className="orbitNode orbitOne" onClick={() => onSelectDeal(deals.find((deal) => deal.company === "Everline") || deals[0])}>
-              <i className="mint">EV</i><span><b>Everline</b><small>Proposal · 68%</small></span>
-            </button>
-            <button className="orbitNode orbitTwo" onClick={() => onSelectDeal(deals.find((deal) => deal.company === "Arcwell") || deals[0])}>
-              <i className="blue">AR</i><span><b>Arcwell</b><small>Negotiation · 82%</small></span>
-            </button>
-            <button className="orbitNode orbitThree" onClick={() => onSelectDeal(deals.find((deal) => deal.company === "Novexa") || deals[0])}>
-              <i className="coral">NO</i><span><b>Novexa</b><small>Risk signal</small></span>
-            </button>
-
-            <span className="orbitPulse pulseA"/><span className="orbitPulse pulseB"/>
-          </div>
-          <div className="orbitFooter"><span>Signal strength</span><div><i style={{width:"84%"}}/></div><b>84 / 100</b></div>
-        </div>
-      </section>
-
-      <section className="momentumBoard">
-        <div className="momentumMain">
-          <div className="sectionEditorial">
-            <div><span className="label">Deal momentum</span><h2>Where revenue is moving</h2></div>
-            <button className="textBtn" onClick={() => onNavigate("Deals")}>Open pipeline <Icon name="arrow" size={14}/></button>
-          </div>
-
-          <div className="stageLegend">
-            {stages.map((stage) => <span key={stage}>{stage}</span>)}
-          </div>
-
-          <div className="momentumRows">
-            {spotlightDeals.map((deal) => {
-              const stageIndex = Math.max(0, stages.indexOf(deal.stage));
-              const left = stageIndex / (stages.length - 1) * 100;
-              return (
-                <button className="momentumRow" key={deal.id} onClick={() => onSelectDeal(deal)}>
-                  <span className={"logo small " + deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
-                  <span className="momentumName"><b>{deal.company}</b><small>{money(deal.value, true)} · {deal.probability}% confidence</small></span>
-                  <span className="momentumTrack"><i/><em style={{left:left + "%"}}><span>{deal.stage}</span></em></span>
-                  <Icon name="chevron" size={14}/>
+          <div className="ccTeam">
+            <div className="ccTeamStack">
+              {[
+                ["MC","Maya Chen","mint"],
+                ["DL","Daniel Lewis","blue"],
+                ["SR","Sofia Reed","violet"],
+                ["OR","Owen Reed","coral"],
+                ["OM","Olivia Martin","amber"]
+              ].map((person,index) => (
+                <button className={"ccPerson " + person[2]} style={{zIndex:10-index}} key={person[0]} title={person[1]}>
+                  {person[0]}<span>{index<4 ? index+2 : "•"}</span>
                 </button>
+              ))}
+            </div>
+            <div className="ccTeamCopy"><b>Active room</b><span>5 people touching revenue today</span></div>
+          </div>
+
+          <div className="ccTools">
+            <button aria-label="Add"><Icon name="plus" size={15}/></button>
+            <button aria-label="Filter"><Icon name="filter" size={15}/></button>
+            <button aria-label="Calendar"><Icon name="calendar" size={15}/></button>
+          </div>
+        </div>
+
+        <div className="ccFlowWrap">
+          <div className="ccFlowGrid">
+            {flowStages.map((column,columnIndex) => {
+              const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
+              return (
+                <section className="ccStage" key={column.stage}>
+                  <div className="ccStageHead">
+                    <div><span>0{columnIndex+1}</span><b>{column.label}</b></div>
+                    <small>{column.note}</small>
+                  </div>
+
+                  <div className="ccStageCards">
+                    {stageDeals.map((deal,index) => {
+                      const emphasized = deal.health !== "Healthy" || (column.stage === "Negotiation" && index === 0);
+                      return (
+                        <button
+                          className={"ccDealNode " + (emphasized ? "emphasized " : "") + deal.tone}
+                          key={deal.id}
+                          onClick={() => onSelectDeal(deal)}
+                        >
+                          <div className="ccNodeMain">
+                            <span className={"logo tiny " + deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
+                            <div><b>{deal.company}</b><small>{deal.title}</small></div>
+                          </div>
+                          <div className="ccNodeMeta">
+                            <span>{money(deal.value,true)}</span>
+                            <em>{deal.probability}%</em>
+                          </div>
+                          <span className="ccNodeOwner">{deal.owner}</span>
+                        </button>
+                      );
+                    })}
+
+                    {column.stage === "Won" && (
+                      <div className="ccOutcomeTiles">
+                        <button><span>↗</span><b>Expansion</b><small>2 accounts</small></button>
+                        <button><span>✦</span><b>Onboarding</b><small>1 ready</small></button>
+                      </div>
+                    )}
+                  </div>
+
+                  {columnIndex < flowStages.length-1 && (
+                    <div className="ccConnector" aria-hidden>
+                      <i/><i/><i/>
+                    </div>
+                  )}
+                </section>
               );
             })}
           </div>
         </div>
 
-        <aside className="interventionPanel">
-          <div className="interventionTop">
-            <div><span className="label">Interventions</span><h2>Three things worth doing</h2></div>
-            <span className="count">{attention.length}</span>
+        <div className="ccBoardFoot">
+          <div><span>Live pipeline</span><b>{money(pipeline,true)}</b></div>
+          <div><span>Weighted</span><b>{money(Math.round(weighted),true)}</b></div>
+          <div><span>Closed</span><b>{money(wonValue,true)}</b></div>
+          <div className="ccBoardFootAction">
+            <button onClick={() => onNavigate("Deals")}>Open full pipeline <Icon name="arrow" size={14}/></button>
+          </div>
+        </div>
+      </section>
+
+      <section className="ccLowerGrid">
+        <div className="ccActionPanel">
+          <div className="ccSectionHead">
+            <div><span className="label">Suggested actions</span><h2>What changes the outcome</h2></div>
+            <button className="ccCircleBtn"><Icon name="plus" size={14}/></button>
           </div>
 
-          <div className="interventionStack">
+          <div className="ccActionList">
             {attention.map((deal,index) => (
-              <button className="interventionCard" key={deal.id} onClick={() => onSelectDeal(deal)}>
-                <span className="interventionIndex">0{index+1}</span>
-                <div>
-                  <div className="interventionCompany"><b>{deal.company}</b><span>{money(deal.value, true)}</span></div>
-                  <p>{deal.health === "At risk" ? "Bring a decision maker into the next conversation before the cycle slips." : "Re-engage the buying team while recent activity is still warm."}</p>
-                </div>
-                <Icon name="arrow" size={14}/>
+              <button className="ccActionRow" key={deal.id} onClick={() => onSelectDeal(deal)}>
+                <span className="ccStar">☆</span>
+                <span className="ccActionSubject">
+                  <b>{deal.company}</b>
+                  <small>{deal.health === "At risk" ? "Add the decision maker before the next commercial step." : "Re-open the buying thread before momentum cools."}</small>
+                </span>
+                <span className={"ccStatus " + (deal.health === "At risk" ? "risk" : "watch")}>{deal.health}</span>
+                <span className="ccActionValue">{money(deal.value,true)}</span>
+                <span className="avatar mini">{deal.owner}</span>
+                <Icon name="chevron" size={14}/>
               </button>
             ))}
           </div>
-
-          <div className="interventionInsight">
-            <span>✦</span>
-            <p><b>Pattern detected.</b> Deals with a second stakeholder added within 48 hours are closing faster this month.</p>
-          </div>
-        </aside>
-      </section>
-
-      <section className="journeyFeature">
-        <div className="journeyFeatureLead">
-          <span className="label">Customer journey spotlight</span>
-          <h2>Everline is not “in Proposal”. It is moving through a decision.</h2>
-          <p>ORBIQ keeps the commercial stage and the human journey connected, so the team sees what has to happen next — not just where the deal sits.</p>
-          <button className="quietAction darkQuiet" onClick={() => onNavigate("Journeys")}>Explore the journey <Icon name="arrow" size={14}/></button>
         </div>
 
-        <div className="journeyFeatureFlow">
-          {[
-            ["01","Discovery","100%","done"],
-            ["02","Solution","72%","active"],
-            ["03","Decision","28%","next"],
-            ["04","Onboarding","0%","future"]
-          ].map((step,index) => (
-            <div className={"featureStage " + step[3]} key={step[1]}>
-              <span className="featureStageNum">{step[0]}</span>
-              <div><b>{step[1]}</b><small>{step[2]}</small></div>
-              {index < 3 && <i className="featureConnector"/>}
+        <div className="ccForecastPanel">
+          <div className="ccSectionHead">
+            <div><span className="label">Forecast journey</span><h2>Coverage to target</h2></div>
+            <button className="ccCircleBtn"><Icon name="dots" size={15}/></button>
+          </div>
+
+          <div className="ccForecastBody">
+            <div className="ccDial">
+              <div className="ccDialInner"><span>Forecast</span><b>92%</b><small>of target</small></div>
             </div>
-          ))}
-          <div className="journeyCallout">
-            <span className="avatar">DK</span>
-            <div><b>Technical validation</b><small>In progress · blocking ROI model</small></div>
-            <span className="journeyCalloutTime">Today</span>
+            <div className="ccForecastLegend">
+              <div><i className="ink"/><span>Commit</span><b>{money(214000,true)}</b></div>
+              <div><i className="soft"/><span>Upside</span><b>{money(178000,true)}</b></div>
+              <div><i className="pale"/><span>Gap</span><b>{money(34000,true)}</b></div>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section className="activityRibbon">
-        <div className="activityRibbonTitle"><span className="liveDot"/><b>Workspace pulse</b><small>What changed while you were away</small></div>
-        {[
-          ["MC","Everline moved to Proposal","12m"],
-          ["DL","Arcwell technical review completed","44m"],
-          ["SR","Northwave buying committee updated","2h"]
-        ].map((item,index) => (
-          <div className="pulseItem" key={item[1]}>
-            <span className={"activityAvatar av"+index}>{item[0]}</span>
-            <b>{item[1]}</b>
-            <time>{item[2]}</time>
+        <div className="ccTasksPanel">
+          <div className="ccSectionHead">
+            <div><span className="label">Team pulse</span><h2>Today’s handoffs</h2></div>
+            <button className="textBtn" onClick={() => onNavigate("Tasks")}>All tasks <Icon name="arrow" size={13}/></button>
           </div>
-        ))}
+
+          <div className="ccTaskStack">
+            {dueTasks.map((task,index) => (
+              <div className="ccTaskItem" key={task.id}>
+                <span className={"ccTaskGlyph g"+index}>{task.type === "Call" ? <Icon name="call" size={13}/> : task.type === "Email" ? <Icon name="mail" size={13}/> : <Icon name="calendar" size={13}/>}</span>
+                <div><b>{task.title}</b><small>{task.company} · {task.due}</small></div>
+                <span className="avatar mini">{task.owner}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     </div>
   );

@@ -1671,3 +1671,11 @@ html,body{
 .contextQuickActions button.dark.amber{box-shadow:inset 0 -3px 0 var(--accent-amber)}
 .contextQuickActions button.dark.violet{box-shadow:inset 0 -3px 0 var(--accent-violet)}
 .contextQuickActions button.dark.mint{box-shadow:inset 0 -3px 0 var(--accent-mint)}
+
+.contextGateName{display:block;margin-top:5px;font-size:12px;letter-spacing:-.15px;color:#334149}
+.contextEvidenceChip.ready.sky{background:var(--accent-sky);color:#26343b}
+.contextEvidenceChip.ready.lime{background:var(--accent-lime);color:#26343b}
+.contextEvidenceChip.ready.amber{background:var(--accent-amber);color:#26343b}
+.contextEvidenceChip.ready.violet{background:var(--accent-violet);color:#fff}
+.contextEvidenceChip.ready.mint{background:var(--accent-mint);color:#26343b}
+.contextEvidenceChip.missing{background:#f5f6f7;color:#8b969b;border:1px dashed #cfd6d9}

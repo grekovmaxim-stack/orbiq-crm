@@ -249,6 +249,14 @@ export function DealContext({ deal }: { deal: Deal }) {
   const stages = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
   const stageIndex = Math.max(0, stages.indexOf(deal.stage));
   const healthTone = deal.health === "Healthy" ? "healthy" : deal.health === "At risk" ? "risk" : "watch";
+  const accent = ["sky","lime","amber","violet","mint"][stageIndex];
+  const evidence = [
+    ["Problem","Urgency","Sponsor"],
+    ["Budget","Timing","Champion"],
+    ["Proof","ROI","Workflow"],
+    ["Security","Terms","Approver"],
+    ["Kickoff","Owner","Success plan"]
+  ][stageIndex];
 
   return (
     <>
@@ -259,10 +267,14 @@ export function DealContext({ deal }: { deal: Deal }) {
 
       <div className="account contextAccount">
         <div className={"logo contextLogo " + deal.tone}>{deal.company.slice(0, 2).toUpperCase()}</div>
-        <div>
+        <div className="contextIdentityCopy">
           <div className="contextEyebrow"><small>Selected opportunity</small><span className={"contextHealth " + healthTone}>{deal.health}</span></div>
           <h3>{deal.company}</h3>
           <p>{deal.title}</p>
+          <div className="contextAccentRow">
+            <span className={"contextStageChip "+accent}>{deal.stage}</span>
+            <span className="contextOwnerChip">Owner {deal.owner}</span>
+          </div>
         </div>
       </div>
 
@@ -271,7 +283,7 @@ export function DealContext({ deal }: { deal: Deal }) {
         <div className="contextProbability"><span>Confidence</span><b>{deal.probability}%</b></div>
       </div>
 
-      <div className="contextJourneyStrip" aria-label="Deal progression">
+      <div className={"contextJourneyStrip accent-"+accent} aria-label="Deal progression">
         {stages.map((stage,index) => (
           <span className={index < stageIndex ? "done" : index === stageIndex ? "current" : ""} key={stage}>
             <i/>
@@ -294,7 +306,14 @@ export function DealContext({ deal }: { deal: Deal }) {
             <div><span>Buying group</span><b>{deal.stage === "New" ? "2 / 5" : deal.stage === "Qualified" ? "3 / 5" : "4 / 5"}</b></div>
           </div>
 
-          <div className="contextNextStep">
+          <div className="contextEvidencePanel">
+            <div className="contextEvidenceHead"><span>Gate evidence</span><small>{deal.stage === "Negotiation" ? "2 / 3 ready" : deal.health === "At risk" ? "1 / 3 ready" : "3 / 3 ready"}</small></div>
+            <div className="contextEvidenceChips">
+              {evidence.map((item,index) => <span className={"contextEvidenceChip "+accent+(index === 0 ? " strong" : "")} key={item}>{item}</span>)}
+            </div>
+          </div>
+
+          <div className={"contextNextStep "+accent}>
             <div className="contextNextIcon">✦</div>
             <div>
               <span>Next best action</span>
@@ -304,9 +323,9 @@ export function DealContext({ deal }: { deal: Deal }) {
           </div>
 
           <div className="contextMiniSignals">
-            <div><Icon name="mail" size={13}/><span><b>Proposal opened</b><small>12 min ago · 4th view</small></span></div>
-            <div><Icon name="people" size={13}/><span><b>Buying group</b><small>4 stakeholders engaged</small></span></div>
-            <div><Icon name="calendar" size={13}/><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
+            <div><span className="contextSignalIcon mail"><Icon name="mail" size={14}/></span><span><b>Proposal opened</b><small>12 min ago · 4th view</small></span></div>
+            <div><span className="contextSignalIcon people"><Icon name="people" size={14}/></span><span><b>Buying group</b><small>4 stakeholders engaged</small></span></div>
+            <div><span className="contextSignalIcon calendar"><Icon name="calendar" size={14}/></span><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
           </div>
 
           <div className="peopleBlock contextPeople">
@@ -342,9 +361,9 @@ export function DealContext({ deal }: { deal: Deal }) {
       )}
 
       <div className="contextQuickActions">
-        <button><Icon name="mail" size={13}/> Email</button>
-        <button><Icon name="call" size={13}/> Call</button>
-        <button className="dark"><Icon name="plus" size={13}/> Task</button>
+        <button><Icon name="mail" size={14}/> Email</button>
+        <button><Icon name="call" size={14}/> Call</button>
+        <button className={"dark "+accent}><Icon name="plus" size={14}/> Task</button>
       </div>
     </>
   );

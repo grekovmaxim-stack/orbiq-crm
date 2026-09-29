@@ -32,12 +32,14 @@ export function OverviewView({
     gate:string;
     signal:string;
     threshold:number;
+    accent:"sky" | "lime" | "amber" | "violet" | "mint";
+    evidence:string[];
   }> = [
-    { label:"Signal", stage:"New", note:"New opportunity", objective:"Confirm a real problem, urgency and sponsor.", gate:"Discovery booked", signal:"Problem + sponsor", threshold:20 },
-    { label:"Qualify", stage:"Qualified", note:"Buying fit", objective:"Map budget, timing and the buying committee.", gate:"Champion confirmed", signal:"3 / 5 people mapped", threshold:40 },
-    { label:"Value", stage:"Proposal", note:"Business case", objective:"Prove workflow fit and make the ROI visible.", gate:"Value case accepted", signal:"Proof + ROI", threshold:60 },
-    { label:"Decision", stage:"Negotiation", note:"Approval path", objective:"Clear security, commercials and final approval.", gate:"Approver aligned", signal:"0 critical blockers", threshold:75 },
-    { label:"Handoff", stage:"Won", note:"Customer launch", objective:"Carry sales context into a clean onboarding.", gate:"Kickoff scheduled", signal:"Launch ≤ 3 days", threshold:100 }
+    { label:"Signal", stage:"New", note:"New opportunity", objective:"Confirm a real problem, urgency and sponsor.", gate:"Discovery booked", signal:"Problem + sponsor", threshold:20, accent:"sky", evidence:["Problem","Urgency","Sponsor"] },
+    { label:"Qualify", stage:"Qualified", note:"Buying fit", objective:"Map budget, timing and the buying committee.", gate:"Champion confirmed", signal:"3 / 5 people mapped", threshold:40, accent:"lime", evidence:["Budget","Timing","Champion"] },
+    { label:"Value", stage:"Proposal", note:"Business case", objective:"Prove workflow fit and make the ROI visible.", gate:"Value case accepted", signal:"Proof + ROI", threshold:60, accent:"amber", evidence:["Proof","ROI","Workflow"] },
+    { label:"Decision", stage:"Negotiation", note:"Approval path", objective:"Clear security, commercials and final approval.", gate:"Approver aligned", signal:"0 critical blockers", threshold:75, accent:"violet", evidence:["Security","Terms","Approver"] },
+    { label:"Handoff", stage:"Won", note:"Customer launch", objective:"Carry sales context into a clean onboarding.", gate:"Kickoff scheduled", signal:"Launch ≤ 3 days", threshold:100, accent:"mint", evidence:["Kickoff","Owner","Success plan"] }
   ];
 
   const blockerCount = openDeals.filter((deal) => deal.health !== "Healthy").length;
@@ -100,11 +102,11 @@ export function OverviewView({
               const ready = stageDeals.filter((deal) => deal.health === "Healthy" && deal.probability >= column.threshold).length;
 
               return (
-                <section className={"ccStage ccLogicStage stage"+columnIndex} key={column.stage}>
+                <section className={"ccStage ccLogicStage stage"+columnIndex+" accent-"+column.accent} key={column.stage}>
                   <div className="ccLogicStageHead">
                     <div className="ccStageIndex">0{columnIndex+1}</div>
                     <div className="ccStageIdentity">
-                      <span>{column.note}</span>
+                      <span className={"ccStageChip "+column.accent}>{column.note}</span>
                       <h3>{column.label}</h3>
                     </div>
                     <div className="ccStageValue"><b>{money(stageValue,true)}</b><small>{stageDeals.length} deals</small></div>
@@ -113,6 +115,9 @@ export function OverviewView({
                   <div className="ccStageObjective">
                     <span>Objective</span>
                     <p>{column.objective}</p>
+                    <div className="ccEvidenceRow">
+                      {column.evidence.map((item,evidenceIndex) => <i className={"ccEvidenceChip "+column.accent+(evidenceIndex === 0 ? " strong" : "")} key={item}>{item}</i>)}
+                    </div>
                   </div>
 
                   <div className="ccStageCards ccLogicCards">
@@ -128,7 +133,7 @@ export function OverviewView({
                           <div className="ccLogicDealTop">
                             <span className={"logo tiny "+deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
                             <div className="ccLogicDealTitle"><b>{deal.company}</b><small>{deal.title}</small></div>
-                            <span className="ccLogicProbability">{deal.probability}%</span>
+                            <span className={"ccLogicProbability "+column.accent}>{deal.probability}%</span>
                           </div>
 
                           <div className="ccLogicDealMeta">
@@ -137,7 +142,7 @@ export function OverviewView({
                             <span>{deal.owner}</span>
                           </div>
 
-                          <div className="ccLogicNext">
+                          <div className={"ccLogicNext "+column.accent}>
                             <span className="ccLogicNextIcon"><Icon name={columnIndex < 2 ? "people" : columnIndex === 2 ? "mail" : columnIndex === 3 ? "task" : "check"} size={12}/></span>
                             <div><small>Next move</small><b>{nextAction(columnIndex)}</b></div>
                           </div>
@@ -170,7 +175,7 @@ export function OverviewView({
                   </div>
 
                   {columnIndex < flowStages.length-1 && (
-                    <div className="ccLogicConnector" aria-hidden>
+                    <div className={"ccLogicConnector "+column.accent} aria-hidden>
                       <span><Icon name="arrow" size={13}/></span>
                       <small>{column.gate}</small>
                     </div>

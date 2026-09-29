@@ -257,6 +257,8 @@ export function DealContext({ deal }: { deal: Deal }) {
     ["Security","Terms","Approver"],
     ["Kickoff","Owner","Success plan"]
   ][stageIndex];
+  const gate = ["Discovery booked","Champion confirmed","Value case accepted","Approver aligned","Kickoff scheduled"][stageIndex];
+  const readyEvidenceCount = deal.health === "At risk" ? 1 : deal.health === "Watch" ? 2 : 3;
 
   return (
     <>
@@ -307,9 +309,14 @@ export function DealContext({ deal }: { deal: Deal }) {
           </div>
 
           <div className="contextEvidencePanel">
-            <div className="contextEvidenceHead"><span>Gate evidence</span><small>{deal.stage === "Negotiation" ? "2 / 3 ready" : deal.health === "At risk" ? "1 / 3 ready" : "3 / 3 ready"}</small></div>
+            <div className="contextEvidenceHead"><span>Exit gate</span><small>{readyEvidenceCount} / 3 ready</small></div>
+            <b className="contextGateName">{gate}</b>
             <div className="contextEvidenceChips">
-              {evidence.map((item,index) => <span className={"contextEvidenceChip "+accent+(index === 0 ? " strong" : "")} key={item}>{item}</span>)}
+              {evidence.map((item,index) => (
+                <span className={"contextEvidenceChip "+(index < readyEvidenceCount ? accent+" ready" : "missing")} key={item}>
+                  {index < readyEvidenceCount ? "✓ " : "○ "}{item}
+                </span>
+              ))}
             </div>
           </div>
 

@@ -1334,3 +1334,340 @@ html,body{
   .ccLogicSummary{grid-template-columns:1fr 1fr}.ccLogicSummary>div:last-child{grid-column:1/-1}.ccLogicLegend{overflow:auto}.ccLogicLegend em{display:none}
   .ccLogicGrid{min-width:1150px}.ccLogicLower{grid-template-columns:1fr}.ccLogicLower .ccActionPanel{grid-column:auto}
 }
+
+/* --- Reference-inspired accent system + Opportunity Focus scale pass --- */
+:root{
+  --accent-sky:#8fd4ff;
+  --accent-lime:#c9f45b;
+  --accent-amber:#ffc85e;
+  --accent-violet:#7f73ff;
+  --accent-mint:#6fd9a1;
+  --accent-coral:#f28f83;
+}
+
+@media(min-width:1200px){
+  .app{grid-template-columns:84px minmax(760px,1fr) 340px}
+  .context{padding:26px 24px}
+}
+
+/* Command Center: neutral canvas, bright accents only */
+.ccV3 .ccBoard{
+  background:
+    radial-gradient(circle at 84% 3%,rgba(218,225,231,.58),transparent 24%),
+    linear-gradient(180deg,#f3f5f6 0%,#eceff1 100%);
+}
+.ccLogicStage,
+.ccLogicStage.stage0,
+.ccLogicStage.stage1,
+.ccLogicStage.stage2,
+.ccLogicStage.stage3,
+.ccLogicStage.stage4{
+  background:linear-gradient(180deg,#fafbfb,#f3f5f5);
+  border-color:rgba(46,58,64,.08);
+}
+.ccLogicStage{position:relative;overflow:visible}
+.ccLogicStage:before{
+  content:"";
+  position:absolute;
+  left:15px;
+  right:15px;
+  top:0;
+  height:4px;
+  border-radius:0 0 6px 6px;
+  opacity:.98;
+}
+.ccLogicStage.accent-sky:before{background:var(--accent-sky)}
+.ccLogicStage.accent-lime:before{background:var(--accent-lime)}
+.ccLogicStage.accent-amber:before{background:var(--accent-amber)}
+.ccLogicStage.accent-violet:before{background:var(--accent-violet)}
+.ccLogicStage.accent-mint:before{background:var(--accent-mint)}
+
+.ccStageIndex{
+  width:38px;
+  height:38px;
+  font-size:10px;
+  background:#fff;
+}
+.ccLogicStage.accent-sky .ccStageIndex{box-shadow:inset 0 0 0 2px var(--accent-sky)}
+.ccLogicStage.accent-lime .ccStageIndex{box-shadow:inset 0 0 0 2px var(--accent-lime)}
+.ccLogicStage.accent-amber .ccStageIndex{box-shadow:inset 0 0 0 2px var(--accent-amber)}
+.ccLogicStage.accent-violet .ccStageIndex{box-shadow:inset 0 0 0 2px var(--accent-violet)}
+.ccLogicStage.accent-mint .ccStageIndex{box-shadow:inset 0 0 0 2px var(--accent-mint)}
+
+.ccStageIdentity h3{font-size:16px;letter-spacing:-.3px;margin-top:5px}
+.ccStageChip{
+  display:inline-flex!important;
+  width:max-content;
+  align-items:center;
+  min-height:22px;
+  padding:0 7px;
+  border-radius:6px;
+  font-size:8px!important;
+  line-height:1;
+  font-weight:700;
+  color:#26343b!important;
+  text-transform:uppercase;
+  letter-spacing:.045em;
+}
+.ccStageChip.sky{background:var(--accent-sky)}
+.ccStageChip.lime{background:var(--accent-lime)}
+.ccStageChip.amber{background:var(--accent-amber)}
+.ccStageChip.violet{background:var(--accent-violet);color:#fff!important}
+.ccStageChip.mint{background:var(--accent-mint)}
+
+.ccStageValue b{font-size:14px}
+.ccStageValue small{font-size:9px}
+.ccStageObjective{padding:11px 12px;background:#fff}
+.ccStageObjective>span{font-size:8px}
+.ccStageObjective p{font-size:10px;line-height:1.45;margin-top:5px}
+.ccEvidenceRow{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.ccEvidenceChip{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  padding:0 7px;
+  border-radius:6px;
+  font-size:8px;
+  font-style:normal;
+  font-weight:650;
+  background:#edf0f1;
+  color:#637178;
+}
+.ccEvidenceChip.sky.strong{background:var(--accent-sky);color:#26343b}
+.ccEvidenceChip.lime.strong{background:var(--accent-lime);color:#26343b}
+.ccEvidenceChip.amber.strong{background:var(--accent-amber);color:#26343b}
+.ccEvidenceChip.violet.strong{background:var(--accent-violet);color:#fff}
+.ccEvidenceChip.mint.strong{background:var(--accent-mint);color:#26343b}
+
+.ccLogicDeal{
+  background:#fff!important;
+  border-color:#e1e5e6!important;
+  min-height:156px;
+}
+.ccLogicDeal.watching{box-shadow:inset 3px 0 0 #e0ae43,0 8px 18px rgba(50,68,70,.035)}
+.ccLogicDeal.blocked{box-shadow:inset 3px 0 0 var(--accent-coral),0 8px 18px rgba(50,68,70,.035)}
+.ccLogicDeal.healthy{box-shadow:inset 3px 0 0 #75b68e,0 8px 18px rgba(50,68,70,.035)}
+.ccLogicDealTitle b{font-size:12px}
+.ccLogicDealTitle small{font-size:10px}
+.ccLogicProbability{
+  min-width:43px;
+  height:25px;
+  border-radius:7px;
+  display:grid;
+  place-items:center;
+  padding:0 7px;
+  font-size:10px;
+  color:#26343b;
+}
+.ccLogicProbability.sky{background:var(--accent-sky)}
+.ccLogicProbability.lime{background:var(--accent-lime)}
+.ccLogicProbability.amber{background:var(--accent-amber)}
+.ccLogicProbability.violet{background:var(--accent-violet);color:#fff}
+.ccLogicProbability.mint{background:var(--accent-mint)}
+.ccLogicDealMeta{font-size:9px}
+.ccLogicDealMeta span:first-child{font-size:12px}
+.ccLogicNext{
+  padding:9px 10px;
+  background:#f2f4f5;
+  border-left:3px solid transparent;
+}
+.ccLogicNext.sky{border-left-color:var(--accent-sky)}
+.ccLogicNext.lime{border-left-color:var(--accent-lime)}
+.ccLogicNext.amber{border-left-color:var(--accent-amber)}
+.ccLogicNext.violet{border-left-color:var(--accent-violet)}
+.ccLogicNext.mint{border-left-color:var(--accent-mint)}
+.ccLogicNextIcon{width:30px;height:30px}
+.ccLogicNext small{font-size:8px}
+.ccLogicNext b{font-size:9px;line-height:1.3}
+.ccLogicSignal b{font-size:9px}
+.ccLogicGate>div:first-child span{font-size:8px}
+.ccLogicGate>div:first-child b{font-size:11px}
+.ccGateEvidence span{font-size:8px}
+.ccGateEvidence b{font-size:9px}
+.ccLogicConnector small{
+  width:102px;
+  font-size:8px;
+  background:#f7f8f8;
+  border:1px solid #e0e4e5;
+}
+.ccLogicConnector.sky>span{background:var(--accent-sky)}
+.ccLogicConnector.lime>span{background:var(--accent-lime)}
+.ccLogicConnector.amber>span{background:var(--accent-amber)}
+.ccLogicConnector.violet>span{background:var(--accent-violet);color:#fff}
+.ccLogicConnector.mint>span{background:var(--accent-mint)}
+
+.ccLogicStory{background:#f8f9f9}
+.ccLogicStory .ccStoryMark{background:var(--accent-lime);color:#26343b}
+.ccLogicFoot .ccBoardFootAction button{background:#263940}
+
+/* Opportunity Focus: larger typography and clearer accent hierarchy */
+.context{
+  overflow-y:auto;
+  scrollbar-width:thin;
+  background:rgba(247,249,250,.92);
+}
+.contextTopPro{
+  font-size:13px;
+  margin-bottom:24px;
+  color:#66737b;
+}
+.contextLiveDot{width:8px;height:8px;background:#4c8b69}
+.contextAccount{gap:14px}
+.contextLogo{width:56px;height:56px;border-radius:17px;font-size:13px}
+.contextIdentityCopy{min-width:0;flex:1}
+.contextEyebrow{gap:8px}
+.contextEyebrow small{font-size:10px}
+.contextHealth{
+  font-size:9px;
+  padding:4px 7px;
+  border-radius:7px;
+  font-weight:700;
+}
+.contextAccount h3{
+  margin:5px 0 3px;
+  font-size:23px;
+  letter-spacing:-.65px;
+}
+.contextAccount p{
+  font-size:13px;
+  line-height:1.35;
+}
+.contextAccentRow{display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap}
+.contextStageChip,.contextOwnerChip{
+  min-height:25px;
+  display:inline-flex;
+  align-items:center;
+  padding:0 8px;
+  border-radius:7px;
+  font-size:9px;
+  font-weight:700;
+}
+.contextStageChip.sky{background:var(--accent-sky)}
+.contextStageChip.lime{background:var(--accent-lime)}
+.contextStageChip.amber{background:var(--accent-amber)}
+.contextStageChip.violet{background:var(--accent-violet);color:#fff}
+.contextStageChip.mint{background:var(--accent-mint)}
+.contextOwnerChip{background:#eceff1;color:#647178}
+
+.contextValueRow{margin:20px 0 17px;padding:17px 0}
+.contextValueRow span{font-size:11px}
+.contextValueRow strong{font-size:34px;letter-spacing:-1.4px;margin-top:5px}
+.contextProbability b{font-size:19px;margin-top:5px}
+.contextJourneyStrip{margin-bottom:18px}
+.contextJourneyStrip i{width:12px;height:12px}
+.contextJourneyStrip small{font-size:8px}
+.contextJourneyStrip.accent-sky .done i,.contextJourneyStrip.accent-sky .current i{background:var(--accent-sky)}
+.contextJourneyStrip.accent-lime .done i,.contextJourneyStrip.accent-lime .current i{background:var(--accent-lime)}
+.contextJourneyStrip.accent-amber .done i,.contextJourneyStrip.accent-amber .current i{background:var(--accent-amber)}
+.contextJourneyStrip.accent-violet .done i,.contextJourneyStrip.accent-violet .current i{background:var(--accent-violet)}
+.contextJourneyStrip.accent-mint .done i,.contextJourneyStrip.accent-mint .current i{background:var(--accent-mint)}
+.contextJourneyStrip .done i,.contextJourneyStrip .current i{border-color:#fff}
+
+.contextTabs{padding:4px;margin-bottom:14px}
+.contextTabs button{height:34px;font-size:10px}
+.contextSignalGrid{gap:8px;margin-bottom:12px}
+.contextSignalGrid>div{padding:11px;border-radius:12px;background:#fff}
+.contextSignalGrid span{font-size:9px}
+.contextSignalGrid b{font-size:12px;margin-top:4px}
+
+.contextEvidencePanel{
+  padding:11px;
+  border:1px solid #e3e7e8;
+  border-radius:13px;
+  background:#fff;
+  margin-bottom:12px;
+}
+.contextEvidenceHead{display:flex;align-items:center;justify-content:space-between}
+.contextEvidenceHead span{font-size:10px;font-weight:700}
+.contextEvidenceHead small{font-size:9px;color:#849097}
+.contextEvidenceChips{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.contextEvidenceChip{
+  min-height:24px;
+  display:inline-flex;
+  align-items:center;
+  padding:0 7px;
+  border-radius:6px;
+  background:#edf0f1;
+  font-size:9px;
+  font-weight:650;
+  color:#647178;
+}
+.contextEvidenceChip.sky.strong{background:var(--accent-sky);color:#26343b}
+.contextEvidenceChip.lime.strong{background:var(--accent-lime);color:#26343b}
+.contextEvidenceChip.amber.strong{background:var(--accent-amber);color:#26343b}
+.contextEvidenceChip.violet.strong{background:var(--accent-violet);color:#fff}
+.contextEvidenceChip.mint.strong{background:var(--accent-mint);color:#26343b}
+
+.contextNextStep{
+  position:relative;
+  background:#fff!important;
+  color:#2e3b42!important;
+  border:1px solid #e1e6e7;
+  box-shadow:0 10px 24px rgba(48,61,68,.06);
+  padding:13px;
+  overflow:hidden;
+}
+.contextNextStep:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:4px;
+}
+.contextNextStep.sky:before{background:var(--accent-sky)}
+.contextNextStep.lime:before{background:var(--accent-lime)}
+.contextNextStep.amber:before{background:var(--accent-amber)}
+.contextNextStep.violet:before{background:var(--accent-violet)}
+.contextNextStep.mint:before{background:var(--accent-mint)}
+.contextNextIcon{
+  width:34px;height:34px;
+  background:#f0f3f4!important;
+  color:#596970!important;
+}
+.contextNextStep span{font-size:9px!important;color:#7f8b90!important}
+.contextNextStep b{font-size:12px!important;line-height:1.4;margin-top:4px}
+.contextNextStep small{font-size:9px!important;color:#7a868b!important;line-height:1.4}
+
+.contextMiniSignals{padding:3px 0}
+.contextMiniSignals>div{
+  grid-template-columns:32px 1fr;
+  gap:9px;
+  padding:9px 0;
+}
+.contextSignalIcon{
+  width:30px;height:30px;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+}
+.contextSignalIcon.mail{background:#e8f3ff;color:#3d6f94}
+.contextSignalIcon.people{background:#eef8cf;color:#5e731c}
+.contextSignalIcon.calendar{background:#eeeaff;color:#6254ae}
+.contextMiniSignals>div>svg{display:none}
+.contextMiniSignals b{font-size:11px}
+.contextMiniSignals small{font-size:9px}
+
+.contextPeople{margin-top:14px}
+.contextPeople .sectionTitle{font-size:12px}
+.contextPeople .sectionTitle button{font-size:10px}
+.contextPeople .person{padding:10px 0}
+.contextPeople .person b{font-size:11px}
+.contextPeople .person small{font-size:9px}
+.contextPeople .person>span{font-size:10px}
+
+.contextJourneyItem b{font-size:10px}
+.contextJourneyItem small{font-size:9px;line-height:1.4}
+.contextJourneyItem em{font-size:8px}
+.contextJourneyNote p{font-size:9px}
+
+.contextQuickActions{gap:7px;margin-top:15px}
+.contextQuickActions button{
+  height:39px;
+  border-radius:10px;
+  font-size:10px;
+}
+.contextQuickActions button.dark{background:#263940!important;border-color:#263940!important}
+.contextQuickActions button.dark.sky{box-shadow:inset 0 -3px 0 var(--accent-sky)}
+.contextQuickActions button.dark.lime{box-shadow:inset 0 -3px 0 var(--accent-lime)}
+.contextQuickActions button.dark.amber{box-shadow:inset 0 -3px 0 var(--accent-amber)}
+.contextQuickActions button.dark.violet{box-shadow:inset 0 -3px 0 var(--accent-violet)}
+.contextQuickActions button.dark.mint{box-shadow:inset 0 -3px 0 var(--accent-mint)}

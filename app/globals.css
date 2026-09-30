@@ -1679,3 +1679,326 @@ html,body{
 .contextEvidenceChip.ready.violet{background:var(--accent-violet);color:#fff}
 .contextEvidenceChip.ready.mint{background:var(--accent-mint);color:#26343b}
 .contextEvidenceChip.missing{background:#f5f6f7;color:#8b969b;border:1px dashed #cfd6d9}
+
+/* --- Command Center refinement: fewer colors, more hierarchy, stronger focus path --- */
+.ccV3{
+  --cc-brand:#4d747b;
+  --cc-brand-strong:#31585f;
+  --cc-brand-soft:#dfe8e9;
+  --cc-neutral:#f4f6f6;
+  --cc-neutral-2:#e8ecec;
+  --cc-text:#27383f;
+  --cc-sub:#718086;
+  --cc-warn:#b18b4b;
+  --cc-risk:#b86e65;
+  --cc-good:#668b76;
+}
+.ccV3 .ccBoard{
+  background:
+    radial-gradient(circle at 76% 0%,rgba(214,222,224,.52),transparent 23%),
+    radial-gradient(circle at 12% 100%,rgba(226,231,228,.58),transparent 28%),
+    linear-gradient(180deg,#f5f7f7 0%,#ecefef 100%);
+  border-color:rgba(55,73,79,.08);
+  color:var(--cc-text);
+}
+.ccLogicTitle .label{font-size:12px;color:#728086}
+.ccLogicTitle .ccTitleRow h2{font-size:30px;letter-spacing:-1.1px}
+.ccLogicTitle>p{font-size:13px;line-height:1.55;color:#6f7c82}
+.ccV3 .ccLive{font-size:10px;padding:6px 9px;background:#f7f9f9;color:#617076}
+.ccV3 .ccLive i{background:var(--cc-brand)}
+
+.ccLogicSummary>div{background:rgba(255,255,255,.63);border-color:rgba(54,73,79,.065)}
+.ccLogicSummary>div.attention{background:#f4f2ee}
+.ccLogicSummary span{font-size:9px}.ccLogicSummary b{font-size:18px}
+.ccLogicLegend{background:rgba(255,255,255,.5);border-color:rgba(54,73,79,.06)}
+.ccLogicLegend>span,.ccLogicLegend em{font-size:10px}
+.ccLogicLegend i.healthy{background:var(--cc-good)}.ccLogicLegend i.watch{background:var(--cc-warn)}.ccLogicLegend i.risk{background:var(--cc-risk)}
+
+/* Single-accent focus rail */
+.ccFocusRail{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(210px,.8fr) minmax(460px,1.65fr) minmax(190px,.75fr);
+  gap:18px;
+  align-items:center;
+  min-width:1040px;
+  margin:2px 0 12px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(55,73,79,.075);
+  box-shadow:0 14px 32px rgba(49,66,71,.045);
+  overflow:hidden;
+}
+.ccFocusRail:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:4px;
+  background:var(--cc-brand);
+}
+.ccFocusIdentity{display:flex;align-items:center;gap:10px}
+.ccFocusIdentity small,.ccFocusIdentity b,.ccFocusIdentity span{display:block}
+.ccFocusIdentity small{font-size:9px;color:#8c979b;text-transform:uppercase;letter-spacing:.06em}
+.ccFocusIdentity b{font-size:14px;margin-top:2px}
+.ccFocusIdentity span{font-size:10px;color:#748086;margin-top:2px}
+.ccFocusProgress{display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:start}
+.ccFocusProgress>div{position:relative;text-align:center;min-width:0}
+.ccFocusProgress>div>em{position:absolute;left:54%;right:-46%;top:16px;height:1px;background:#d6dddd}
+.ccFocusProgress>div:last-child>em{display:none}
+.ccFocusProgress i{
+  position:relative;
+  z-index:2;
+  width:32px;height:32px;
+  border-radius:50%;
+  margin:0 auto 7px;
+  display:grid;place-items:center;
+  background:#eef1f1;
+  border:1px solid #dce1e1;
+  color:#839094;
+  font-style:normal;
+  font-size:9px;
+  transition:.2s ease;
+}
+.ccFocusProgress span{font-size:9px;color:#899498}
+.ccFocusProgress .done i{background:#dfe8e6;color:#49695f;border-color:#d2dfdc}
+.ccFocusProgress .done>em{background:#aebfbc}
+.ccFocusProgress .active i{
+  background:#fff;
+  color:var(--cc-brand-strong);
+  border:2px solid var(--cc-brand);
+  box-shadow:0 0 0 6px rgba(77,116,123,.09);
+}
+.ccFocusProgress .active span{color:#344b50;font-weight:700}
+.ccFocusProgress .active i:after{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  border:1px solid rgba(77,116,123,.18);
+  border-radius:50%;
+  animation:ccFocusPulse 2.2s ease-out infinite;
+}
+@keyframes ccFocusPulse{0%{transform:scale(.8);opacity:.85}70%,100%{transform:scale(1.35);opacity:0}}
+.ccFocusNext{padding-left:15px;border-left:1px solid #e1e5e5}
+.ccFocusNext small,.ccFocusNext b,.ccFocusNext span{display:block}
+.ccFocusNext small{font-size:9px;color:#8b969a;text-transform:uppercase;letter-spacing:.055em}
+.ccFocusNext b{font-size:13px;margin-top:4px}
+.ccFocusNext span{font-size:10px;color:#758186;margin-top:3px;line-height:1.35}
+
+/* Neutral stages; accent comes from structure, not colored plaques */
+.ccLogicStage,
+.ccLogicStage.stage0,
+.ccLogicStage.stage1,
+.ccLogicStage.stage2,
+.ccLogicStage.stage3,
+.ccLogicStage.stage4{
+  background:linear-gradient(180deg,#fbfcfc,#f3f5f5);
+  border-color:rgba(53,72,77,.075);
+}
+.ccLogicStage:before{background:#dce2e2!important;height:3px}
+.ccLogicStage:has(.ccLogicDeal.selected):before{background:var(--cc-brand)!important}
+.ccStageIndex{
+  width:40px;height:40px;
+  font-size:11px;
+  background:#fff;
+  box-shadow:none!important;
+  border:1px solid #dce2e2;
+}
+.ccStageIdentity h3{font-size:17px;letter-spacing:-.35px}
+.ccStageChip{
+  min-height:auto;
+  padding:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#7d898e!important;
+  font-size:9px!important;
+  font-weight:650;
+  letter-spacing:.06em;
+}
+.ccStageValue b{font-size:15px}.ccStageValue small{font-size:9px}
+.ccStageObjective{background:#fff;border-color:#e4e8e8;padding:12px}
+.ccStageObjective>span{font-size:9px}
+.ccStageObjective p{font-size:11px;line-height:1.45;color:#617077}
+.ccEvidenceLine{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid #ecefef;
+}
+.ccEvidenceLine span{display:flex;align-items:center;gap:5px;font-size:9px;color:#7d898e}
+.ccEvidenceLine i{width:6px;height:6px;border-radius:50%;background:#cfd6d6}
+.ccEvidenceLine i.active{background:var(--cc-brand)}
+
+.ccLogicDeal,
+.ccLogicDeal.healthy,
+.ccLogicDeal.watching,
+.ccLogicDeal.blocked{
+  background:#fff!important;
+  border-color:#e2e6e6!important;
+  min-height:160px;
+}
+.ccLogicDeal.healthy{box-shadow:inset 3px 0 0 var(--cc-good),0 8px 18px rgba(49,65,69,.035)}
+.ccLogicDeal.watching{box-shadow:inset 3px 0 0 var(--cc-warn),0 8px 18px rgba(49,65,69,.035)}
+.ccLogicDeal.blocked{box-shadow:inset 3px 0 0 var(--cc-risk),0 8px 18px rgba(49,65,69,.035)}
+.ccLogicDeal.selected{
+  outline:2px solid var(--cc-brand);
+  box-shadow:0 15px 30px rgba(57,84,90,.12)!important;
+}
+.ccLogicDealTitle b{font-size:13px}
+.ccLogicDealTitle small{font-size:10px}
+.ccLogicProbability{
+  min-width:auto;
+  height:auto;
+  padding:0;
+  border-radius:0;
+  background:transparent!important;
+  color:#41575d!important;
+  font-size:11px;
+  font-weight:750;
+}
+.ccLogicProbability:after{content:" conf.";font-size:8px;font-weight:500;color:#9aa3a6}
+.ccLogicDealMeta{font-size:9px}
+.ccLogicDealMeta span:first-child{font-size:13px}
+.ccLogicNext{
+  background:#f2f4f4!important;
+  border-left-color:var(--cc-brand)!important;
+  padding:10px;
+}
+.ccLogicNextIcon{background:#fff;color:var(--cc-brand-strong)}
+.ccLogicNext small{font-size:8px}
+.ccLogicNext b{font-size:10px}
+.ccLogicSignal b{font-size:9px}
+.ccV3 .ccFocusTag{background:var(--cc-brand);font-size:7px}
+.ccLogicGate>div:first-child span{font-size:9px}
+.ccLogicGate>div:first-child b{font-size:12px}
+.ccGateEvidence span{font-size:8px}.ccGateEvidence b{font-size:9px}
+.ccLogicConnector>span{
+  background:#fff!important;
+  color:var(--cc-brand-strong)!important;
+  border-color:#ccd6d5;
+}
+.ccLogicConnector small{font-size:8px;background:#f7f8f8}
+.ccLogicStory{background:#f7f8f8}
+.ccLogicStory .ccStoryMark{background:#e5eceb;color:var(--cc-brand-strong)}
+.ccLogicStory b{font-size:12px}.ccLogicStory small{font-size:10px}
+.ccLogicFoot span{font-size:9px}.ccLogicFoot b{font-size:16px}
+.ccLogicFoot .ccBoardFootAction button{background:var(--cc-brand-strong);font-size:10px}
+
+/* Lower cards: keep mostly neutral */
+.ccV3 .ccActionPanel,.ccV3 .ccForecastPanel,.ccV3 .ccTasksPanel{background:#f8f9f9}
+.ccV3 .ccSectionHead h2{font-size:19px}
+.ccV3 .ccSectionHead .label{font-size:10px}
+.ccV3 .ccActionSubject b{font-size:12px}.ccV3 .ccActionSubject small{font-size:10px}
+.ccV3 .ccStatus{background:#eef1f1;color:#6d787d}
+.ccV3 .ccStatus.risk{color:#9d5c54}.ccV3 .ccStatus.watch{color:#8a6b35}
+.ccV3 .ccDial{background:conic-gradient(var(--cc-brand) 0 70%,#aebdbc 70% 92%,#e5e8e6 92%)}
+.ccV3 .ccForecastLegend i.ink{background:var(--cc-brand)}
+.ccV3 .ccForecastLegend i.soft{background:#aebdbc}
+.ccV3 .ccForecastLegend i.pale{background:#e5e8e6;border-color:#d8dddd}
+
+/* Opportunity Focus: remove color plaques; scale type up */
+.contextTopPro{font-size:14px}
+.contextLogo{width:58px;height:58px}
+.contextEyebrow small{font-size:11px}
+.contextHealth{
+  position:relative;
+  background:transparent!important;
+  padding:0 0 0 11px;
+  font-size:10px;
+  color:#69767b!important;
+}
+.contextHealth:before{
+  content:"";
+  position:absolute;
+  left:0;top:50%;
+  transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;
+}
+.contextHealth.healthy:before{background:var(--cc-good)}
+.contextHealth.watch:before{background:var(--cc-warn)}
+.contextHealth.risk:before{background:var(--cc-risk)}
+.contextAccount h3{font-size:25px;letter-spacing:-.75px}
+.contextAccount p{font-size:14px}
+.contextAccentRow{margin-top:9px}
+.contextStageLabel,.contextOwnerLabel{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:auto;
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  font-size:10px;
+  font-weight:650;
+  color:#6d797e;
+}
+.contextStageLabel i{width:7px;height:7px;border-radius:50%;background:var(--cc-brand)}
+.contextOwnerLabel:before{content:"·";margin-right:1px;color:#adb4b7}
+.contextValueRow span{font-size:12px}
+.contextValueRow strong{font-size:36px}
+.contextProbability b{font-size:20px}
+.contextJourneyStrip small{font-size:9px}
+.contextJourneyStrip .done i,.contextJourneyStrip .current i{background:var(--cc-brand)!important}
+.contextTabs button{font-size:11px}
+.contextSignalGrid span{font-size:10px}
+.contextSignalGrid b{font-size:13px}
+.contextEvidencePanel{padding:12px}
+.contextEvidenceHead span{font-size:11px}
+.contextEvidenceHead small{font-size:10px}
+.contextGateName{font-size:13px}
+.contextEvidenceList{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:10px;
+}
+.contextEvidenceList>span{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:32px;
+  padding:0 7px;
+  border-radius:8px;
+  background:#f4f6f6;
+  border:1px solid #e6e9e9;
+  color:#657279;
+}
+.contextEvidenceList>span i{
+  width:17px;height:17px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid #cbd2d2;
+  color:#fff;
+  flex:0 0 auto;
+}
+.contextEvidenceList>span.ready i{background:var(--cc-brand);border-color:var(--cc-brand)}
+.contextEvidenceList>span.missing i{background:#fff}
+.contextEvidenceList>span b{font-size:9px;font-weight:650}
+.contextNextStep:before{background:var(--cc-brand)!important}
+.contextNextStep span{font-size:10px!important}
+.contextNextStep b{font-size:13px!important}
+.contextNextStep small{font-size:10px!important}
+.contextMiniSignals b{font-size:12px}
+.contextMiniSignals small{font-size:10px}
+.contextSignalIcon.mail,.contextSignalIcon.people,.contextSignalIcon.calendar{
+  background:#eef2f2;
+  color:var(--cc-brand-strong);
+}
+.contextPeople .sectionTitle{font-size:13px}
+.contextPeople .person b{font-size:12px}
+.contextPeople .person small{font-size:10px}
+.contextPeople .person>span{font-size:11px}
+.contextJourneyItem b{font-size:11px}
+.contextJourneyItem small{font-size:10px}
+.contextQuickActions button{font-size:11px;height:41px}
+.contextQuickActions button.dark{background:var(--cc-brand-strong)!important;border-color:var(--cc-brand-strong)!important;box-shadow:none!important}
+
+@media(max-width:1180px){
+  .ccFocusRail{min-width:1000px;grid-template-columns:210px 1fr 190px}
+}
+@media(max-width:760px){
+  .ccLogicTitle .ccTitleRow h2{font-size:25px}
+  .ccLogicTitle>p{font-size:12px}
+}

@@ -47,6 +47,9 @@ export function OverviewView({
   const selectedDeal = deals.find((deal) => deal.id === selectedDealId) || deals[0];
   const selectedStageIndex = Math.max(0, flowStages.findIndex((column) => column.stage === selectedDeal.stage));
   const selectedStage = flowStages[selectedStageIndex];
+  const averageProbability = openDeals.length ? Math.round(openDeals.reduce((sum, deal) => sum + deal.probability, 0) / openDeals.length) : 0;
+  const flowHealth = Math.max(48, Math.min(96, Math.round(100 - blockerCount * 9 + averageProbability * .18)));
+  const stageAge = [2.1,3.4,4.8,5.6,1.2];
 
   function nextAction(stageIndex:number) {
     return [
@@ -81,6 +84,13 @@ export function OverviewView({
             <div><span>Live opportunities</span><b>{openDeals.length}</b></div>
             <div className={blockerCount ? "attention" : ""}><span>Blocked / watch</span><b>{blockerCount}</b></div>
             <div><span>Value exposed</span><b>{money(atRiskValue,true)}</b></div>
+            <div className="ccFlowHealth">
+              <span>Flow health</span>
+              <div><b>{flowHealth}</b><small>/100</small></div>
+              <em>
+                {[42,48,45,55,58,62,60,69,73,flowHealth].map((point,index) => <i key={index} style={{height:Math.max(20, point-30)+"%"}}/> )}
+              </em>
+            </div>
           </div>
 
           <div className="ccTools">
@@ -130,6 +140,7 @@ export function OverviewView({
               const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
               const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
               const ready = stageDeals.filter((deal) => deal.health === "Healthy" && deal.probability >= column.threshold).length;
+              const stageBlockers = stageDeals.filter((deal) => deal.health !== "Healthy").length;
 
               return (
                 <section className={"ccStage ccLogicStage stage"+columnIndex+" accent-"+column.accent+(selectedDeal.stage === column.stage ? " currentStage" : "")} key={column.stage}>
@@ -148,6 +159,13 @@ export function OverviewView({
                     <div className="ccEvidenceLine">
                       {column.evidence.map((item,evidenceIndex) => <span key={item}><i className={evidenceIndex === 0 ? "active" : ""}/>{item}</span>)}
                     </div>
+                  </div>
+
+                  <div className="ccStageOps">
+                    <div><span>Ready</span><b>{ready}/{stageDeals.length || 0}</b></div>
+                    <div><span>Median age</span><b>{stageAge[columnIndex]}d</b></div>
+                    <div className={stageBlockers ? "hasRisk" : ""}><span>Blockers</span><b>{stageBlockers}</b></div>
+                    <em><i style={{width:(stageDeals.length ? Math.round(ready/stageDeals.length*100) : 0)+"%"}}/></em>
                   </div>
 
                   <div className="ccStageCards ccLogicCards">

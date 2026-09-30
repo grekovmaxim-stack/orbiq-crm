@@ -44,6 +44,9 @@ export function OverviewView({
 
   const blockerCount = openDeals.filter((deal) => deal.health !== "Healthy").length;
   const atRiskValue = openDeals.filter((deal) => deal.health !== "Healthy").reduce((sum, deal) => sum + deal.value, 0);
+  const selectedDeal = deals.find((deal) => deal.id === selectedDealId) || deals[0];
+  const selectedStageIndex = Math.max(0, flowStages.findIndex((column) => column.stage === selectedDeal.stage));
+  const selectedStage = flowStages[selectedStageIndex];
 
   function nextAction(stageIndex:number) {
     return [
@@ -94,6 +97,29 @@ export function OverviewView({
           <em>Flow rule: stage → evidence → exit gate → handoff</em>
         </div>
 
+        <div className="ccFocusRail">
+          <div className="ccFocusIdentity">
+            <span className={"logo small "+selectedDeal.tone}>{selectedDeal.company.slice(0,2).toUpperCase()}</span>
+            <div><small>Selected path</small><b>{selectedDeal.company}</b><span>{selectedDeal.title} · {money(selectedDeal.value,true)}</span></div>
+          </div>
+
+          <div className="ccFocusProgress" aria-label="Selected opportunity flow">
+            {flowStages.map((column,index) => (
+              <div className={index < selectedStageIndex ? "done" : index === selectedStageIndex ? "active" : ""} key={column.label}>
+                <i>{index < selectedStageIndex ? <Icon name="check" size={12}/> : "0"+(index+1)}</i>
+                <span>{column.label}</span>
+                {index < flowStages.length-1 && <em/>}
+              </div>
+            ))}
+          </div>
+
+          <div className="ccFocusNext">
+            <small>Next gate</small>
+            <b>{selectedStage.gate}</b>
+            <span>{nextAction(selectedStageIndex)}</span>
+          </div>
+        </div>
+
         <div className="ccFlowWrap">
           <div className="ccFlowGrid ccLogicGrid">
             {flowStages.map((column,columnIndex) => {
@@ -115,8 +141,8 @@ export function OverviewView({
                   <div className="ccStageObjective">
                     <span>Objective</span>
                     <p>{column.objective}</p>
-                    <div className="ccEvidenceRow">
-                      {column.evidence.map((item,evidenceIndex) => <i className={"ccEvidenceChip "+column.accent+(evidenceIndex === 0 ? " strong" : "")} key={item}>{item}</i>)}
+                    <div className="ccEvidenceLine">
+                      {column.evidence.map((item,evidenceIndex) => <span key={item}><i className={evidenceIndex === 0 ? "active" : ""}/>{item}</span>)}
                     </div>
                   </div>
 

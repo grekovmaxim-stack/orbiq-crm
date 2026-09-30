@@ -345,6 +345,18 @@ export function DealContext({ deal }: { deal: Deal }) {
             </div>
           </div>
 
+          <div className="contextBuyerMap">
+            <div className="contextBuyerMapHead"><span>Buying group map</span><small>4 / 5 roles covered</small></div>
+            <div className="contextBuyerMapBody">
+              <div className="buyerCore"><span>{deal.company.slice(0,2).toUpperCase()}</span><small>Account</small></div>
+              <div className="buyerNode decision"><span>OM</span><small>Decision</small></div>
+              <div className="buyerNode technical"><span>DK</span><small>Technical</small></div>
+              <div className="buyerNode champion"><span>MC</span><small>Champion</small></div>
+              <div className="buyerNode missing"><span>?</span><small>Procurement</small></div>
+              <i className="buyerLink l1"/><i className="buyerLink l2"/><i className="buyerLink l3"/><i className="buyerLink l4"/>
+            </div>
+          </div>
+
           <div className="contextMiniSignals">
             <div><span className="contextSignalIcon mail"><Icon name="mail" size={14}/></span><span><b>Proposal opened</b><small>12 min ago · 4th view</small></span></div>
             <div><span className="contextSignalIcon people"><Icon name="people" size={14}/></span><span><b>Buying group</b><small>4 stakeholders engaged</small></span></div>

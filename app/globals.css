@@ -2010,3 +2010,185 @@ html,body{
   --cc-warn:#b18b4b;
   --cc-risk:#b86e65;
 }
+
+/* --- Selective color comeback + restrained wow pass --- */
+.ccLogicStage:before{
+  left:16px;
+  right:auto;
+  width:44px;
+  height:3px;
+  border-radius:0 0 5px 5px;
+  background:#dce2e2!important;
+}
+.ccLogicStage.accent-sky:before{background:var(--accent-sky)!important}
+.ccLogicStage.accent-lime:before{background:var(--accent-lime)!important}
+.ccLogicStage.accent-amber:before{background:var(--accent-amber)!important}
+.ccLogicStage.accent-violet:before{background:var(--accent-violet)!important}
+.ccLogicStage.accent-mint:before{background:var(--accent-mint)!important}
+
+.ccStageIndex{position:relative}
+.ccStageIndex:after{
+  content:"";
+  position:absolute;
+  right:-3px;
+  bottom:-3px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  border:2px solid #f7f9f9;
+  background:#cfd6d6;
+}
+.ccLogicStage.accent-sky .ccStageIndex:after{background:var(--accent-sky)}
+.ccLogicStage.accent-lime .ccStageIndex:after{background:var(--accent-lime)}
+.ccLogicStage.accent-amber .ccStageIndex:after{background:var(--accent-amber)}
+.ccLogicStage.accent-violet .ccStageIndex:after{background:var(--accent-violet)}
+.ccLogicStage.accent-mint .ccStageIndex:after{background:var(--accent-mint)}
+
+.ccLogicStage.currentStage{
+  border-color:rgba(59,86,91,.16);
+  box-shadow:0 18px 38px rgba(48,67,72,.075),inset 0 0 0 1px rgba(56,82,88,.035);
+}
+.ccLogicStage.currentStage:after{
+  content:"Current stage";
+  position:absolute;
+  top:13px;
+  right:13px;
+  font-size:7px;
+  font-weight:750;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#607076;
+}
+
+.ccFocusProgress>div small{
+  display:block;
+  margin-top:3px;
+  font-size:7px;
+  color:#adb4b7;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.ccFocusProgress .active small{color:#6a787d}
+.ccFocusProgress .done small{color:#889496}
+.ccFocusProgress .active.sky i{border-color:var(--accent-sky);color:#43687d;box-shadow:0 0 0 6px rgba(143,212,255,.13)}
+.ccFocusProgress .active.lime i{border-color:var(--accent-lime);color:#5b681f;box-shadow:0 0 0 6px rgba(201,244,91,.12)}
+.ccFocusProgress .active.amber i{border-color:var(--accent-amber);color:#7c632a;box-shadow:0 0 0 6px rgba(255,200,94,.13)}
+.ccFocusProgress .active.violet i{border-color:var(--accent-violet);color:#5f55b8;box-shadow:0 0 0 6px rgba(127,115,255,.11)}
+.ccFocusProgress .active.mint i{border-color:var(--accent-mint);color:#3f7158;box-shadow:0 0 0 6px rgba(111,217,161,.12)}
+.ccFocusProgress .active.sky i:after{border-color:rgba(143,212,255,.32)}
+.ccFocusProgress .active.lime i:after{border-color:rgba(201,244,91,.32)}
+.ccFocusProgress .active.amber i:after{border-color:rgba(255,200,94,.34)}
+.ccFocusProgress .active.violet i:after{border-color:rgba(127,115,255,.28)}
+.ccFocusProgress .active.mint i:after{border-color:rgba(111,217,161,.3)}
+
+.ccLogicGate{position:relative}
+.ccGateAccent{
+  position:absolute;
+  left:0;
+  bottom:-1px;
+  width:34px;
+  height:3px;
+  border-radius:999px;
+  background:#cfd6d6;
+}
+.ccGateAccent.sky{background:var(--accent-sky)}
+.ccGateAccent.lime{background:var(--accent-lime)}
+.ccGateAccent.amber{background:var(--accent-amber)}
+.ccGateAccent.violet{background:var(--accent-violet)}
+.ccGateAccent.mint{background:var(--accent-mint)}
+
+/* A slim signal ribbon gives the board energy without adding large colored blocks */
+.ccMomentumRibbon{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(280px,1.1fr) .35fr .7fr 1fr;
+  gap:0;
+  align-items:stretch;
+  margin-top:13px;
+  border:1px solid rgba(52,72,77,.075);
+  border-radius:17px;
+  background:rgba(255,255,255,.74);
+  overflow:hidden;
+  box-shadow:0 12px 28px rgba(49,65,70,.035);
+}
+.ccMomentumRibbon:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--accent-sky),var(--accent-lime),var(--accent-amber),var(--accent-violet),var(--accent-mint));
+  background-size:160% 100%;
+  animation:ccSpectrum 8s linear infinite;
+}
+@keyframes ccSpectrum{0%{background-position:0 0}100%{background-position:160% 0}}
+.ccMomentumLead,.ccMomentumMetric{padding:13px 14px}
+.ccMomentumLead{display:flex;align-items:center;gap:10px}
+.ccMomentumLead small,.ccMomentumLead b{display:block}
+.ccMomentumLead small{font-size:8px;color:#8d979b;text-transform:uppercase;letter-spacing:.055em}
+.ccMomentumLead b{font-size:11px;margin-top:3px}
+.ccMomentumPulse{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--cc-brand);
+  box-shadow:0 0 0 6px rgba(77,116,123,.08);
+  flex:0 0 auto;
+}
+.ccMomentumMetric{border-left:1px solid #e4e8e8}
+.ccMomentumMetric span,.ccMomentumMetric b{display:block}
+.ccMomentumMetric span{font-size:8px;color:#8d979b;text-transform:uppercase;letter-spacing:.05em}
+.ccMomentumMetric b{font-size:11px;line-height:1.35;margin-top:4px;color:#374950}
+
+/* Opportunity Focus: only the current stage gets color */
+.contextStageLabel.sky i{background:var(--accent-sky)}
+.contextStageLabel.lime i{background:var(--accent-lime)}
+.contextStageLabel.amber i{background:var(--accent-amber)}
+.contextStageLabel.violet i{background:var(--accent-violet)}
+.contextStageLabel.mint i{background:var(--accent-mint)}
+
+.contextEvidencePanel.sky .ready i{background:var(--accent-sky);border-color:var(--accent-sky);color:#34566a}
+.contextEvidencePanel.lime .ready i{background:var(--accent-lime);border-color:var(--accent-lime);color:#526017}
+.contextEvidencePanel.amber .ready i{background:var(--accent-amber);border-color:var(--accent-amber);color:#745b21}
+.contextEvidencePanel.violet .ready i{background:var(--accent-violet);border-color:var(--accent-violet);color:#fff}
+.contextEvidencePanel.mint .ready i{background:var(--accent-mint);border-color:var(--accent-mint);color:#345e49}
+
+.contextNextStep.sky:before{background:var(--accent-sky)!important}
+.contextNextStep.lime:before{background:var(--accent-lime)!important}
+.contextNextStep.amber:before{background:var(--accent-amber)!important}
+.contextNextStep.violet:before{background:var(--accent-violet)!important}
+.contextNextStep.mint:before{background:var(--accent-mint)!important}
+
+/* Slightly larger, more premium reading scale */
+.ccLogicTitle .ccTitleRow h2{font-size:31px}
+.ccStageIdentity h3{font-size:18px}
+.ccStageObjective p{font-size:11.5px}
+.ccLogicDealTitle b{font-size:13.5px}
+.ccLogicDealTitle small{font-size:10.5px}
+.ccLogicNext b{font-size:10.5px}
+.ccLogicGate>div:first-child b{font-size:12.5px}
+.ccFocusIdentity b{font-size:14.5px}
+.ccFocusIdentity span{font-size:10.5px}
+.ccFocusNext b{font-size:13.5px}
+.ccFocusNext span{font-size:10.5px}
+
+.contextAccount h3{font-size:26px}
+.contextAccount p{font-size:14.5px}
+.contextValueRow strong{font-size:37px}
+.contextProbability b{font-size:21px}
+.contextSignalGrid b{font-size:13.5px}
+.contextGateName{font-size:13.5px}
+.contextNextStep b{font-size:13.5px!important}
+.contextMiniSignals b{font-size:12.5px}
+.contextPeople .person b{font-size:12.5px}
+
+@media(max-width:1180px){
+  .ccMomentumRibbon{grid-template-columns:1fr 1fr 1fr}
+  .ccMomentumLead{grid-column:1/-1;border-bottom:1px solid #e4e8e8}
+  .ccMomentumMetric:nth-child(2){border-left:0}
+}
+@media(max-width:760px){
+  .ccMomentumRibbon{grid-template-columns:1fr}
+  .ccMomentumMetric{border-left:0;border-top:1px solid #e4e8e8}
+}

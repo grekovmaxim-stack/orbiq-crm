@@ -129,7 +129,7 @@ export function OverviewView({
               const ready = stageDeals.filter((deal) => deal.health === "Healthy" && deal.probability >= column.threshold).length;
 
               return (
-                <section className={"ccStage ccLogicStage stage"+columnIndex+" accent-"+column.accent} key={column.stage}>
+                <section className={"ccStage ccLogicStage stage"+columnIndex+" accent-"+column.accent+(selectedDeal.stage === column.stage ? " currentStage" : "")} key={column.stage}>
                   <div className="ccLogicStageHead">
                     <div className="ccStageIndex">0{columnIndex+1}</div>
                     <div className="ccStageIdentity">

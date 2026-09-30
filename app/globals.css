@@ -2192,3 +2192,103 @@ html,body{
   .ccMomentumRibbon{grid-template-columns:1fr}
   .ccMomentumMetric{border-left:0;border-top:1px solid #e4e8e8}
 }
+
+/* --- Command Center depth + Opportunity readiness scan --- */
+.ccLogicGrid{position:relative;isolation:isolate}
+.ccStageSpotlight{
+  position:absolute;
+  z-index:0;
+  top:-18px;
+  bottom:-22px;
+  left:calc(var(--focus-stage) * 20% + 1.5%);
+  width:17%;
+  pointer-events:none;
+  transition:left .3s ease;
+}
+.ccStageSpotlight:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:26px;
+  background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.08));
+  box-shadow:0 0 46px rgba(55,79,84,.055);
+}
+.ccStageSpotlight>span{
+  position:absolute;
+  left:50%;
+  top:-2px;
+  bottom:8px;
+  width:1px;
+  background:linear-gradient(180deg,rgba(77,116,123,.2),rgba(77,116,123,.02));
+}
+.ccStageSpotlight>i{
+  position:absolute;
+  left:calc(50% - 4px);
+  top:6px;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid var(--cc-brand);
+  box-shadow:0 0 0 7px rgba(77,116,123,.06);
+}
+.ccLogicGrid>.ccLogicStage{position:relative;z-index:2}
+.ccFlowCaption{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:9px 3px 0;
+  color:#7d888d;
+  font-size:9px;
+}
+.ccFlowCaption>div{display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.05em;font-size:7px}
+.ccFlowCaption>div i{width:5px;height:5px;border-radius:50%;background:#87999a}
+.ccDealReadiness{
+  margin-top:9px;
+  padding-top:8px;
+  border-top:1px solid #ecefef;
+}
+.ccDealReadinessHead{display:flex;align-items:center;justify-content:space-between}
+.ccDealReadinessHead span{font-size:7px;color:#8c979b;text-transform:uppercase;letter-spacing:.055em}
+.ccDealReadinessHead b{font-size:8px;color:#5c6c71}
+.ccDealReadinessTrack{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px}
+.ccDealReadinessTrack i{height:4px;border-radius:999px;background:#e4e8e8}
+.ccDealReadinessTrack i.ready{background:var(--cc-brand)}
+.ccLogicGrid:has(.ccLogicStage:hover) .ccLogicStage:not(:hover){
+  opacity:.82;
+  transform:scale(.994)!important;
+}
+.ccLogicStage{transition:opacity .2s ease,transform .2s ease,box-shadow .2s ease}
+.ccLogicStage:hover{box-shadow:0 20px 40px rgba(46,63,67,.075)}
+@media(prefers-reduced-motion:reduce){
+  .ccStageSpotlight{transition:none}
+  .ccLogicGrid:has(.ccLogicStage:hover) .ccLogicStage:not(:hover){transform:none!important}
+}
+
+/* Opportunity Focus readiness visual */
+.contextReadinessScan{
+  margin-bottom:12px;
+  padding:12px;
+  border-radius:13px;
+  background:#f8f9f9;
+  border:1px solid #e5e9e9;
+}
+.contextReadinessHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.contextReadinessHead span{font-size:11px;font-weight:700;color:#3f4d53}
+.contextReadinessHead b{font-size:13px;color:#33484d}
+.contextReadinessRow{
+  display:grid;
+  grid-template-columns:78px 1fr 34px;
+  gap:8px;
+  align-items:center;
+  padding:6px 0;
+}
+.contextReadinessRow>span{font-size:9px;color:#748086}
+.contextReadinessRow>div{height:5px;border-radius:999px;background:#e5e9e9;overflow:hidden}
+.contextReadinessRow>div i{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#9cafaf,var(--cc-brand));
+}
+.contextReadinessRow>b{font-size:9px;text-align:right;color:#607076}

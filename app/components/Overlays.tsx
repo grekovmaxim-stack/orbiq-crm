@@ -274,8 +274,8 @@ export function DealContext({ deal }: { deal: Deal }) {
           <h3>{deal.company}</h3>
           <p>{deal.title}</p>
           <div className="contextAccentRow">
-            <span className={"contextStageChip "+accent}>{deal.stage}</span>
-            <span className="contextOwnerChip">Owner {deal.owner}</span>
+            <span className="contextStageLabel"><i/>{deal.stage}</span>
+            <span className="contextOwnerLabel">Owner {deal.owner}</span>
           </div>
         </div>
       </div>
@@ -311,10 +311,11 @@ export function DealContext({ deal }: { deal: Deal }) {
           <div className="contextEvidencePanel">
             <div className="contextEvidenceHead"><span>Exit gate</span><small>{readyEvidenceCount} / 3 ready</small></div>
             <b className="contextGateName">{gate}</b>
-            <div className="contextEvidenceChips">
+            <div className="contextEvidenceList">
               {evidence.map((item,index) => (
-                <span className={"contextEvidenceChip "+(index < readyEvidenceCount ? accent+" ready" : "missing")} key={item}>
-                  {index < readyEvidenceCount ? "✓ " : "○ "}{item}
+                <span className={index < readyEvidenceCount ? "ready" : "missing"} key={item}>
+                  <i>{index < readyEvidenceCount ? <Icon name="check" size={10}/> : ""}</i>
+                  <b>{item}</b>
                 </span>
               ))}
             </div>

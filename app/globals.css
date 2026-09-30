@@ -2002,3 +2002,11 @@ html,body{
   .ccLogicTitle .ccTitleRow h2{font-size:25px}
   .ccLogicTitle>p{font-size:12px}
 }
+
+.context{
+  --cc-brand:#4d747b;
+  --cc-brand-strong:#31585f;
+  --cc-good:#668b76;
+  --cc-warn:#b18b4b;
+  --cc-risk:#b86e65;
+}

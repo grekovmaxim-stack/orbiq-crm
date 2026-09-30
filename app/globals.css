@@ -2292,3 +2292,122 @@ html,body{
   background:linear-gradient(90deg,#9cafaf,var(--cc-brand));
 }
 .contextReadinessRow>b{font-size:9px;text-align:right;color:#607076}
+
+/* --- Command Center intelligence layer --- */
+.ccLogicSummary{grid-template-columns:repeat(4,minmax(105px,1fr))}
+.ccFlowHealth>div{display:flex;align-items:baseline;gap:3px;margin-top:4px}
+.ccFlowHealth>div b{font-size:18px}.ccFlowHealth>div small{font-size:8px;color:#8f999d}
+.ccFlowHealth em{
+  display:flex;
+  align-items:flex-end;
+  gap:2px;
+  height:18px;
+  margin-top:6px;
+}
+.ccFlowHealth em i{
+  flex:1;
+  min-width:2px;
+  max-width:5px;
+  border-radius:999px 999px 1px 1px;
+  background:linear-gradient(180deg,#8fa6a7,var(--cc-brand));
+}
+
+.ccStageOps{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  padding:9px 10px 12px;
+  margin:0 0 10px;
+  border-radius:12px;
+  background:#f7f8f8;
+  border:1px solid #e7eaea;
+  overflow:hidden;
+}
+.ccStageOps>div span,.ccStageOps>div b{display:block}
+.ccStageOps>div span{font-size:7px;color:#909a9e;text-transform:uppercase;letter-spacing:.05em}
+.ccStageOps>div b{font-size:10px;margin-top:3px;color:#4d5e64}
+.ccStageOps>div.hasRisk b{color:#9d6258}
+.ccStageOps>em{
+  position:absolute;
+  left:10px;right:10px;bottom:6px;
+  height:3px;
+  border-radius:999px;
+  background:#e4e8e8;
+  overflow:hidden;
+}
+.ccStageOps>em i{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:var(--cc-brand);
+}
+
+@media(max-width:1180px){
+  .ccLogicSummary{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:760px){
+  .ccLogicSummary{grid-template-columns:1fr 1fr}
+  .ccLogicSummary>div:last-child{grid-column:auto}
+}
+
+/* --- Opportunity Focus buying-group map --- */
+.contextBuyerMap{
+  margin-bottom:12px;
+  padding:12px;
+  border-radius:13px;
+  background:#f8f9f9;
+  border:1px solid #e5e9e9;
+}
+.contextBuyerMapHead{display:flex;align-items:center;justify-content:space-between}
+.contextBuyerMapHead span{font-size:11px;font-weight:700;color:#405056}
+.contextBuyerMapHead small{font-size:9px;color:#879297}
+.contextBuyerMapBody{
+  position:relative;
+  height:128px;
+  margin-top:8px;
+  overflow:hidden;
+}
+.buyerCore,.buyerNode{
+  position:absolute;
+  z-index:3;
+  display:grid;
+  place-items:center;
+  text-align:center;
+}
+.buyerCore{
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:58px;height:58px;
+  border-radius:50%;
+  background:#fff;
+  border:1px solid #dfe5e5;
+  box-shadow:0 9px 18px rgba(48,63,69,.06);
+}
+.buyerCore span{font-size:10px;font-weight:800;color:#3d5056}
+.buyerCore small{font-size:6px;color:#8e989c;margin-top:1px}
+.buyerNode{
+  width:44px;height:44px;
+  border-radius:50%;
+  background:#fff;
+  border:1px solid #e0e5e5;
+  box-shadow:0 6px 14px rgba(48,63,69,.045);
+}
+.buyerNode span{font-size:8px;font-weight:750;color:#52646a}
+.buyerNode small{font-size:5px;color:#929ca0;margin-top:1px}
+.buyerNode.decision{left:9%;top:13%}
+.buyerNode.technical{right:8%;top:14%}
+.buyerNode.champion{left:12%;bottom:6%}
+.buyerNode.missing{right:10%;bottom:7%;border-style:dashed;background:#fbfcfc}
+.buyerNode.missing span{color:#a5adb0}
+.buyerLink{
+  position:absolute;
+  z-index:1;
+  height:1px;
+  background:#d8dfdf;
+  transform-origin:left center;
+}
+.buyerLink.l1{left:27%;top:39%;width:27%;transform:rotate(14deg)}
+.buyerLink.l2{left:50%;top:39%;width:27%;transform:rotate(-14deg)}
+.buyerLink.l3{left:28%;top:68%;width:27%;transform:rotate(-14deg)}
+.buyerLink.l4{left:50%;top:67%;width:27%;transform:rotate(14deg)}

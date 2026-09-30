@@ -321,6 +321,21 @@ export function DealContext({ deal }: { deal: Deal }) {
             </div>
           </div>
 
+          <div className="contextReadinessScan">
+            <div className="contextReadinessHead"><span>Decision readiness</span><b>{Math.min(96, Math.max(42, deal.probability + (deal.health === "Healthy" ? 10 : deal.health === "Watch" ? 2 : -8)))}%</b></div>
+            {[
+              ["Stakeholders", deal.health === "At risk" ? 46 : deal.probability > 70 ? 88 : 72],
+              ["Evidence", readyEvidenceCount * 31],
+              ["Timing", deal.stage === "Negotiation" ? 82 : deal.stage === "Won" ? 100 : 68]
+            ].map((item,index) => (
+              <div className="contextReadinessRow" key={String(item[0])}>
+                <span>{item[0]}</span>
+                <div><i style={{width:String(item[1])+"%"}}/></div>
+                <b>{item[1]}%</b>
+              </div>
+            ))}
+          </div>
+
           <div className={"contextNextStep "+accent}>
             <div className="contextNextIcon">✦</div>
             <div>

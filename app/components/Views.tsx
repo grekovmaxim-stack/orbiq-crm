@@ -105,9 +105,10 @@ export function OverviewView({
 
           <div className="ccFocusProgress" aria-label="Selected opportunity flow">
             {flowStages.map((column,index) => (
-              <div className={index < selectedStageIndex ? "done" : index === selectedStageIndex ? "active" : ""} key={column.label}>
+              <div className={(index < selectedStageIndex ? "done " : index === selectedStageIndex ? "active " : "")+column.accent} key={column.label}>
                 <i>{index < selectedStageIndex ? <Icon name="check" size={12}/> : "0"+(index+1)}</i>
                 <span>{column.label}</span>
+                <small>{index < selectedStageIndex ? "cleared" : index === selectedStageIndex ? "in motion" : "queued"}</small>
                 {index < flowStages.length-1 && <em/>}
               </div>
             ))}
@@ -198,6 +199,7 @@ export function OverviewView({
                   <div className="ccLogicGate">
                     <div><span>Exit gate</span><b>{column.gate}</b></div>
                     <div className="ccGateEvidence"><span>{column.signal}</span><b>{ready}/{stageDeals.length || 0} ready</b></div>
+                    <span className={"ccGateAccent "+column.accent}/>
                   </div>
 
                   {columnIndex < flowStages.length-1 && (
@@ -210,6 +212,16 @@ export function OverviewView({
               );
             })}
           </div>
+        </div>
+
+        <div className="ccMomentumRibbon">
+          <div className="ccMomentumLead">
+            <span className="ccMomentumPulse"/>
+            <div><small>Selected opportunity signal</small><b>{selectedDeal.company} is {selectedDeal.health === "Healthy" ? "moving with healthy momentum" : selectedDeal.health === "Watch" ? "losing momentum" : "blocked at a key gate"}.</b></div>
+          </div>
+          <div className="ccMomentumMetric"><span>Confidence</span><b>{selectedDeal.probability}%</b></div>
+          <div className="ccMomentumMetric"><span>Gate</span><b>{selectedStage.gate}</b></div>
+          <div className="ccMomentumMetric"><span>Next</span><b>{nextAction(selectedStageIndex)}</b></div>
         </div>
 
         <div className="ccBoardStory ccLogicStory">

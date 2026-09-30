@@ -123,6 +123,9 @@ export function OverviewView({
 
         <div className="ccFlowWrap">
           <div className="ccFlowGrid ccLogicGrid">
+            <div className="ccStageSpotlight" style={{"--focus-stage":selectedStageIndex} as CSSProperties} aria-hidden>
+              <span/><i/>
+            </div>
             {flowStages.map((column,columnIndex) => {
               const stageDeals = deals.filter((deal) => deal.stage === column.stage).slice(0,3);
               const stageValue = stageDeals.reduce((sum, deal) => sum + deal.value, 0);
@@ -179,6 +182,18 @@ export function OverviewView({
                             <b>{dealSignal(deal)}</b>
                           </div>
 
+                          {selected && (
+                            <div className="ccDealReadiness">
+                              <div className="ccDealReadinessHead"><span>Gate readiness</span><b>{deal.health === "At risk" ? "1 / 3" : deal.health === "Watch" ? "2 / 3" : "3 / 3"}</b></div>
+                              <div className="ccDealReadinessTrack">
+                                {[0,1,2].map((item) => {
+                                  const readyCount = deal.health === "At risk" ? 1 : deal.health === "Watch" ? 2 : 3;
+                                  return <i className={item < readyCount ? "ready" : ""} key={item}/>;
+                                })}
+                              </div>
+                            </div>
+                          )}
+
                           {selected && <span className="ccFocusTag">in focus</span>}
                         </button>
                       );
@@ -212,6 +227,11 @@ export function OverviewView({
               );
             })}
           </div>
+        </div>
+
+        <div className="ccFlowCaption">
+          <span>Northstar reads the pipeline as a sequence of proof, not just stages.</span>
+          <div><i/> evidence <i/> gate <i/> handoff</div>
         </div>
 
         <div className="ccMomentumRibbon">

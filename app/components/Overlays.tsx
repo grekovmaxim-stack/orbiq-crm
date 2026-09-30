@@ -274,7 +274,7 @@ export function DealContext({ deal }: { deal: Deal }) {
           <h3>{deal.company}</h3>
           <p>{deal.title}</p>
           <div className="contextAccentRow">
-            <span className="contextStageLabel"><i/>{deal.stage}</span>
+            <span className={"contextStageLabel "+accent}><i/>{deal.stage}</span>
             <span className="contextOwnerLabel">Owner {deal.owner}</span>
           </div>
         </div>
@@ -308,7 +308,7 @@ export function DealContext({ deal }: { deal: Deal }) {
             <div><span>Buying group</span><b>{deal.stage === "New" ? "2 / 5" : deal.stage === "Qualified" ? "3 / 5" : "4 / 5"}</b></div>
           </div>
 
-          <div className="contextEvidencePanel">
+          <div className={"contextEvidencePanel "+accent}>
             <div className="contextEvidenceHead"><span>Exit gate</span><small>{readyEvidenceCount} / 3 ready</small></div>
             <b className="contextGateName">{gate}</b>
             <div className="contextEvidenceList">

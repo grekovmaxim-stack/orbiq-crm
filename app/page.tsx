@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import Icon from "./components/Icon";
 import SettingsView from "./components/SettingsView";
-import { AnalyticsView, CalendarView, CompaniesView, ContactsView, DealsView, JourneyView, OverviewView, TasksView } from "./components/Views";
+import { ActivityView, AnalyticsView, CalendarView, CompaniesView, ContactsView, DealsView, JourneyView, OverviewView, TasksView } from "./components/Views";
 import { CommandPalette, CreateModal, DealContext, DetailDrawer, Notifications, Toast } from "./components/Overlays";
-import { seedCompanies, seedContacts, seedDeals, seedTasks } from "./lib/data";
+import { seedActivities, seedCompanies, seedContacts, seedDeals, seedTasks } from "./lib/data";
 import { initials } from "./lib/format";
-import type { Company, Contact, Deal, Stage, Task } from "./lib/types";
+import type { Activity, Company, Contact, Deal, Stage, Task } from "./lib/types";
 
 const nav = [
   ["Overview", "grid"],
@@ -15,6 +15,7 @@ const nav = [
   ["Companies", "company"],
   ["Deals", "deal"],
   ["Journeys", "journey"],
+  ["Activity", "bell"],
   ["Tasks", "task"],
   ["Calendar", "calendar"],
   ["Analytics", "chart"]
@@ -30,6 +31,7 @@ export default function Home() {
   const [deals, setDeals] = useState(seedDeals);
   const [contacts, setContacts] = useState(seedContacts);
   const [tasks, setTasks] = useState(seedTasks);
+  const [activities, setActivities] = useState(seedActivities);
   const [selectedDeal, setSelectedDeal] = useState(seedDeals[0]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -43,10 +45,11 @@ export default function Home() {
     try {
       const saved = window.localStorage.getItem("orbiq-demo-state");
       if (saved) {
-        const parsed = JSON.parse(saved) as { deals?: Deal[]; contacts?: Contact[]; tasks?: Task[] };
+        const parsed = JSON.parse(saved) as { deals?: Deal[]; contacts?: Contact[]; tasks?: Task[]; activities?: Activity[] };
         if (parsed.deals) setDeals(parsed.deals);
         if (parsed.contacts) setContacts(parsed.contacts);
         if (parsed.tasks) setTasks(parsed.tasks);
+        if (parsed.activities) setActivities(parsed.activities);
       }
     } catch {
       // Keep seeded demo data if local storage is unavailable.
@@ -56,8 +59,8 @@ export default function Home() {
 
   useEffect(() => {
     if (!demoReady) return;
-    window.localStorage.setItem("orbiq-demo-state", JSON.stringify({ deals, contacts, tasks }));
-  }, [demoReady, deals, contacts, tasks]);
+    window.localStorage.setItem("orbiq-demo-state", JSON.stringify({ deals, contacts, tasks, activities }));
+  }, [demoReady, deals, contacts, tasks, activities]);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -81,6 +84,7 @@ export default function Home() {
     if (active === "Overview") return "Signals, movement, and the next actions that can change the month.";
     if (active === "Journeys") return "Connected customer work from first discovery through onboarding.";
     if (active === "Analytics") return "Live portfolio intelligence across pipeline, revenue and customers.";
+    if (active === "Activity") return "A live stream of customer touches, pipeline movement and team execution.";
     return "Northstar workspace · Live portfolio demo";
   }, [active]);
 
@@ -89,14 +93,46 @@ export default function Home() {
     window.setTimeout(() => setToast(null), 2200);
   }
 
+  function addActivity(activity: Omit<Activity, "id" | "time"> & { time?: string }) {
+    const item: Activity = {
+      ...activity,
+      id: "a" + Date.now().toString(),
+      time: activity.time || "Just now"
+    };
+    setActivities((current) => [item, ...current].slice(0, 60));
+  }
+
   function moveDeal(id: string, stage: Stage) {
-    setDeals((current) => current.map((deal) => deal.id === id ? { ...deal, stage, probability: stage === "Won" ? 100 : deal.probability } : deal));
     const updated = deals.find((deal) => deal.id === id);
-    if (updated) setSelectedDeal({ ...updated, stage, probability: stage === "Won" ? 100 : updated.probability });
+    setDeals((current) => current.map((deal) => deal.id === id ? { ...deal, stage, probability: stage === "Won" ? 100 : deal.probability } : deal));
+    if (updated) {
+      setSelectedDeal({ ...updated, stage, probability: stage === "Won" ? 100 : updated.probability });
+      if (updated.stage !== stage) {
+        addActivity({
+          type: "Stage",
+          title: "Moved to " + stage,
+          company: updated.company,
+          detail: updated.title + " advanced from " + updated.stage + " to " + stage + ".",
+          actor: updated.owner,
+          dealId: updated.id
+        });
+        notify(updated.company + " moved to " + stage);
+      }
+    }
   }
 
   function toggleTask(id: string) {
+    const target = tasks.find((task) => task.id === id);
     setTasks((current) => current.map((task) => task.id === id ? { ...task, done: !task.done } : task));
+    if (target) {
+      addActivity({
+        type: "Task",
+        title: target.done ? "Task reopened" : "Task completed",
+        company: target.company,
+        detail: target.title,
+        actor: target.owner
+      });
+    }
   }
 
   function createItem(type: "deal" | "contact" | "task", values: Record<string, string>) {
@@ -117,6 +153,7 @@ export default function Home() {
       };
       setDeals((current) => [deal, ...current]);
       setSelectedDeal(deal);
+      addActivity({ type:"System", title:"Opportunity created", company:deal.company, detail:deal.title+" entered the pipeline.", actor:deal.owner, dealId:deal.id });
       setActive("Deals");
       return;
     }
@@ -133,6 +170,7 @@ export default function Home() {
         email: "demo@example.com"
       };
       setContacts((current) => [contact, ...current]);
+      addActivity({ type:"System", title:"Stakeholder added", company:contact.company, detail:contact.name+" joined the relationship map as "+contact.relationship+".", actor:"MC" });
       setActive("Contacts");
       return;
     }
@@ -148,6 +186,7 @@ export default function Home() {
       priority: (values.priority || "Normal") as Task["priority"]
     };
     setTasks((current) => [task, ...current]);
+    addActivity({ type:"Task", title:"Task created", company:task.company, detail:task.title, actor:task.owner });
     setActive("Tasks");
   }
 
@@ -155,6 +194,7 @@ export default function Home() {
     setDeals(seedDeals);
     setContacts(seedContacts);
     setTasks(seedTasks);
+    setActivities(seedActivities);
     setSelectedDeal(seedDeals[0]);
     window.localStorage.removeItem("orbiq-demo-state");
     notify("Demo data restored");
@@ -163,6 +203,7 @@ export default function Home() {
   function renderView() {
     if (active === "Deals") return <DealsView deals={deals} onMove={moveDeal} onSelect={setSelectedDeal} selectedDealId={selectedDeal.id}/>;
     if (active === "Journeys") return <JourneyView/>;
+    if (active === "Activity") return <ActivityView activities={activities} deals={deals} onSelectDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); }}/>;
     if (active === "Contacts") return <ContactsView contacts={contacts} onOpen={(contact) => setDrawer({ kind: "contact", data: contact })}/>;
     if (active === "Companies") return <CompaniesView companies={seedCompanies} onOpen={(company) => setDrawer({ kind: "company", data: company })}/>;
     if (active === "Tasks") return <TasksView tasks={tasks} onToggle={toggleTask}/>;
@@ -237,7 +278,37 @@ export default function Home() {
       </section>
 
       <aside className="context">
-        <DealContext deal={selectedDeal}/>
+        <DealContext
+          deal={selectedDeal}
+          onAction={(action) => {
+            if (action === "Task") {
+              const task: Task = {
+                id: "t" + Date.now().toString(),
+                title: "Follow up on " + selectedDeal.title,
+                company: selectedDeal.company,
+                type: "Follow-up",
+                due: "Today · 17:00",
+                owner: selectedDeal.owner,
+                done: false,
+                priority: selectedDeal.health === "At risk" ? "High" : "Normal"
+              };
+              setTasks((current) => [task, ...current]);
+              addActivity({ type:"Task", title:"Follow-up created", company:selectedDeal.company, detail:task.title, actor:selectedDeal.owner, dealId:selectedDeal.id });
+              notify("Task created for " + selectedDeal.company);
+              return;
+            }
+
+            addActivity({
+              type: action,
+              title: action === "Email" ? "Email sent" : "Call logged",
+              company: selectedDeal.company,
+              detail: action === "Email" ? "Outbound follow-up sent from Opportunity Focus." : "Customer call logged from Opportunity Focus.",
+              actor: selectedDeal.owner,
+              dealId: selectedDeal.id
+            });
+            notify(action + " activity added");
+          }}
+        />
       </aside>
 
       {searchOpen && <CommandPalette

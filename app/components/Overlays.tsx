@@ -245,7 +245,7 @@ export function DetailDrawer({
   );
 }
 
-export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action: "Email" | "Call" | "Task") => void }) {
+export function DealContext({ deal, contacts = [], onAction }: { deal: Deal; contacts?: Contact[]; onAction?: (action: "Email" | "Call" | "Task") => void }) {
   const [tab, setTab] = useState<"summary" | "journey">("summary");
   const stages = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
   const stageIndex = Math.max(0, stages.indexOf(deal.stage));
@@ -261,6 +261,8 @@ export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action
   ][stageIndex];
   const gate = ["Discovery booked","Champion confirmed","Value case accepted","Approver aligned","Kickoff scheduled"][stageIndex];
   const readyEvidenceCount = deal.health === "At risk" ? 1 : deal.health === "Watch" ? 2 : 3;
+  const dealContacts = contacts.filter((contact) => contact.company === deal.company).slice(0, 3);
+  const buyingCoverage = Math.min(5, Math.max(dealContacts.length + 2, stageIndex + 2));
 
   return (
     <>
@@ -348,12 +350,12 @@ export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action
           </div>
 
           <div className="contextBuyerMap">
-            <div className="contextBuyerMapHead"><span>Buying group map</span><small>4 / 5 roles covered</small></div>
+            <div className="contextBuyerMapHead"><span>Buying group map</span><small>{buyingCoverage} / 5 roles covered</small></div>
             <div className="contextBuyerMapBody">
               <div className="buyerCore"><span>{deal.company.slice(0,2).toUpperCase()}</span><small>Account</small></div>
-              <div className="buyerNode decision"><span>OM</span><small>Decision</small></div>
-              <div className="buyerNode technical"><span>DK</span><small>Technical</small></div>
-              <div className="buyerNode champion"><span>MC</span><small>Champion</small></div>
+              <div className="buyerNode decision"><span>DM</span><small>Decision</small></div>
+              <div className="buyerNode technical"><span>TL</span><small>Technical</small></div>
+              <div className="buyerNode champion"><span>CH</span><small>Champion</small></div>
               <div className="buyerNode missing"><span>?</span><small>Procurement</small></div>
               <i className="buyerLink l1"/><i className="buyerLink l2"/><i className="buyerLink l3"/><i className="buyerLink l4"/>
             </div>
@@ -361,14 +363,24 @@ export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action
 
           <div className="contextMiniSignals">
             <div><span className="contextSignalIcon mail"><Icon name="mail" size={14}/></span><span><b>Proposal opened</b><small>12 min ago · 4th view</small></span></div>
-            <div><span className="contextSignalIcon people"><Icon name="people" size={14}/></span><span><b>Buying group</b><small>4 stakeholders engaged</small></span></div>
+            <div><span className="contextSignalIcon people"><Icon name="people" size={14}/></span><span><b>Buying group</b><small>{buyingCoverage} roles covered</small></span></div>
             <div><span className="contextSignalIcon calendar"><Icon name="calendar" size={14}/></span><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
           </div>
 
           <div className="peopleBlock contextPeople">
             <div className="sectionTitle"><span>Key people</span><button>View all</button></div>
-            <div className="person"><div className="avatar">OM</div><div><b>Olivia Martin</b><small>Decision maker</small></div><span>84%</span></div>
-            <div className="person"><div className="avatar pale">DK</div><div><b>Daniel Kim</b><small>Technical lead</small></div><span>67%</span></div>
+            {dealContacts.length ? dealContacts.slice(0,2).map((contact,index) => (
+              <div className="person" key={contact.id}>
+                <div className={"avatar "+(index ? "pale" : "")}>{contact.initials}</div>
+                <div><b>{contact.name}</b><small>{contact.relationship} · {contact.role}</small></div>
+                <span>{contact.lastActivity}</span>
+              </div>
+            )) : (
+              <div className="contextPeopleEmpty">
+                <span className="avatar pale">+</span>
+                <div><b>No mapped contacts yet</b><small>Add a decision-maker or champion to improve coverage.</small></div>
+              </div>
+            )}
           </div>
         </>
       ) : (

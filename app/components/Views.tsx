@@ -1193,114 +1193,199 @@ export function CalendarView({
   );
 }
 
-export function AnalyticsView({ deals, companies }: { deals: Deal[]; companies: Company[] }) {
+export function AnalyticsView({
+  deals,
+  companies,
+  onSelectDeal
+}: {
+  deals: Deal[];
+  companies: Company[];
+  onSelectDeal?: (deal: Deal) => void;
+}) {
   const [confidence, setConfidence] = useState(60);
+  const target = 392000;
+  const openDeals = deals.filter((deal) => deal.stage !== "Won");
+  const closedValue = deals.filter((deal) => deal.stage === "Won").reduce((sum, deal) => sum + deal.value, 0);
+  const commitDeals = openDeals.filter((deal) => deal.probability >= confidence);
+  const commitValue = commitDeals.reduce((sum, deal) => sum + deal.value, 0);
+  const secured = closedValue + commitValue;
+  const weightedValue = openDeals.reduce((sum, deal) => sum + deal.value * deal.probability / 100, 0);
+  const upsideValue = openDeals.filter((deal) => deal.probability < confidence).reduce((sum, deal) => sum + deal.value * deal.probability / 100, 0);
+  const gap = Math.max(0, target - secured);
+  const coverage = Math.round(secured / target * 100);
+  const riskValue = openDeals.filter((deal) => deal.health !== "Healthy").reduce((sum, deal) => sum + deal.value, 0);
 
   const byStage = useMemo(() => {
-    const stages: Stage[] = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
-    return stages.map((stage) => ({
-      stage,
-      count: deals.filter((deal) => deal.stage === stage).length,
-      value: deals.filter((deal) => deal.stage === stage).reduce((sum, deal) => sum + deal.value, 0)
-    }));
+    const stages: Stage[] = ["New","Qualified","Proposal","Negotiation","Won"];
+    return stages.map((stage) => {
+      const list = deals.filter((deal) => deal.stage === stage);
+      return {
+        stage,
+        count:list.length,
+        value:list.reduce((sum, deal) => sum + deal.value, 0),
+        avg:list.length ? Math.round(list.reduce((sum, deal) => sum + deal.probability, 0) / list.length) : 0,
+        blockers:list.filter((deal) => deal.health !== "Healthy").length
+      };
+    });
   }, [deals]);
 
-  const maxValue = Math.max(...byStage.map((item) => item.value), 1);
-  const commitDeals = deals.filter((deal) => deal.stage !== "Won" && deal.probability >= confidence);
-  const commitValue = commitDeals.reduce((sum, deal) => sum + deal.value, 0);
-  const weightedValue = deals
-    .filter((deal) => deal.stage !== "Won")
-    .reduce((sum, deal) => sum + deal.value * deal.probability / 100, 0);
+  const levers = [...openDeals]
+    .sort((a,b) => (b.value * b.probability) - (a.value * a.probability))
+    .slice(0,3);
+
+  const healthiest = [...companies].sort((a,b) => b.health-a.health).slice(0,3);
+  const exposed = [...companies].sort((a,b) => a.health-b.health).slice(0,2);
+
+  const bridgeTotal = Math.max(target, secured + upsideValue);
+  const closedShare = Math.max(2, closedValue / bridgeTotal * 100);
+  const commitShare = Math.max(4, commitValue / bridgeTotal * 100);
+  const upsideShare = Math.max(3, upsideValue / bridgeTotal * 100);
+  const gapShare = Math.max(0, 100 - closedShare - commitShare - upsideShare);
 
   return (
-    <div className="analyticsGrid">
-      <section className="panel analyticsHero">
-        <div className="panelHead">
-          <div><span className="label">Performance</span><h2>Revenue intelligence</h2></div>
-          <span className="trendUp">↗ 14.2%</span>
+    <div className="revenueIntel">
+      <section className="riHero">
+        <div className="riHeroStory">
+          <span className="label">Revenue intelligence</span>
+          <h2>{gap > 0 ? money(gap,true)+" remains to target." : "Target is covered."}</h2>
+          <p>{gap > 0
+            ? "The month is not a chart problem — it is a decision problem. ORBIQ isolates the opportunities, approval paths and customer signals that can close the remaining gap."
+            : "Current commit and closed revenue cover the monthly target. The next job is protecting quality and expansion potential."}</p>
+          <div className="riHeroActions">
+            <button onClick={() => levers[0] && onSelectDeal?.(levers[0])}>Open strongest lever <Icon name="arrow" size={13}/></button>
+            <span>{coverage}% covered at {confidence}%+ confidence</span>
+          </div>
         </div>
-        <div className="bigMetric"><strong>$284.6K</strong><span>closed revenue this month</span></div>
-        <div className="barChart">
-          {[42,58,51,71,65,76,70,88,82,96,91,100].map((value,index) => (
-            <i key={index} style={{ height:value + "%" }}><span>{index + 1}</span></i>
-          ))}
+
+        <div className="riTargetDial">
+          <div className="riDialRing" style={{"--coverage":Math.min(100,coverage)} as CSSProperties}>
+            <div><strong>{coverage}%</strong><span>target coverage</span></div>
+          </div>
+          <div className="riTargetMeta">
+            <div><span>Monthly target</span><b>{money(target,true)}</b></div>
+            <div><span>Closed + commit</span><b>{money(secured,true)}</b></div>
+            <div><span>Risk exposed</span><b>{money(riskValue,true)}</b></div>
+          </div>
         </div>
       </section>
 
-      <section className="panel funnelPanel">
-        <div className="panelHead"><div><span className="label">Conversion</span><h2>Pipeline funnel</h2></div></div>
-        <div className="funnel">
-          {byStage.map((item, index) => (
-            <div className="funnelRow" key={item.stage}>
-              <span>{item.stage}</span><div><i style={{ width: Math.max(22, 100 - index * 15) + "%" }}/></div><b>{item.count}</b>
+      <section className="riBridge">
+        <div className="riSectionHead">
+          <div><span className="label">Forecast bridge</span><h2>How the month gets covered</h2></div>
+          <div className="riScenarioControl">
+            <span>Commit threshold</span>
+            <b>{confidence}%+</b>
+            <input type="range" min="20" max="90" step="5" value={confidence} onChange={(event) => setConfidence(Number(event.target.value))}/>
+          </div>
+        </div>
+
+        <div className="riBridgeBar">
+          <i className="closed" style={{width:closedShare+"%"}}><span>Closed</span></i>
+          <i className="commit" style={{width:commitShare+"%"}}><span>Commit</span></i>
+          <i className="upside" style={{width:upsideShare+"%"}}><span>Weighted upside</span></i>
+          {gapShare > 0 && <i className="gap" style={{width:gapShare+"%"}}><span>Gap</span></i>}
+        </div>
+
+        <div className="riBridgeMetrics">
+          <div><span>Closed</span><b>{money(closedValue,true)}</b><small>booked</small></div>
+          <div><span>Commit</span><b>{money(commitValue,true)}</b><small>{commitDeals.length} opportunities</small></div>
+          <div><span>Weighted upside</span><b>{money(Math.round(upsideValue),true)}</b><small>below threshold</small></div>
+          <div className="gap"><span>Gap</span><b>{money(gap,true)}</b><small>to monthly target</small></div>
+        </div>
+      </section>
+
+      <section className="riMainGrid">
+        <div className="riLeverPanel">
+          <div className="riSectionHead">
+            <div><span className="label">Decision levers</span><h2>What can change the outcome</h2></div>
+            <span className="riMeta">{money(Math.round(weightedValue),true)} weighted pipeline</span>
+          </div>
+
+          <div className="riLeverList">
+            {levers.map((deal,index) => {
+              const impact = Math.round(deal.value * deal.probability / 100);
+              return (
+                <button className="riLever" key={deal.id} onClick={() => onSelectDeal?.(deal)}>
+                  <span className="riLeverRank">0{index+1}</span>
+                  <span className={"logo small "+deal.tone}>{deal.company.slice(0,2).toUpperCase()}</span>
+                  <span className="riLeverCopy">
+                    <small>{deal.stage} · closes {deal.closeDate}</small>
+                    <b>{deal.company} · {deal.title}</b>
+                    <em>{deal.health === "At risk" ? "Decision coverage is missing." : deal.health === "Watch" ? "Momentum needs protection." : "Evidence is tracking toward the next gate."}</em>
+                  </span>
+                  <span className="riLeverImpact"><small>Weighted impact</small><b>{money(impact,true)}</b><em>{deal.probability}%</em></span>
+                  <Icon name="chevron" size={15}/>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="riNarrative">
+          <div className="riNarrativeHead"><span className="label">ORBIQ signal</span><h2>Month narrative</h2></div>
+          <div className="riNarrativeLead">
+            <span>✦</span>
+            <p>{gap > 0
+              ? levers.length >= 2
+                ? levers[0].company+" and "+levers[1].company+" are the strongest path to reducing the gap. The priority is clearing approval friction before more top-of-funnel activity is added."
+                : "The portfolio needs more decision-ready pipeline before target coverage becomes credible."
+              : "Coverage is strong enough to shift attention from quantity to execution quality and handoff risk."}</p>
+          </div>
+          <div className="riNarrativeSignals">
+            <div><span>Decision-stage value</span><b>{money(deals.filter((deal) => deal.stage === "Negotiation").reduce((sum,deal) => sum+deal.value,0),true)}</b></div>
+            <div><span>At-risk / watch</span><b>{openDeals.filter((deal) => deal.health !== "Healthy").length} deals</b></div>
+            <div><span>Healthy accounts</span><b>{companies.filter((company) => company.health >= 80).length}/{companies.length}</b></div>
+          </div>
+          <div className="riPulse">
+            <div><span>Portfolio pulse</span><b>{Math.min(96,Math.round(60+coverage*.28))}</b></div>
+            <em>{[48,52,57,55,62,66,70,68,75,Math.min(92,60+coverage*.28)].map((item,index)=><i key={index} style={{height:item+"%"}}/>)}</em>
+            <small>Confidence strengthens as more value moves from evidence into decision-ready stages.</small>
+          </div>
+        </aside>
+      </section>
+
+      <section className="riStageMatrix">
+        <div className="riSectionHead"><div><span className="label">Pipeline anatomy</span><h2>Where value is accumulating</h2></div><span className="riMeta">{openDeals.length} live opportunities</span></div>
+        <div className="riStageRows">
+          {byStage.map((item,index) => (
+            <div className={"riStageRow stage"+index} key={item.stage}>
+              <div className="riStageIdentity"><span>0{index+1}</span><b>{item.stage}</b></div>
+              <div className="riStageMeasure"><span>Value</span><b>{money(item.value,true)}</b></div>
+              <div className="riStageMeasure"><span>Avg. confidence</span><b>{item.avg}%</b></div>
+              <div className={"riStageMeasure "+(item.blockers ? "risk" : "")}><span>Blockers</span><b>{item.blockers}</b></div>
+              <div className="riStageProgress"><i style={{width:item.avg+"%"}}/></div>
+              <strong>{item.count}</strong>
             </div>
           ))}
         </div>
-        <div className="funnelFoot"><span>Lead → Won</span><b>34.8%</b></div>
       </section>
 
-      <section className="panel forecastPanel">
-        <div className="panelHead">
-          <div><span className="label">Scenario model</span><h2>Forecast simulator</h2></div>
-          <span className="confidenceBadge">{confidence}%+</span>
-        </div>
-        <div className="forecastValue">
-          <strong>{money(commitValue, true)}</strong>
-          <span>commit pipeline above confidence threshold</span>
-        </div>
-        <div>
-          <input className="confidenceSlider" type="range" min="20" max="90" step="5" value={confidence} onChange={(event) => setConfidence(Number(event.target.value))}/>
-          <div className="sliderLabels"><span>20% exploratory</span><span>90% commit</span></div>
-        </div>
-        <div className="forecastMiniGrid">
-          <div><span>Weighted pipeline</span><b>{money(Math.round(weightedValue), true)}</b></div>
-          <div><span>Deals included</span><b>{commitDeals.length}</b></div>
-          <div><span>Coverage</span><b>{Math.round(commitValue / 392000 * 100)}%</b></div>
-        </div>
-      </section>
-
-      <section className="panel stagePanel">
-        <div className="panelHead"><div><span className="label">Pipeline</span><h2>Value by stage</h2></div></div>
-        <div className="stageBars">
-          {byStage.map((item) => (
-            <div className="stageBar" key={item.stage}><span>{item.stage}</span><div><i style={{ width: item.value / maxValue * 100 + "%" }}/></div><b>{money(item.value, true)}</b></div>
+      <section className="riAccountGrid">
+        <div className="riAccountPanel">
+          <div className="riSectionHead"><div><span className="label">Customer quality</span><h2>Health leaders</h2></div></div>
+          {healthiest.map((company) => (
+            <div className="riAccountRow" key={company.id}>
+              <span className={"logo small "+company.tone}>{company.name.slice(0,2).toUpperCase()}</span>
+              <div><b>{company.name}</b><small>{company.industry} · {money(company.arr,true)} ARR</small></div>
+              <i><em style={{width:company.health+"%"}}/></i>
+              <strong>{company.health}</strong>
+            </div>
           ))}
         </div>
-      </section>
 
-      <section className="panel healthPanel">
-        <div className="panelHead"><div><span className="label">Customers</span><h2>Account health</h2></div></div>
-        {companies.slice(0,5).map((company) => (
-          <div className="healthRow" key={company.id}>
-            <div className={"logo small " + company.tone}>{company.name.slice(0,2).toUpperCase()}</div>
-            <span>{company.name}</span><div className="miniHealth"><i style={{ width: company.health + "%" }}/></div><b>{company.health}</b>
-          </div>
-        ))}
-      </section>
-
-      <section className="panel teamPanel">
-        <div className="panelHead"><div><span className="label">Team</span><h2>Sales performance</h2></div><span className="tinyMeta">September</span></div>
-        {[
-          ["MC","Maya Chen","$118K","42%","+18%"],
-          ["DL","Daniel Lewis","$92K","38%","+11%"],
-          ["SR","Sofia Reed","$61K","31%","+7%"],
-          ["OR","Owen Reed","$44K","29%","+4%"]
-        ].map((member,index) => (
-          <div className="teamRow" key={member[0]}>
-            <span className="rank">0{index+1}</span>
-            <div className={"avatar teamAvatar av"+(index%3)}>{member[0]}</div>
-            <div className="teamName"><b>{member[1]}</b><span>{member[3]} win rate</span></div>
-            <strong>{member[2]}</strong><em>{member[4]}</em>
-          </div>
-        ))}
-      </section>
-
-      <section className="panel sourcePanel">
-        <div className="panelHead"><div><span className="label">Acquisition</span><h2>Source efficiency</h2></div></div>
-        {[["Product-led","38%","+6.2%"],["Partner","26%","+2.4%"],["Outbound","21%","-1.1%"],["Organic","15%","+3.8%"]].map((row) => (
-          <div className="sourceRow" key={row[0]}><span>{row[0]}</span><b>{row[1]}</b><em className={row[2].startsWith("-") ? "negative" : ""}>{row[2]}</em></div>
-        ))}
+        <div className="riAccountPanel exposed">
+          <div className="riSectionHead"><div><span className="label">Exposure</span><h2>Accounts to protect</h2></div></div>
+          {exposed.map((company) => (
+            <div className="riAccountRow" key={company.id}>
+              <span className={"logo small "+company.tone}>{company.name.slice(0,2).toUpperCase()}</span>
+              <div><b>{company.name}</b><small>{company.industry} · {money(company.arr,true)} ARR</small></div>
+              <i><em style={{width:company.health+"%"}}/></i>
+              <strong>{company.health}</strong>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );
 }
+

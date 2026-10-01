@@ -32,3 +32,109 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* --- Final product polish: continuity, focus and tactile states --- */
+.context{animation:contextSwap .22s cubic-bezier(.2,.75,.25,1)}
+@keyframes contextSwap{from{opacity:.55;transform:translateX(5px)}to{opacity:1;transform:none}}
+
+.dealSyncPill{
+  height:34px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:0 9px 0 6px;
+  border:1px solid rgba(66,82,88,.1);
+  border-radius:11px;
+  background:rgba(255,255,255,.72);
+  color:#58676d;
+  cursor:pointer;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.dealSyncPill:hover{
+  background:#fff;
+  border-color:rgba(66,82,88,.18);
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(47,61,66,.055);
+}
+.dealSyncLogo{
+  width:24px;height:24px;border-radius:8px;
+  display:grid;place-items:center;
+  font-size:7px;font-weight:800;
+  flex:0 0 auto;
+}
+.dealSyncLogo.blue{background:#dce8ff;color:#355b9c}
+.dealSyncLogo.mint{background:#dff2ea;color:#3e7660}
+.dealSyncLogo.violet{background:#e7e1f7;color:#695b9a}
+.dealSyncLogo.coral{background:#f6dfdd;color:#9d5650}
+.dealSyncLogo.amber{background:#f5ead6;color:#8e6b33}
+.dealSyncCopy{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.dealSyncCopy b{font-size:9px}
+.dealSyncCopy small{font-size:7px;color:#909a9e}
+.dealSyncPill svg{color:#9aa3a6}
+
+/* Shared tactile behavior for the new ORBIQ surfaces */
+.riLever,.activityEvent,.actionMove,.agendaItem,.revenueEvent,
+.pipelineDeal,.journeyWorkCard,.personFeature,.accountTile{
+  transition:
+    transform .18s cubic-bezier(.2,.75,.25,1),
+    background .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    opacity .18s ease;
+}
+.riLever:hover,.activityEvent:hover,.agendaItem:hover{
+  transform:translateX(2px);
+}
+.revenueEvent:hover{transform:translateY(-1px);filter:saturate(1.04)}
+.actionMove:hover{transform:translateX(2px)}
+.journeyWorkCard:hover,.pipelineDeal:hover,.personFeature:hover,.accountTile:hover{
+  transform:translateY(-2px);
+}
+
+/* Clear keyboard focus without changing the visual language */
+.dealSyncPill:focus-visible,
+.riLever:focus-visible,.activityEvent:focus-visible,.agendaItem:focus-visible,
+.actionMove:focus-visible,.revenueEvent:focus-visible,
+.pipelineDeal:focus-visible,.journeyWorkCard:focus-visible,
+.personFeature:focus-visible,.accountTile:focus-visible{
+  outline:2px solid rgba(60,92,99,.4);
+  outline-offset:2px;
+}
+
+/* Softer view transitions for large analytical surfaces */
+.riHero,.activityHero,.actionDeskHero,.calendarHero,.ccBoard,.journeyStudioTop,.pipelineStudioHead{
+  animation:surfaceReveal .28s cubic-bezier(.2,.78,.25,1) both;
+}
+@keyframes surfaceReveal{
+  from{opacity:0;transform:translateY(7px) scale(.997)}
+  to{opacity:1;transform:none}
+}
+
+/* Selected opportunity should feel persistent across workspaces */
+.pipelineFocusStrip,.journeySyncBar,.ccFocusRail{
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.pipelineFocusStrip:hover,.journeySyncBar:hover,.ccFocusRail:hover{
+  border-color:rgba(58,84,90,.14);
+  box-shadow:0 13px 30px rgba(45,61,66,.05);
+}
+
+@media(max-width:1040px){
+  .dealSyncCopy small{display:none}
+}
+@media(max-width:900px){
+  .dealSyncPill{display:none}
+}
+@media(max-width:680px){
+  .viewStage{animation-duration:.18s}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .context,.riHero,.activityHero,.actionDeskHero,.calendarHero,.ccBoard,.journeyStudioTop,.pipelineStudioHead{
+    animation:none!important;
+  }
+  .riLever:hover,.activityEvent:hover,.agendaItem:hover,.actionMove:hover,
+  .revenueEvent:hover,.journeyWorkCard:hover,.pipelineDeal:hover,.personFeature:hover,.accountTile:hover{
+    transform:none!important;
+  }
+}

@@ -931,79 +931,265 @@ export function ActivityView({
 
 export function TasksView({
   tasks,
-  onToggle
+  deals = [],
+  onToggle,
+  onOpenDeal
 }: {
   tasks: Task[];
+  deals?: Deal[];
   onToggle: (id: string) => void;
+  onOpenDeal?: (deal: Deal) => void;
 }) {
-  const sections = ["Today", "Tomorrow", "Later"];
+  const openTasks = tasks.filter((task) => !task.done);
+  const [selectedTaskId, setSelectedTaskId] = useState(openTasks[0]?.id || tasks[0]?.id || "");
+  const [scope, setScope] = useState<"Today" | "All">("Today");
+  const selectedTask = tasks.find((task) => task.id === selectedTaskId) || openTasks[0] || tasks[0];
+  const linkedDeal = selectedTask ? deals.find((deal) => deal.company === selectedTask.company && deal.stage !== "Won") : undefined;
+  const highPriority = openTasks.filter((task) => task.priority === "High").length;
+  const todayTasks = openTasks.filter((task) => task.due.startsWith("Today"));
+  const tomorrowTasks = openTasks.filter((task) => task.due.startsWith("Tomorrow"));
+  const touchedCompanies = Array.from(new Set(openTasks.map((task) => task.company)));
+  const revenueTouched = deals.filter((deal) => touchedCompanies.includes(deal.company) && deal.stage !== "Won").reduce((sum, deal) => sum + deal.value, 0);
 
-  function section(task: Task) {
-    if (task.due.startsWith("Today")) return "Today";
-    if (task.due.startsWith("Tomorrow")) return "Tomorrow";
-    return "Later";
+  const visible = scope === "Today"
+    ? tasks.filter((task) => task.due.startsWith("Today") || task.due.startsWith("Tomorrow"))
+    : tasks;
+
+  function urgency(task: Task) {
+    if (task.done) return "done";
+    if (task.priority === "High") return "critical";
+    if (task.due.startsWith("Today")) return "today";
+    return "normal";
   }
 
   return (
-    <div className="tasksLayout">
-      <section className="panel taskMain">
-        <div className="panelHead"><div><span className="label">Work queue</span><h2>My tasks</h2></div><span className="completion">{tasks.filter((task) => task.done).length}/{tasks.length} done</span></div>
-        {sections.map((group) => {
-          const list = tasks.filter((task) => section(task) === group);
-          return (
-            <div className="taskGroup" key={group}>
-              <div className="taskGroupTitle"><span>{group}</span><i>{list.length}</i></div>
-              {list.map((task) => (
-                <button className={task.done ? "taskRow completed" : "taskRow"} key={task.id} onClick={() => onToggle(task.id)}>
-                  <span className="checkCircle">{task.done && <Icon name="check" size={13}/>}</span>
-                  <span className="taskKind">{task.type === "Call" ? <Icon name="call" size={14}/> : task.type === "Email" ? <Icon name="mail" size={14}/> : <Icon name="calendar" size={14}/>}</span>
-                  <span className="taskText"><b>{task.title}</b><small>{task.company} · {task.due}</small></span>
-                  {task.priority === "High" && <span className="priority">High</span>}
-                  <span className="avatar mini">{task.owner}</span>
-                </button>
-              ))}
-            </div>
-          );
-        })}
+    <div className="actionDesk">
+      <section className="actionDeskHero">
+        <div className="actionDeskHeroCopy">
+          <span className="label">Revenue action desk</span>
+          <h2>Turn today into pipeline movement.</h2>
+          <p>Tasks are ordered by customer impact, timing and deal context — not just by due date.</p>
+          <div className="actionDeskMode">
+            {(["Today","All"] as const).map((item) => <button className={scope === item ? "active" : ""} key={item} onClick={() => setScope(item)}>{item}</button>)}
+          </div>
+        </div>
+        <div className="actionDeskStats">
+          <div><span>Due today</span><b>{todayTasks.length}</b><small>{highPriority} high priority</small></div>
+          <div><span>Tomorrow</span><b>{tomorrowTasks.length}</b><small>queued handoffs</small></div>
+          <div><span>Revenue touched</span><b>{money(revenueTouched,true)}</b><small>{touchedCompanies.length} accounts</small></div>
+        </div>
       </section>
-      <aside className="panel taskSide">
-        <span className="label">Today</span><h2>Focus score</h2><strong className="focusScore">78</strong><p>You have two high-priority follow-ups before 14:00. Clearing them would put the day on track.</p>
-        <div className="focusRing"><div><b>3</b><span>tasks due</span></div></div>
-        <button className="primary full">Start focus block</button>
-      </aside>
+
+      <section className="actionDeskLayout">
+        <div className="actionQueue">
+          <div className="actionQueueHead">
+            <div><span className="label">Action runway</span><h2>{visible.filter((task) => !task.done).length} moves in view</h2></div>
+            <span className="actionQueueHint">Complete work without losing deal context</span>
+          </div>
+
+          <div className="actionRunway">
+            {visible.map((task,index) => {
+              const deal = deals.find((item) => item.company === task.company && item.stage !== "Won");
+              const selected = selectedTask?.id === task.id;
+              return (
+                <article className={"actionMove "+urgency(task)+(selected ? " selected" : "")} key={task.id} onClick={() => setSelectedTaskId(task.id)}>
+                  <div className="actionTime">
+                    <span>{task.due.includes("·") ? task.due.split("·")[0].trim() : task.due}</span>
+                    <b>{task.due.includes("·") ? task.due.split("·")[1].trim() : "—"}</b>
+                    {index < visible.length-1 && <i/>}
+                  </div>
+
+                  <button
+                    className="actionCheck"
+                    aria-label={task.done ? "Reopen task" : "Complete task"}
+                    onClick={(event) => { event.stopPropagation(); onToggle(task.id); setSelectedTaskId(task.id); }}
+                  >
+                    {task.done && <Icon name="check" size={13}/>}
+                  </button>
+
+                  <div className="actionMoveBody">
+                    <div className="actionMoveTop">
+                      <div>
+                        <span className="actionType"><Icon name={task.type === "Call" ? "call" : task.type === "Email" ? "mail" : task.type === "Meeting" ? "calendar" : "task"} size={12}/>{task.type}</span>
+                        <h3>{task.title}</h3>
+                      </div>
+                      <span className="avatar mini">{task.owner}</span>
+                    </div>
+                    <div className="actionMoveContext">
+                      <b>{task.company}</b>
+                      {deal ? <><span>{deal.stage}</span><span>{money(deal.value,true)}</span><span>{deal.probability}% confidence</span></> : <span>Account follow-up</span>}
+                    </div>
+                    {deal && (
+                      <div className="actionImpactLine">
+                        <span>Revenue impact</span>
+                        <i><em style={{width:Math.max(24,deal.probability)+"%"}}/></i>
+                        <b>{deal.health === "At risk" ? "Needs intervention" : deal.health === "Watch" ? "Protect momentum" : "On track"}</b>
+                      </div>
+                    )}
+                  </div>
+
+                  <button className="actionOpen" aria-label="Open task context" onClick={(event) => { event.stopPropagation(); setSelectedTaskId(task.id); }}><Icon name="chevron" size={15}/></button>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="actionFocus">
+          {selectedTask ? (
+            <>
+              <div className="actionFocusHead">
+                <div><span className="label">In focus</span><h2>{selectedTask.company}</h2></div>
+                <span className={"actionPriority "+(selectedTask.priority === "High" ? "high" : "")}>{selectedTask.priority}</span>
+              </div>
+
+              <div className="actionFocusType"><span><Icon name={selectedTask.type === "Call" ? "call" : selectedTask.type === "Email" ? "mail" : selectedTask.type === "Meeting" ? "calendar" : "task"} size={15}/></span><div><small>Next move</small><b>{selectedTask.title}</b></div></div>
+
+              <div className="actionFocusClock">
+                <span>Due</span><b>{selectedTask.due}</b>
+                <i/>
+                <span>Owner</span><b>{selectedTask.owner}</b>
+              </div>
+
+              {linkedDeal ? (
+                <div className="actionLinkedDeal">
+                  <div className="actionLinkedTop"><span>Linked opportunity</span><b>{linkedDeal.stage}</b></div>
+                  <h3>{linkedDeal.title}</h3>
+                  <strong>{money(linkedDeal.value)}</strong>
+                  <div className="actionDealMeter"><i style={{width:linkedDeal.probability+"%"}}/></div>
+                  <div className="actionDealMeta"><span>{linkedDeal.probability}% confidence</span><span>{linkedDeal.health}</span></div>
+                  {onOpenDeal && <button onClick={() => onOpenDeal(linkedDeal)}>Open opportunity <Icon name="arrow" size={13}/></button>}
+                </div>
+              ) : (
+                <div className="actionLinkedDeal empty"><span>Account task</span><p>No open opportunity is linked to this action.</p></div>
+              )}
+
+              <div className="actionFocusInsight">
+                <span>✦</span>
+                <div><small>Why now</small><p>{selectedTask.priority === "High" ? "This action sits on a critical revenue path. Clearing it today protects the next gate." : "Completing this move keeps the customer sequence tight and prevents avoidable delay."}</p></div>
+              </div>
+
+              <button className={selectedTask.done ? "actionComplete done" : "actionComplete"} onClick={() => onToggle(selectedTask.id)}>
+                <Icon name="check" size={14}/>{selectedTask.done ? "Reopen action" : "Mark complete"}
+              </button>
+            </>
+          ) : <div className="actionFocusEmpty">Select an action to see revenue context.</div>}
+        </aside>
+      </section>
     </div>
   );
 }
 
-export function CalendarView() {
-  const days = Array.from({ length: 35 }, (_, index) => index);
-  const events: Record<number, Array<[string, string]>> = {
-    3: [["09:30", "Arcwell follow-up"]],
-    8: [["11:00", "Northwave demo"], ["15:30", "Internal review"]],
-    12: [["10:00", "Kinetiq discovery"]],
-    18: [["14:00", "Everline workshop"]],
-    22: [["09:00", "Lumon QBR"]],
-    27: [["11:30", "Security review"], ["14:00", "Proposal walkthrough"]],
-    29: [["09:30", "Buying committee"]]
-  };
+export function CalendarView({
+  tasks = [],
+  deals = [],
+  onSelectDeal
+}: {
+  tasks?: Task[];
+  deals?: Deal[];
+  onSelectDeal?: (deal: Deal) => void;
+}) {
+  const [mode, setMode] = useState<"Month" | "Agenda">("Month");
+  const cells = Array.from({ length: 35 }, (_, index) => {
+    if (index < 3) return { day:28+index, month:"Sep", current:false };
+    if (index < 34) return { day:index-2, month:"Oct", current:true };
+    return { day:1, month:"Nov", current:false };
+  });
+
+  const todayTasks = tasks.filter((task) => task.due.startsWith("Today"));
+  const highPriority = tasks.filter((task) => !task.done && task.priority === "High").length;
+  const octoberDeals = deals.filter((deal) => deal.closeDate.startsWith("Oct") && deal.stage !== "Won");
+  const closingValue = octoberDeals.reduce((sum, deal) => sum + deal.value, 0);
+
+  function dayItems(day:number, month:string) {
+    const items: Array<{time:string;title:string;kind:"task"|"deal"|"meeting";deal?:Deal}> = [];
+    if (month === "Oct" && day === 1) {
+      todayTasks.forEach((task) => items.push({ time:task.due.includes("·") ? task.due.split("·")[1].trim() : "Today", title:task.title, kind:"task" }));
+      items.push({time:"15:00",title:"Revenue stand-up",kind:"meeting"});
+    }
+    if (month === "Oct" && day === 2) tasks.filter((task) => task.due.startsWith("Tomorrow")).forEach((task) => items.push({time:task.due.includes("·") ? task.due.split("·")[1].trim() : "Tomorrow",title:task.title,kind:"task"}));
+    if (month === "Sep" && day === 30) tasks.filter((task) => task.due.startsWith("Sep 30")).forEach((task) => items.push({time:task.due.includes("·") ? task.due.split("·")[1].trim() : "09:30",title:task.title,kind:"task"}));
+    if (month === "Oct") {
+      octoberDeals.forEach((deal) => {
+        const date = Number(deal.closeDate.replace("Oct ",""));
+        if (date === day) items.push({time:"Close",title:deal.company+" · "+money(deal.value,true),kind:"deal",deal});
+      });
+    }
+    if (month === "Oct" && day === 6) items.push({time:"11:30",title:"Northstar pipeline review",kind:"meeting"});
+    if (month === "Oct" && day === 14) items.push({time:"14:00",title:"Customer success handoff",kind:"meeting"});
+    if (month === "Oct" && day === 23) items.push({time:"10:00",title:"Forecast calibration",kind:"meeting"});
+    return items;
+  }
+
+  const agenda = cells.flatMap((cell) => dayItems(cell.day,cell.month).map((item) => ({...item,day:cell.day,month:cell.month}))).slice(0,12);
 
   return (
-    <section className="calendarPanel">
-      <div className="calendarToolbar"><div><span className="label">Schedule</span><h2>September 2026</h2></div><div><button className="softBtn">Today</button><button className="softBtn">Month</button></div></div>
-      <div className="calendarWeek">{["MON","TUE","WED","THU","FRI","SAT","SUN"].map((day) => <span key={day}>{day}</span>)}</div>
-      <div className="calendarGrid">
-        {days.map((day, index) => {
-          const date = day === 0 ? 31 : day > 30 ? day - 30 : day;
-          const muted = day === 0 || day > 30;
-          return (
-            <div className={"calendarDay " + (muted ? "muted " : "") + (day === 27 ? "today" : "")} key={index}>
-              <span className="date">{date}</span>
-              {(events[day] || []).map((event) => <div className="calendarEvent" key={event[0] + event[1]}><b>{event[0]}</b><span>{event[1]}</span></div>)}
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    <div className="revenueCalendar">
+      <section className="calendarHero">
+        <div>
+          <span className="label">Revenue calendar</span>
+          <h2>Time, tied to outcomes.</h2>
+          <p>Meetings, customer actions and expected closes live on one timeline so the team can see where time turns into revenue.</p>
+        </div>
+        <div className="calendarHeroStats">
+          <div><span>Today</span><b>{todayTasks.length+1}</b><small>customer + team moves</small></div>
+          <div><span>High priority</span><b>{highPriority}</b><small>need protection</small></div>
+          <div><span>Closing in Oct</span><b>{money(closingValue,true)}</b><small>{octoberDeals.length} opportunities</small></div>
+        </div>
+      </section>
+
+      <section className="calendarCommand">
+        <div className="calendarCommandCopy"><span>October 2026</span><b>Revenue operating month</b></div>
+        <div className="calendarMode">
+          {(["Month","Agenda"] as const).map((item) => <button className={mode === item ? "active" : ""} key={item} onClick={() => setMode(item)}>{item}</button>)}
+        </div>
+        <div className="calendarLegend"><span><i className="task"/>Action</span><span><i className="deal"/>Close</span><span><i className="meeting"/>Meeting</span></div>
+      </section>
+
+      {mode === "Month" ? (
+        <section className="calendarCanvas">
+          <div className="calendarWeek">{["MON","TUE","WED","THU","FRI","SAT","SUN"].map((day) => <span key={day}>{day}</span>)}</div>
+          <div className="calendarGrid revenueGrid">
+            {cells.map((cell,index) => {
+              const items = dayItems(cell.day,cell.month);
+              const today = cell.month === "Oct" && cell.day === 1;
+              return (
+                <div className={"calendarDay revenueDay "+(!cell.current ? "muted " : "")+(today ? "today " : "")} key={cell.month+cell.day+"-"+index}>
+                  <div className="revenueDayHead"><span className="date">{cell.day}</span>{items.length > 0 && <small>{items.length} moves</small>}</div>
+                  <div className="revenueDayEvents">
+                    {items.slice(0,3).map((item,itemIndex) => (
+                      <button className={"revenueEvent "+item.kind} key={item.title+itemIndex} onClick={() => item.deal && onSelectDeal?.(item.deal)}>
+                        <span>{item.time}</span><b>{item.title}</b>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : (
+        <section className="calendarAgenda">
+          <div className="agendaTimeline">
+            {agenda.map((item,index) => (
+              <button className={"agendaItem "+item.kind} key={item.month+item.day+item.title+index} onClick={() => item.deal && onSelectDeal?.(item.deal)}>
+                <div className="agendaDate"><span>{item.month}</span><b>{String(item.day).padStart(2,"0")}</b></div>
+                <span className="agendaDot"><i/></span>
+                <div className="agendaCopy"><small>{item.time} · {item.kind}</small><b>{item.title}</b></div>
+                {item.deal && <div className="agendaDeal"><span>{item.deal.stage}</span><b>{item.deal.probability}%</b></div>}
+                <Icon name="chevron" size={14}/>
+              </button>
+            ))}
+          </div>
+          <aside className="agendaInsight">
+            <span className="label">Month signal</span>
+            <h3>Decision-heavy calendar.</h3>
+            <p>Most October value sits in Proposal and Negotiation. Protect customer-facing time before internal meetings consume the critical path.</p>
+            <div className="agendaForecast"><span>October close value</span><b>{money(closingValue,true)}</b><i><em style={{width:"78%"}}/></i><small>78% of target coverage represented on the calendar</small></div>
+          </aside>
+        </section>
+      )}
+    </div>
   );
 }
 

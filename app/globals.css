@@ -171,7 +171,6 @@ button{color:inherit}
   .journeyPreview{grid-column:1}
   .journeyRail{grid-template-columns:1fr 1fr;gap:18px}
   .connector{display:none}
-  .journeyHero{align-items:flex-start;flex-direction:column}
   .journeyStats{width:100%;justify-content:space-between}
 }
 @media(max-width:680px){
@@ -209,18 +208,6 @@ button{color:inherit}
 .healthPill.atrisk{background:#f6e7e5;color:#9a5651}
 .emptyDrop{border:1px dashed #d9dcdf;border-radius:15px;height:72px;display:grid;place-items:center;color:#aaadb2;font-size:9px}
 .mobileStage{display:none;width:100%;height:32px;border:1px solid var(--line);border-radius:9px;background:#fafbfb;margin-top:10px;padding:0 8px;font-size:10px;color:#666}
-.journeyTimeline{height:72px;margin:4px 4px 18px;display:grid;grid-template-columns:repeat(4,1fr);align-items:start;position:relative}
-.journeyTimeline:before{content:"";position:absolute;left:5%;right:5%;top:15px;height:1px;background:#e2e4e7}
-.journeyTimelineFill{position:absolute;left:5%;top:15px;height:1px;background:#1c1e20;transition:width .35s ease;max-width:90%}
-.journeyNode{position:relative;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;color:#999;z-index:2}
-.journeyNode i{width:30px;height:30px;border-radius:50%;background:#eceeef;border:4px solid #f9fafb;display:grid;place-items:center;font-style:normal;font-size:8px}
-.journeyNode span{font-size:9px}
-.journeyNode.active{color:#17191b}.journeyNode.active i{background:#17191b;color:#fff;box-shadow:0 7px 17px rgba(0,0,0,.14)}
-.journeyColumn{transition:.22s ease}
-.journeyColumn.selected{border-color:#c9cdd1;box-shadow:0 15px 36px rgba(21,25,29,.07);transform:translateY(-3px)}
-.journeyDetail{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:16px;padding:18px 20px;background:#17191b;color:#fff;border-radius:20px}
-.journeyDetail h3{margin:5px 0 6px;font-size:16px}.journeyDetail p{margin:0;max-width:660px;color:#bfc2c6;font-size:10px;line-height:1.55}.journeyDetail .label{color:#83878d}
-.journeyDetailActions{display:flex;gap:8px;flex:0 0 auto}.journeyDetail .softBtn{background:#2a2c2f;color:#fff;border-color:#36393d}
 .tableActions{display:flex!important;gap:8px;align-items:center}
 .inlineSearch{height:34px;min-width:190px;border:1px solid var(--line);background:#fafbfb;border-radius:11px;display:flex;align-items:center;gap:7px;padding:0 10px;color:#999}
 .inlineSearch input{border:0;background:transparent;outline:0;width:100%;font-size:10px}
@@ -327,11 +314,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{
 }
 .sidebar .navBtn.active:after{background:#151719}
 .sidebar .navBtn.active{box-shadow:0 10px 24px rgba(0,0,0,.15)}
-.journeyNode.active i{animation:nodePulse 2.8s ease-in-out infinite}
-@keyframes nodePulse{
-  0%,100%{box-shadow:0 7px 17px rgba(0,0,0,.14),0 0 0 0 rgba(21,23,25,.12)}
-  50%{box-shadow:0 9px 22px rgba(0,0,0,.16),0 0 0 7px rgba(21,23,25,0)}
-}
 .dealCard:hover .logo,.companyCard:hover .logo{transform:scale(1.04)}
 .logo{transition:transform .2s ease}
 .contactButton{transition:background .16s ease,transform .16s ease}
@@ -1054,7 +1036,6 @@ html,body{
 .insight small{color:#7380a0}.insight p{color:#41506a}
 .railStep.current .stepNum{background:#7184cd}
 .checkCircle{border-color:#cfd8e4}
-.barChart i{background:linear-gradient(to top,#dbe4f0,#7a8ed2)}
 .funnelRow i,.stageBar i,.miniHealth i,.healthBar i{background:linear-gradient(90deg,#8ea3d8,#6b7fc9)}
 
 @media(max-width:680px){

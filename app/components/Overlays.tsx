@@ -30,6 +30,7 @@ export function CommandPalette({
     ["Overview","grid","Command center"],
     ["Deals","deal","Pipeline room"],
     ["Journeys","journey","Customer lifecycle"],
+    ["Activity","bell","Live CRM activity"],
     ["Contacts","people","People directory"],
     ["Companies","company","Accounts"],
     ["Tasks","task","Team work"],
@@ -244,7 +245,7 @@ export function DetailDrawer({
   );
 }
 
-export function DealContext({ deal }: { deal: Deal }) {
+export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action: "Email" | "Call" | "Task") => void }) {
   const [tab, setTab] = useState<"summary" | "journey">("summary");
   const stages = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
   const stageIndex = Math.max(0, stages.indexOf(deal.stage));
@@ -396,9 +397,9 @@ export function DealContext({ deal }: { deal: Deal }) {
       )}
 
       <div className="contextQuickActions">
-        <button><Icon name="mail" size={14}/> Email</button>
-        <button><Icon name="call" size={14}/> Call</button>
-        <button className={"dark "+accent}><Icon name="plus" size={14}/> Task</button>
+        <button onClick={() => onAction?.("Email")}><Icon name="mail" size={14}/> Email</button>
+        <button onClick={() => onAction?.("Call")}><Icon name="call" size={14}/> Call</button>
+        <button className={"dark "+accent} onClick={() => onAction?.("Task")}><Icon name="plus" size={14}/> Task</button>
       </div>
     </>
   );

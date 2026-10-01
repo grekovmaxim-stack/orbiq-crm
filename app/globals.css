@@ -2731,3 +2731,82 @@ html,body{
   .calendarCommand{grid-template-columns:1fr}.calendarLegend{grid-column:auto}.calendarGrid.revenueGrid{min-width:760px}.calendarCanvas{overflow:auto}
   .agendaItem{grid-template-columns:46px 16px 1fr 16px}.agendaDeal{display:none}
 }
+
+/* --- Narrative Revenue Intelligence --- */
+.revenueIntel{display:flex;flex-direction:column;gap:14px}
+.riHero{
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);
+  gap:20px;
+  padding:26px;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 84% 12%,rgba(216,224,229,.62),transparent 25%),
+    linear-gradient(135deg,#f8f9fa 0%,#eef2f3 100%);
+  border:1px solid rgba(56,72,79,.075);
+  box-shadow:0 18px 44px rgba(47,63,69,.045);
+}
+.riHeroStory h2{margin:8px 0 9px;font-size:34px;line-height:1;letter-spacing:-1.25px;max-width:720px}
+.riHeroStory p{max-width:680px;margin:0;color:#748087;font-size:11px;line-height:1.6}
+.riHeroActions{display:flex;align-items:center;gap:11px;margin-top:16px}
+.riHeroActions button{
+  height:36px;border:0;border-radius:10px;padding:0 12px;
+  display:flex;align-items:center;gap:6px;background:#355f66;color:#fff;font-size:8px;cursor:pointer
+}
+.riHeroActions>span{font-size:8px;color:#7d898e}
+.riTargetDial{display:grid;grid-template-columns:148px 1fr;gap:18px;align-items:center}
+.riDialRing{
+  --coverage:70;
+  width:148px;height:148px;border-radius:50%;
+  background:conic-gradient(#4f7479 0 calc(var(--coverage)*1%),#dfe6e6 calc(var(--coverage)*1%) 100%);
+  display:grid;place-items:center;position:relative
+}
+.riDialRing:after{content:"";position:absolute;inset:12px;background:#f7f9f9;border-radius:50%}
+.riDialRing>div{position:relative;z-index:2;text-align:center}.riDialRing strong{display:block;font-size:28px;letter-spacing:-1px}.riDialRing span{font-size:8px;color:#8a959a}
+.riTargetMeta{display:flex;flex-direction:column;gap:9px}.riTargetMeta>div{padding-bottom:9px;border-bottom:1px solid #e0e5e5}.riTargetMeta>div:last-child{border-bottom:0;padding-bottom:0}
+.riTargetMeta span,.riTargetMeta b{display:block}.riTargetMeta span{font-size:8px;color:#8a959a}.riTargetMeta b{font-size:12px;margin-top:3px}
+
+.riBridge,.riLeverPanel,.riNarrative,.riStageMatrix,.riAccountPanel{
+  border-radius:23px;background:#f9fafa;border:1px solid rgba(55,73,79,.065);box-shadow:0 10px 28px rgba(49,65,70,.035)
+}
+.riBridge{padding:18px}
+.riSectionHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}.riSectionHead h2{font-size:18px;margin:4px 0 0}.riMeta{font-size:8px;color:#8d979b}
+.riScenarioControl{display:grid;grid-template-columns:auto auto;gap:3px 8px;align-items:center}.riScenarioControl span{font-size:8px;color:#869196}.riScenarioControl b{font-size:10px}.riScenarioControl input{grid-column:1/-1;width:190px;accent-color:#4f7479}
+.riBridgeBar{height:34px;display:flex;overflow:hidden;border-radius:10px;background:#ecefef;margin-top:15px}.riBridgeBar i{position:relative;display:block;height:100%;font-style:normal;min-width:0}.riBridgeBar i span{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:7px;white-space:nowrap;color:#fff}
+.riBridgeBar .closed{background:#355f66}.riBridgeBar .commit{background:#789399}.riBridgeBar .upside{background:#aebdbf}.riBridgeBar .gap{background:#e6e9e9}.riBridgeBar .gap span{color:#879297}
+.riBridgeMetrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.riBridgeMetrics>div{padding:10px;border-radius:12px;background:#fff;border:1px solid #e6e9e9}.riBridgeMetrics span,.riBridgeMetrics b,.riBridgeMetrics small{display:block}.riBridgeMetrics span{font-size:7px;color:#8b969a;text-transform:uppercase;letter-spacing:.05em}.riBridgeMetrics b{font-size:14px;margin-top:3px}.riBridgeMetrics small{font-size:7px;color:#9ba4a7;margin-top:2px}.riBridgeMetrics .gap{background:#f5f2ee}
+
+.riMainGrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(270px,.55fr);gap:14px}
+.riLeverPanel{padding:18px}.riLeverList{display:flex;flex-direction:column;margin-top:12px}
+.riLever{
+  width:100%;display:grid;grid-template-columns:30px 34px minmax(0,1fr) auto 18px;gap:9px;align-items:center;
+  border:0;border-bottom:1px solid #e7ebeb;background:transparent;padding:12px 2px;text-align:left;cursor:pointer
+}
+.riLever:last-child{border-bottom:0}.riLever:hover{background:#f3f6f6;border-radius:12px}
+.riLeverRank{font-size:8px;color:#9aa3a7}.riLeverCopy small,.riLeverCopy b,.riLeverCopy em{display:block}.riLeverCopy small{font-size:7px;color:#8d979b}.riLeverCopy b{font-size:11px;margin-top:3px}.riLeverCopy em{font-size:8px;color:#7b878c;font-style:normal;margin-top:3px}
+.riLeverImpact{text-align:right}.riLeverImpact small,.riLeverImpact b,.riLeverImpact em{display:block}.riLeverImpact small{font-size:7px;color:#929ca0}.riLeverImpact b{font-size:12px;margin-top:3px}.riLeverImpact em{font-size:7px;color:#7e898e;font-style:normal;margin-top:2px}
+
+.riNarrative{padding:18px;display:flex;flex-direction:column;gap:11px}.riNarrativeHead h2{font-size:18px;margin:4px 0 0}
+.riNarrativeLead{display:grid;grid-template-columns:30px 1fr;gap:9px;padding:12px;border-radius:14px;background:#fff;border:1px solid #e5e9e9}.riNarrativeLead>span{width:30px;height:30px;border-radius:10px;background:#eaf0f0;display:grid;place-items:center;color:#4e7075}.riNarrativeLead p{font-size:9px;line-height:1.55;color:#69787e;margin:0}
+.riNarrativeSignals{display:grid;grid-template-columns:1fr;gap:6px}.riNarrativeSignals>div{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e7eaea}.riNarrativeSignals span{font-size:8px;color:#859095}.riNarrativeSignals b{font-size:9px}
+.riPulse{margin-top:auto;padding:12px;border-radius:14px;background:#eef2f2}.riPulse>div{display:flex;align-items:center;justify-content:space-between}.riPulse>div span{font-size:8px;color:#7e898e}.riPulse>div b{font-size:17px}.riPulse>em{height:46px;display:flex;gap:3px;align-items:flex-end;margin:9px 0 6px}.riPulse>em i{flex:1;min-height:7px;border-radius:4px 4px 1px 1px;background:linear-gradient(180deg,#a7b8b9,#4e7378)}.riPulse>small{font-size:8px;line-height:1.4;color:#7a868b}
+
+.riStageMatrix{padding:18px}.riStageRows{display:flex;flex-direction:column;margin-top:12px}
+.riStageRow{display:grid;grid-template-columns:120px 1fr 1fr .7fr 1.4fr 30px;gap:10px;align-items:center;padding:11px 2px;border-bottom:1px solid #e7ebeb}.riStageRow:last-child{border-bottom:0}
+.riStageIdentity{display:flex;align-items:center;gap:8px}.riStageIdentity span{width:28px;height:28px;border-radius:50%;background:#eef1f1;display:grid;place-items:center;font-size:7px;color:#7f8b90}.riStageIdentity b{font-size:10px}
+.riStageMeasure span,.riStageMeasure b{display:block}.riStageMeasure span{font-size:7px;color:#8f999d}.riStageMeasure b{font-size:10px;margin-top:2px}.riStageMeasure.risk b{color:#9a625a}
+.riStageProgress{height:5px;background:#e4e8e8;border-radius:999px;overflow:hidden}.riStageProgress i{display:block;height:100%;border-radius:999px;background:#54787d}.riStageRow>strong{font-size:11px;text-align:right}
+
+.riAccountGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.riAccountPanel{padding:18px}.riAccountRow{display:grid;grid-template-columns:34px minmax(0,1fr) 100px 28px;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid #e7ebeb}.riAccountRow:last-child{border-bottom:0}.riAccountRow>div b,.riAccountRow>div small{display:block}.riAccountRow>div b{font-size:10px}.riAccountRow>div small{font-size:7px;color:#8d989c;margin-top:2px}.riAccountRow>i{height:5px;background:#e4e8e8;border-radius:999px;overflow:hidden}.riAccountRow>i em{display:block;height:100%;border-radius:999px;background:#567c7e}.riAccountRow>strong{font-size:10px;text-align:right}.riAccountPanel.exposed .riAccountRow>i em{background:#a07a70}
+
+@media(max-width:1100px){
+  .riHero{grid-template-columns:1fr}.riTargetDial{grid-template-columns:140px 1fr;max-width:520px}
+  .riMainGrid{grid-template-columns:1fr}.riAccountGrid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .riHero{padding:18px}.riHeroStory h2{font-size:28px}.riHeroActions{align-items:flex-start;flex-direction:column}
+  .riTargetDial{grid-template-columns:1fr}.riDialRing{width:130px;height:130px}
+  .riSectionHead{align-items:flex-start;flex-direction:column}.riScenarioControl{width:100%}.riScenarioControl input{width:100%}
+  .riBridgeMetrics{grid-template-columns:1fr 1fr}.riStageRow{grid-template-columns:90px 1fr 1fr}.riStageMeasure:nth-of-type(3),.riStageProgress{display:none}.riStageRow>strong{text-align:left}
+  .riLever{grid-template-columns:24px 32px minmax(0,1fr) 16px}.riLeverImpact{display:none}
+}

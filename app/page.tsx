@@ -293,7 +293,7 @@ export default function Home() {
               <span className="dealSyncCopy"><b>{selectedDeal.company}</b><small>{selectedDeal.stage} · {selectedDeal.probability}%</small></span>
               <Icon name="chevron" size={13}/>
             </button>
-            <span className="dateRange">Sep 01 — Sep 30</span>
+            <span className="dateRange">Oct 01 — Oct 31</span>
             <button className="softBtn" onClick={() => setFocus((value) => !value)}>{focus ? "Comfort view" : "Focus view"}</button>
           </div>
         </div>

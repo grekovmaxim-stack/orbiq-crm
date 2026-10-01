@@ -82,10 +82,29 @@ export default function Home() {
 
   const subtitle = useMemo(() => {
     if (active === "Overview") return "Signals, movement, and the next actions that can change the month.";
+    if (active === "Deals") return "A live pipeline with buying context, gate readiness and revenue risk.";
     if (active === "Journeys") return "Connected customer work from first discovery through onboarding.";
-    if (active === "Analytics") return "Live portfolio intelligence across pipeline, revenue and customers.";
     if (active === "Activity") return "A live stream of customer touches, pipeline movement and team execution.";
+    if (active === "Tasks") return "Revenue actions ordered by timing, customer impact and deal context.";
+    if (active === "Calendar") return "Customer time, team work and expected closes on one operating timeline.";
+    if (active === "Analytics") return "Live portfolio intelligence across pipeline, revenue and customers.";
+    if (active === "Contacts") return "Buying groups, influence and relationship coverage across the portfolio.";
+    if (active === "Companies") return "Account health, annual value and expansion context in one view.";
+    if (active === "Settings") return "Workspace behavior, preferences and demo controls.";
     return "Northstar workspace · Live portfolio demo";
+  }, [active]);
+
+  const workspaceLabel = useMemo(() => {
+    if (active === "Overview") return "REVENUE";
+    if (active === "Deals") return "PIPELINE";
+    if (active === "Journeys") return "CUSTOMER";
+    if (active === "Activity") return "SIGNALS";
+    if (active === "Tasks") return "ACTIONS";
+    if (active === "Calendar") return "TIME";
+    if (active === "Analytics") return "INTELLIGENCE";
+    if (active === "Contacts") return "PEOPLE";
+    if (active === "Companies") return "ACCOUNTS";
+    return "WORKSPACE";
   }, [active]);
 
   function notify(message: string) {
@@ -243,7 +262,7 @@ export default function Home() {
       <section className="workspace">
         <header className="topbar">
           <div>
-            <p className="eyebrow">NORTHSTAR / REVENUE</p>
+            <p className="eyebrow">NORTHSTAR / {workspaceLabel}</p>
             <h1>{active === "Overview" ? "Command center" : active}</h1>
             <p className="sub">{subtitle}</p>
           </div>
@@ -269,7 +288,12 @@ export default function Home() {
             ))}
           </div>
           <div className="range">
-            <span>Sep 01 — Sep 30</span>
+            <button className="dealSyncPill" onClick={() => setActive("Deals")} title="Return to selected opportunity">
+              <span className={"dealSyncLogo "+selectedDeal.tone}>{selectedDeal.company.slice(0,2).toUpperCase()}</span>
+              <span className="dealSyncCopy"><b>{selectedDeal.company}</b><small>{selectedDeal.stage} · {selectedDeal.probability}%</small></span>
+              <Icon name="chevron" size={13}/>
+            </button>
+            <span className="dateRange">Sep 01 — Sep 30</span>
             <button className="softBtn" onClick={() => setFocus((value) => !value)}>{focus ? "Comfort view" : "Focus view"}</button>
           </div>
         </div>
@@ -279,6 +303,7 @@ export default function Home() {
 
       <aside className="context">
         <DealContext
+          key={selectedDeal.id}
           deal={selectedDeal}
           onAction={(action) => {
             if (action === "Task") {

@@ -45,3 +45,15 @@ export type Task = {
   done: boolean;
   priority: "High" | "Normal";
 };
+
+
+export type Activity = {
+  id: string;
+  type: "Email" | "Call" | "Task" | "Stage" | "Meeting" | "System";
+  title: string;
+  company: string;
+  detail: string;
+  actor: string;
+  time: string;
+  dealId?: string;
+};

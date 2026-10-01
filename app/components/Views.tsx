@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties, type DragEvent } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type DragEvent } from "react";
 import Icon from "./Icon";
 import { journeySeed } from "../lib/data";
 import { money } from "../lib/format";
@@ -346,12 +346,14 @@ export function DealsView({
   deals,
   onMove,
   onSelect,
-  selectedDealId
+  selectedDealId,
+  onOpenJourney
 }: {
   deals: Deal[];
   onMove: (id: string, stage: Stage) => void;
   onSelect: (deal: Deal) => void;
   selectedDealId: string;
+  onOpenJourney?: () => void;
 }) {
   const [dragging, setDragging] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -411,7 +413,10 @@ export function DealsView({
             return <span className={index < currentIndex ? "done" : index === currentIndex ? "active" : ""} key={stage}><i/><small>{stage}</small></span>;
           })}
         </div>
-        <button onClick={() => onSelect(selectedDeal)}>Open context <Icon name="arrow" size={13}/></button>
+        <div className="pipelineFocusActions">
+          {onOpenJourney && <button className="soft" onClick={onOpenJourney}><Icon name="journey" size={13}/> Journey</button>}
+          <button onClick={() => onSelect(selectedDeal)}>Open context <Icon name="arrow" size={13}/></button>
+        </div>
       </section>
 
       <div className="dealBoard pipelineBoard five">
@@ -478,15 +483,25 @@ export function DealsView({
   );
 }
 
-export function JourneyView() {
-  const [activeStep, setActiveStep] = useState(1);
+export function JourneyView({ deal, onNavigate }: { deal?: Deal; onNavigate?: (view: string) => void }) {
+  const stageToJourney: Record<Stage, number> = { New:0, Qualified:1, Proposal:2, Negotiation:2, Won:3 };
+  const syncedStep = deal ? stageToJourney[deal.stage] : 1;
+  const [activeStep, setActiveStep] = useState(syncedStep);
   const [completed, setCompleted] = useState<Record<string, boolean>>(() => {
     const state: Record<string, boolean> = {};
     journeySeed.forEach((column) => column.tasks.forEach((task) => { state[column.label + "::" + task[0]] = task[1] === "done"; }));
     return state;
   });
 
+  useEffect(() => {
+    if (deal) setActiveStep(stageToJourney[deal.stage]);
+  }, [deal?.id, deal?.stage]);
+
   const current = journeySeed[activeStep];
+  const journeyHealth = deal ? Math.max(48, Math.min(96, Math.round(deal.probability + (deal.health === "Healthy" ? 16 : deal.health === "Watch" ? 4 : -10)))) : 84;
+  const journeyHealthLabel = deal?.health === "At risk" ? "at risk" : deal?.health === "Watch" ? "watch" : "healthy";
+  const journeyAge = deal ? [6,11,19,24,29][Math.max(0, ["New","Qualified","Proposal","Negotiation","Won"].indexOf(deal.stage))] : 19;
+  const stakeholderCount = deal ? (deal.stage === "New" ? 2 : deal.stage === "Qualified" ? 3 : deal.stage === "Proposal" ? 4 : 5) : 5;
   const activeTask = current.tasks.find((task) => task[1] === "active") || current.tasks.find((task) => !completed[current.label + "::" + task[0]]) || current.tasks[0];
 
   function stageProgress(column: (typeof journeySeed)[number]) {
@@ -506,24 +521,35 @@ export function JourneyView() {
           <span className="label">Customer lifecycle studio</span>
           <div className="journeyStudioHeading">
             <div>
-              <h2>Everline · Enterprise expansion</h2>
+              <h2>{deal ? deal.company+" · "+deal.title : "Everline · Enterprise expansion"}</h2>
               <p>A connected view of people, decisions, value moments and post-sale adoption.</p>
             </div>
             <div className="journeyStudioHealth">
               <span>Health</span>
-              <b>84</b>
-              <small>healthy</small>
+              <b>{journeyHealth}</b>
+              <small>{journeyHealthLabel}</small>
             </div>
           </div>
         </div>
 
         <div className="journeyStudioMeta">
-          <div><span>Potential value</span><b>$31.8K</b></div>
-          <div><span>Journey age</span><b>19 days</b></div>
-          <div><span>Stakeholders</span><b>5 active</b></div>
+          <div><span>Potential value</span><b>{deal ? money(deal.value,true) : "$31.8K"}</b></div>
+          <div><span>Journey age</span><b>{journeyAge} days</b></div>
+          <div><span>Stakeholders</span><b>{stakeholderCount} active</b></div>
           <button><Icon name="dots" size={16}/></button>
         </div>
       </section>
+
+      {deal && (
+        <section className="journeySyncBar">
+          <div className={"logo small "+deal.tone}>{deal.company.slice(0,2).toUpperCase()}</div>
+          <div><span>Synced from pipeline</span><b>{deal.stage} · {deal.probability}% confidence</b></div>
+          <div className="journeySyncPath">
+            <span className="done">Pipeline</span><i/><span className="active">Journey</span><i/><span>Customer</span>
+          </div>
+          <button onClick={() => onNavigate?.("Deals")}>Back to pipeline <Icon name="arrow" size={13}/></button>
+        </section>
+      )}
 
       <section className="journeyMap">
         <div className="journeyMapRail" aria-hidden>
@@ -623,16 +649,16 @@ export function JourneyView() {
             <span className="journeyFocusStatus">{completed[current.label + "::" + activeTask[0]] ? "done" : "active"}</span>
           </div>
           <div className="journeyFocusSignals">
-            <div><Icon name="people" size={13}/><span><b>5 stakeholders</b><small>4 engaged this week</small></span></div>
+            <div><Icon name="people" size={13}/><span><b>{stakeholderCount} stakeholders</b><small>{Math.max(1,stakeholderCount-1)} engaged this week</small></span></div>
             <div><Icon name="calendar" size={13}/><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
             <div><Icon name="mail" size={13}/><span><b>Proposal viewed</b><small>4 times · latest 12m ago</small></span></div>
           </div>
         </div>
 
         <div className="journeyPulseCard">
-          <div className="journeyPulseHead"><span>Lifecycle pulse</span><b>84 / 100</b></div>
+          <div className="journeyPulseHead"><span>Lifecycle pulse</span><b>{journeyHealth} / 100</b></div>
           <div className="journeyPulseLine">
-            {[62,66,64,72,75,73,79,82,80,84].map((point,index) => <i key={index} style={{height:point + "%"}}/> )}
+            {[52,58,61,64,68,71,74,77,Math.max(48,journeyHealth-4),journeyHealth].map((point,index) => <i key={index} style={{height:point + "%"}}/> )}
           </div>
           <div className="journeyPulseLegend"><span>Discovery</span><span>Now</span></div>
           <div className="journeyPulseInsight"><span>✦</span><p>Momentum is positive, but decision coverage is the strongest predictor of whether the next stage lands on time.</p></div>

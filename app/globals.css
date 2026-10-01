@@ -2751,3 +2751,15 @@ html,body{
   .riBridgeMetrics{grid-template-columns:1fr 1fr}.riStageRow{grid-template-columns:90px 1fr 1fr}.riStageMeasure:nth-of-type(3),.riStageProgress{display:none}.riStageRow>strong{text-align:left}
   .riLever{grid-template-columns:24px 32px minmax(0,1fr) 16px}.riLeverImpact{display:none}
 }
+
+/* --- Final QA: empty relationship state --- */
+.contextPeopleEmpty{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:10px;
+  align-items:center;
+  padding:11px 0;
+  border-bottom:1px solid var(--line);
+}
+.contextPeopleEmpty b{display:block;font-size:11px}
+.contextPeopleEmpty small{display:block;margin-top:3px;font-size:9px;line-height:1.4;color:#929b9f}

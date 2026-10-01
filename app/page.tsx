@@ -305,6 +305,7 @@ export default function Home() {
         <DealContext
           key={selectedDeal.id}
           deal={selectedDeal}
+          contacts={contacts}
           onAction={(action) => {
             if (action === "Task") {
               const task: Task = {

@@ -2,7 +2,7 @@ import { useMemo, useState, type CSSProperties, type DragEvent } from "react";
 import Icon from "./Icon";
 import { journeySeed } from "../lib/data";
 import { money } from "../lib/format";
-import type { Company, Contact, Deal, Stage, Task } from "../lib/types";
+import type { Activity, Company, Contact, Deal, Stage, Task } from "../lib/types";
 
 export function OverviewView({
   deals,
@@ -787,6 +787,121 @@ export function CompaniesView({
     </div>
   );
 }
+
+export function ActivityView({
+  activities,
+  deals,
+  onSelectDeal
+}: {
+  activities: Activity[];
+  deals: Deal[];
+  onSelectDeal: (deal: Deal) => void;
+}) {
+  const [filter, setFilter] = useState("All");
+  const [query, setQuery] = useState("");
+  const categories = ["All","Customer","Team","Pipeline","System"];
+
+  function category(activity: Activity) {
+    if (activity.type === "Email" || activity.type === "Call" || activity.type === "Meeting") return "Customer";
+    if (activity.type === "Task") return "Team";
+    if (activity.type === "Stage") return "Pipeline";
+    return "System";
+  }
+
+  const filtered = activities.filter((activity) => {
+    const matchesFilter = filter === "All" || category(activity) === filter;
+    const haystack = (activity.title+" "+activity.company+" "+activity.detail+" "+activity.actor).toLowerCase();
+    return matchesFilter && haystack.includes(query.toLowerCase());
+  });
+
+  const customerTouches = activities.filter((activity) => category(activity) === "Customer").length;
+  const pipelineMoves = activities.filter((activity) => activity.type === "Stage").length;
+  const riskSignals = activities.filter((activity) => activity.title.toLowerCase().includes("risk") || activity.detail.toLowerCase().includes("dependency")).length;
+
+  function iconFor(activity: Activity) {
+    if (activity.type === "Email") return "mail";
+    if (activity.type === "Call") return "call";
+    if (activity.type === "Task") return "task";
+    if (activity.type === "Meeting") return "calendar";
+    if (activity.type === "Stage") return "journey";
+    return "bell";
+  }
+
+  return (
+    <div className="activityStudio">
+      <section className="activityHero">
+        <div className="activityHeroCopy">
+          <span className="label">Live activity center</span>
+          <h2>Everything that changes revenue.</h2>
+          <p>Customer touches, pipeline movement, team execution and system signals — stitched into one operational stream.</p>
+        </div>
+        <div className="activityHeroStats">
+          <div><span>Customer touches</span><b>{customerTouches}</b><small>recent interactions</small></div>
+          <div><span>Pipeline moves</span><b>{pipelineMoves}</b><small>stage transitions</small></div>
+          <div className="attention"><span>Risk signals</span><b>{riskSignals}</b><small>need review</small></div>
+        </div>
+      </section>
+
+      <section className="activityControlBar">
+        <label className="activitySearch"><Icon name="search" size={14}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search activity, company or owner"/></label>
+        <div className="activityFilters">
+          {categories.map((item) => <button className={filter === item ? "active" : ""} key={item} onClick={() => setFilter(item)}>{item}</button>)}
+        </div>
+        <div className="activityLive"><i/><span>Live workspace stream</span></div>
+      </section>
+
+      <section className="activityLayout">
+        <div className="activityFeed">
+          <div className="activityFeedHead"><div><span className="label">Event stream</span><h2>{filtered.length} signals in view</h2></div><small>Newest first</small></div>
+          <div className="activityTimeline">
+            {filtered.map((activity,index) => {
+              const deal = activity.dealId ? deals.find((item) => item.id === activity.dealId) : undefined;
+              return (
+                <button className={"activityEvent "+category(activity).toLowerCase()} key={activity.id} onClick={() => deal && onSelectDeal(deal)}>
+                  <span className="activityRail"><i/><em>{index < filtered.length-1 ? "" : "end"}</em></span>
+                  <span className="activityGlyph"><Icon name={iconFor(activity)} size={14}/></span>
+                  <span className="activityEventCopy">
+                    <span className="activityMeta"><b>{activity.company}</b><em>{category(activity)}</em><small>{activity.time}</small></span>
+                    <strong>{activity.title}</strong>
+                    <p>{activity.detail}</p>
+                  </span>
+                  <span className="activityActor">{activity.actor}</span>
+                  {deal && <span className="activityOpen"><Icon name="chevron" size={14}/></span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <aside className="activityDigest">
+          <div className="activityDigestHead"><span className="label">Signal digest</span><h2>What matters now</h2></div>
+          <div className="activityDigestCard primarySignal">
+            <span>01 · Approval path</span>
+            <b>Arcwell security work is clearing.</b>
+            <p>Commercial approval is now the dominant dependency. Keep the buyer thread active.</p>
+            <button onClick={() => { const deal = deals.find((item) => item.company === "Arcwell"); if (deal) onSelectDeal(deal); }}>Open opportunity <Icon name="arrow" size={13}/></button>
+          </div>
+          <div className="activityDigestCard">
+            <span>02 · Momentum</span>
+            <b>Everline has repeated proposal engagement.</b>
+            <p>Four views in a short window make the next commercial touch more timely.</p>
+          </div>
+          <div className="activityDigestCard">
+            <span>03 · Coverage gap</span>
+            <b>Novexa still lacks decision coverage.</b>
+            <p>The opportunity remains exposed until an economic buyer enters the path.</p>
+          </div>
+          <div className="activityPulse">
+            <div><span>Workspace pulse</span><b>84</b></div>
+            <em>{[48,54,52,63,61,70,74,71,80,84].map((item,index) => <i style={{height:item+"%"}} key={index}/>)}</em>
+            <small>Signals are trending healthier over the last 10 events.</small>
+          </div>
+        </aside>
+      </section>
+    </div>
+  );
+}
+
 
 export function TasksView({
   tasks,

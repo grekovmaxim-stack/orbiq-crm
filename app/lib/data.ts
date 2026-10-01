@@ -1,4 +1,4 @@
-import type { Company, Contact, Deal, Task } from "./types";
+import type { Activity, Company, Contact, Deal, Task } from "./types";
 
 export const seedDeals: Deal[] = [
   { id:"d1", company:"Everline", title:"Enterprise expansion", value:31800, stage:"Proposal", owner:"MC", tone:"mint", probability:68, closeDate:"Oct 18", health:"Healthy" },
@@ -49,3 +49,15 @@ export const journeySeed = [
   { label:"Adoption", progress:0, tasks:[["Usage baseline","todo","SR"],["Champion check-in","todo","MC"],["Value review","todo","OM"]] },
   { label:"Retention", progress:0, tasks:[["Health review","todo","MC"],["Renewal path","todo","OM"],["Expansion signal","todo","DL"]] }
 ] as const;
+
+
+export const seedActivities: Activity[] = [
+  { id:"a1", type:"Email", title:"Proposal opened", company:"Everline", detail:"Olivia Martin opened the enterprise proposal for the 4th time.", actor:"OM", time:"12 min ago", dealId:"d1" },
+  { id:"a2", type:"System", title:"Security review updated", company:"Arcwell", detail:"Two review notes were resolved; commercial approval is now the main dependency.", actor:"DL", time:"44 min ago", dealId:"d2" },
+  { id:"a3", type:"Task", title:"Buying committee confirmed", company:"Northwave", detail:"Champion and decision coverage reached 3 of 5 mapped roles.", actor:"SR", time:"2 h ago", dealId:"d3" },
+  { id:"a4", type:"Meeting", title:"Proposal walkthrough scheduled", company:"Everline", detail:"Commercial walkthrough booked for today at 14:00.", actor:"MC", time:"Today · 09:18", dealId:"d1" },
+  { id:"a5", type:"Call", title:"Discovery call logged", company:"Kinetiq", detail:"Urgency confirmed; sponsor still needs to be identified.", actor:"SR", time:"Yesterday", dealId:"d8" },
+  { id:"a6", type:"Stage", title:"Moved to Proposal", company:"Ardent", detail:"Technical fit was validated and the ROI case entered the value stage.", actor:"DL", time:"Yesterday", dealId:"d6" },
+  { id:"a7", type:"System", title:"Risk signal detected", company:"Novexa", detail:"Decision-maker coverage is missing and momentum dropped below target.", actor:"OR", time:"Sep 28", dealId:"d4" },
+  { id:"a8", type:"Meeting", title:"Expansion review completed", company:"Lumon", detail:"Sales operations expansion remains healthy with two follow-up actions.", actor:"MC", time:"Sep 27", dealId:"d5" }
+];

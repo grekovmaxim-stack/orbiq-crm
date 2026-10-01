@@ -249,6 +249,7 @@ export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action
   const [tab, setTab] = useState<"summary" | "journey">("summary");
   const stages = ["New", "Qualified", "Proposal", "Negotiation", "Won"];
   const stageIndex = Math.max(0, stages.indexOf(deal.stage));
+  const journeyIndex = [0,1,2,2,3][stageIndex] ?? 0;
   const healthTone = deal.health === "Healthy" ? "healthy" : deal.health === "At risk" ? "risk" : "watch";
   const accent = ["sky","lime","amber","violet","mint"][stageIndex];
   const evidence = [
@@ -377,10 +378,11 @@ export function DealContext({ deal, onAction }: { deal: Deal; onAction?: (action
             ["Solution","Technical validation and workflow fit"],
             ["Decision","Commercial case and approval path"],
             ["Onboarding","Kickoff, workspace and success plan"],
-            ["Retention","Adoption signal and expansion motion"]
+            ["Adoption","Usage, value realization and champion check-ins"],
+            ["Retention","Health, renewal path and expansion motion"]
           ].map((item,index) => {
-            const active = index === Math.min(stageIndex, 3);
-            const done = index < Math.min(stageIndex, 4);
+            const active = index === journeyIndex;
+            const done = index < journeyIndex;
             return (
               <div className={"contextJourneyItem " + (done ? "done " : "") + (active ? "active" : "")} key={item[0]}>
                 <span className="contextJourneyDot">{done ? "✓" : index + 1}</span>

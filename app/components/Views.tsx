@@ -483,7 +483,7 @@ export function DealsView({
   );
 }
 
-export function JourneyView({ deal, onNavigate }: { deal?: Deal; onNavigate?: (view: string) => void }) {
+export function JourneyView({ deal, contacts = [], onNavigate }: { deal?: Deal; contacts?: Contact[]; onNavigate?: (view: string) => void }) {
   const stageToJourney: Record<Stage, number> = { New:0, Qualified:1, Proposal:2, Negotiation:2, Won:3 };
   const syncedStep = deal ? stageToJourney[deal.stage] : 1;
   const [activeStep, setActiveStep] = useState(syncedStep);
@@ -501,7 +501,19 @@ export function JourneyView({ deal, onNavigate }: { deal?: Deal; onNavigate?: (v
   const journeyHealth = deal ? Math.max(48, Math.min(96, Math.round(deal.probability + (deal.health === "Healthy" ? 16 : deal.health === "Watch" ? 4 : -10)))) : 84;
   const journeyHealthLabel = deal?.health === "At risk" ? "at risk" : deal?.health === "Watch" ? "watch" : "healthy";
   const journeyAge = deal ? [6,11,19,24,29][Math.max(0, ["New","Qualified","Proposal","Negotiation","Won"].indexOf(deal.stage))] : 19;
-  const stakeholderCount = deal ? (deal.stage === "New" ? 2 : deal.stage === "Qualified" ? 3 : deal.stage === "Proposal" ? 4 : 5) : 5;
+  const dealContacts = deal ? contacts.filter((contact) => contact.company === deal.company) : [];
+  const stakeholderCount = deal ? Math.max(dealContacts.length, deal.stage === "New" ? 2 : deal.stage === "Qualified" ? 3 : deal.stage === "Proposal" ? 4 : 5) : 5;
+  const technicalContact = dealContacts.find((contact) => contact.relationship === "Technical lead");
+  const decisionContact = dealContacts.find((contact) => contact.relationship === "Decision maker" || contact.relationship === "Economic buyer");
+  const nextTouch = deal?.stage === "Negotiation" ? "Today · 15:30" : deal?.stage === "Won" ? "Oct 14 · 14:00" : deal?.stage === "New" ? "Today · 16:00" : deal?.stage === "Qualified" ? "Tomorrow · 10:00" : "Tomorrow · 10:30";
+  const engagementLabel = deal?.stage === "New" ? "Buying group forming" : deal?.stage === "Qualified" ? "Technical validation" : deal?.stage === "Won" ? "Kickoff scheduled" : "Proposal engagement";
+  const engagementDetail = deal?.stage === "New"
+    ? stakeholderCount+" roles identified"
+    : deal?.stage === "Qualified"
+      ? (technicalContact ? technicalContact.name+" engaged" : "Technical owner needed")
+      : deal?.stage === "Won"
+        ? "Handoff context ready"
+        : Math.max(2, Math.round((deal?.probability || 60) / 18))+" views · latest 12m ago";
   const activeTask = current.tasks.find((task) => task[1] === "active") || current.tasks.find((task) => !completed[current.label + "::" + task[0]]) || current.tasks[0];
 
   function stageProgress(column: (typeof journeySeed)[number]) {
@@ -606,12 +618,12 @@ export function JourneyView({ deal, onNavigate }: { deal?: Deal; onNavigate?: (v
 
                 {columnIndex === 1 && (
                   <div className="journeyMicroNode tech">
-                    <span>DK</span><div><b>Technical proof</b><small>Validation in progress</small></div>
+                    <span>{technicalContact?.initials || "TL"}</span><div><b>Technical proof</b><small>{technicalContact ? technicalContact.name+" engaged" : "Validation owner needed"}</small></div>
                   </div>
                 )}
                 {columnIndex === 2 && (
                   <div className="journeyMicroNode decision">
-                    <span>OM</span><div><b>Decision gate</b><small>Economic buyer required</small></div>
+                    <span>{decisionContact?.initials || "DM"}</span><div><b>Decision gate</b><small>{decisionContact ? decisionContact.name+" mapped" : "Economic buyer required"}</small></div>
                   </div>
                 )}
                 {columnIndex === 4 && (
@@ -650,8 +662,8 @@ export function JourneyView({ deal, onNavigate }: { deal?: Deal; onNavigate?: (v
           </div>
           <div className="journeyFocusSignals">
             <div><Icon name="people" size={13}/><span><b>{stakeholderCount} stakeholders</b><small>{Math.max(1,stakeholderCount-1)} engaged this week</small></span></div>
-            <div><Icon name="calendar" size={13}/><span><b>Next touch</b><small>Tomorrow · 10:30</small></span></div>
-            <div><Icon name="mail" size={13}/><span><b>Proposal viewed</b><small>4 times · latest 12m ago</small></span></div>
+            <div><Icon name="calendar" size={13}/><span><b>Next touch</b><small>{nextTouch}</small></span></div>
+            <div><Icon name="mail" size={13}/><span><b>{engagementLabel}</b><small>{engagementDetail}</small></span></div>
           </div>
         </div>
 
@@ -843,6 +855,12 @@ export function ActivityView({
   const customerTouches = activities.filter((activity) => category(activity) === "Customer").length;
   const pipelineMoves = activities.filter((activity) => activity.type === "Stage").length;
   const riskSignals = activities.filter((activity) => activity.title.toLowerCase().includes("risk") || activity.detail.toLowerCase().includes("dependency")).length;
+  const openDeals = deals.filter((deal) => deal.stage !== "Won");
+  const approvalDeal = [...openDeals].filter((deal) => deal.stage === "Negotiation").sort((a,b) => b.probability-a.probability)[0] || [...openDeals].sort((a,b) => b.probability-a.probability)[0];
+  const momentumDeal = [...openDeals].filter((deal) => deal.health === "Healthy").sort((a,b) => (b.value*b.probability)-(a.value*a.probability))[0] || openDeals[0];
+  const coverageDeal = [...openDeals].filter((deal) => deal.health !== "Healthy").sort((a,b) => a.probability-b.probability)[0] || [...openDeals].sort((a,b) => a.probability-b.probability)[0];
+  const averageProbability = openDeals.length ? Math.round(openDeals.reduce((sum, deal) => sum + deal.probability, 0) / openDeals.length) : 0;
+  const workspacePulse = Math.max(48, Math.min(94, Math.round(averageProbability + 32 - riskSignals * 2)));
 
   function iconFor(activity: Activity) {
     if (activity.type === "Email") return "mail";
@@ -901,26 +919,34 @@ export function ActivityView({
 
         <aside className="activityDigest">
           <div className="activityDigestHead"><span className="label">Signal digest</span><h2>What matters now</h2></div>
-          <div className="activityDigestCard primarySignal">
-            <span>01 · Approval path</span>
-            <b>Arcwell security work is clearing.</b>
-            <p>Commercial approval is now the dominant dependency. Keep the buyer thread active.</p>
-            <button onClick={() => { const deal = deals.find((item) => item.company === "Arcwell"); if (deal) onSelectDeal(deal); }}>Open opportunity <Icon name="arrow" size={13}/></button>
-          </div>
-          <div className="activityDigestCard">
-            <span>02 · Momentum</span>
-            <b>Everline has repeated proposal engagement.</b>
-            <p>Four views in a short window make the next commercial touch more timely.</p>
-          </div>
-          <div className="activityDigestCard">
-            <span>03 · Coverage gap</span>
-            <b>Novexa still lacks decision coverage.</b>
-            <p>The opportunity remains exposed until an economic buyer enters the path.</p>
-          </div>
+          {approvalDeal && (
+            <div className="activityDigestCard primarySignal">
+              <span>01 · Approval path</span>
+              <b>{approvalDeal.company} is closest to a decision gate.</b>
+              <p>{approvalDeal.health === "Watch" ? "Momentum needs protection while the approval path clears." : "Keep the commercial thread active and remove the final approval dependency."}</p>
+              <button onClick={() => onSelectDeal(approvalDeal)}>Open opportunity <Icon name="arrow" size={13}/></button>
+            </div>
+          )}
+          {momentumDeal && (
+            <div className="activityDigestCard">
+              <span>02 · Momentum</span>
+              <b>{momentumDeal.company} carries the strongest healthy weighted signal.</b>
+              <p>{money(Math.round(momentumDeal.value * momentumDeal.probability / 100),true)} of weighted impact is currently supported by healthy momentum.</p>
+              <button onClick={() => onSelectDeal(momentumDeal)}>Open opportunity <Icon name="arrow" size={13}/></button>
+            </div>
+          )}
+          {coverageDeal && (
+            <div className="activityDigestCard">
+              <span>03 · Coverage gap</span>
+              <b>{coverageDeal.company} needs the clearest intervention.</b>
+              <p>{coverageDeal.health === "At risk" ? "Decision coverage is still below target." : "The deal is on watch; protect stakeholder engagement before momentum slips."}</p>
+              <button onClick={() => onSelectDeal(coverageDeal)}>Open opportunity <Icon name="arrow" size={13}/></button>
+            </div>
+          )}
           <div className="activityPulse">
-            <div><span>Workspace pulse</span><b>84</b></div>
-            <em>{[48,54,52,63,61,70,74,71,80,84].map((item,index) => <i style={{height:item+"%"}} key={index}/>)}</em>
-            <small>Signals are trending healthier over the last 10 events.</small>
+            <div><span>Workspace pulse</span><b>{workspacePulse}</b></div>
+            <em>{[48,54,52,60,63,67,69,Math.max(52,workspacePulse-8),Math.max(54,workspacePulse-4),workspacePulse].map((item,index) => <i style={{height:item+"%"}} key={index}/>)}</em>
+            <small>Pulse combines current opportunity confidence with recent system and risk signals.</small>
           </div>
         </aside>
       </section>

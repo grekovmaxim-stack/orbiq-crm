@@ -224,7 +224,7 @@ export default function Home() {
     if (active === "Journeys") return <JourneyView deal={selectedDeal} contacts={contacts} onNavigate={setActive}/>;
     if (active === "Activity") return <ActivityView activities={activities} deals={deals} onSelectDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); }}/>;
     if (active === "Contacts") return <ContactsView contacts={contacts} onOpen={(contact) => setDrawer({ kind: "contact", data: contact })}/>;
-    if (active === "Companies") return <CompaniesView companies={seedCompanies} onOpen={(company) => setDrawer({ kind: "company", data: company })}/>;
+    if (active === "Companies") return <CompaniesView companies={seedCompanies} deals={deals} onOpen={(company) => setDrawer({ kind: "company", data: company })}/>;
     if (active === "Tasks") return <TasksView tasks={tasks} deals={deals} onToggle={toggleTask} onOpenDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); }}/>;
     if (active === "Calendar") return <CalendarView tasks={tasks} deals={deals} onSelectDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); }}/>;
     if (active === "Analytics") return <AnalyticsView deals={deals} companies={seedCompanies} onSelectDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); }}/>;

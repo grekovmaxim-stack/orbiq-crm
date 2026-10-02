@@ -2763,3 +2763,42 @@ html,body{
 }
 .contextPeopleEmpty b{display:block;font-size:11px}
 .contextPeopleEmpty small{display:block;margin-top:3px;font-size:9px;line-height:1.4;color:#929b9f}
+
+/* --- Final Contacts / Companies QA --- */
+.peopleNetworkEmpty{
+  position:absolute;
+  left:50%;
+  top:56%;
+  transform:translate(-50%,-50%);
+  width:190px;
+  text-align:center;
+  padding:14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(50,68,74,.07);
+  box-shadow:0 10px 24px rgba(48,64,69,.04);
+}
+.peopleNetworkEmpty b,.peopleNetworkEmpty small{display:block}
+.peopleNetworkEmpty b{font-size:10px}
+.peopleNetworkEmpty small{margin-top:4px;font-size:8px;line-height:1.4;color:#8b959a}
+
+.drawerLinkedDeal{
+  width:100%;
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto 18px;
+  gap:10px;
+  align-items:center;
+  padding:10px 11px;
+  border:1px solid #e2e7e7;
+  border-radius:12px;
+  background:#f7f9f9;
+  text-align:left;
+  cursor:pointer;
+}
+.drawerLinkedDeal:hover{background:#f1f5f4}
+.drawerLinkedDeal>span small,.drawerLinkedDeal>span b{display:block}
+.drawerLinkedDeal>span small{font-size:7px;color:#8b969a}
+.drawerLinkedDeal>span b{font-size:9px;margin-top:3px}
+.drawerLinkedDeal>span:nth-child(2){text-align:right}
+.drawerLinkedDeal svg{color:#95a0a4}

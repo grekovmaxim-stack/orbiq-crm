@@ -194,16 +194,39 @@ export function CreateModal({
 
 export function DetailDrawer({
   entity,
-  close
+  close,
+  deals = [],
+  contacts = [],
+  onDeal,
+  onAction
 }: {
   entity: { kind: "contact"; data: Contact } | { kind: "company"; data: Company };
   close: () => void;
+  deals?: Deal[];
+  contacts?: Contact[];
+  onDeal?: (deal: Deal) => void;
+  onAction?: (action: "Email" | "Call" | "Task", label: string, company: string) => void;
 }) {
   const isContact = entity.kind === "contact";
   const contact = isContact ? entity.data : null;
   const company = !isContact ? entity.data : null;
   const title = contact?.name || company?.name || "";
   const subtitle = contact ? contact.role + " · " + contact.company : company ? company.industry + " · " + company.employees + " employees" : "";
+  const entityCompany = contact?.company || company?.name || "";
+  const relatedContacts = contacts.filter((item) => item.company === entityCompany);
+  const relatedDeals = deals.filter((deal) => deal.company === entityCompany);
+  const linkedDeal = relatedDeals.find((deal) => deal.stage !== "Won") || relatedDeals[0];
+  const contextRows = isContact
+    ? [
+        ["Latest", contact ? contact.name + " · " + contact.lastActivity : "Recent relationship activity"],
+        ["Pipeline", linkedDeal ? linkedDeal.title + " · " + linkedDeal.stage : "No open opportunity linked"],
+        ["Coverage", relatedContacts.length + " known stakeholder" + (relatedContacts.length === 1 ? "" : "s") + " at " + entityCompany]
+      ]
+    : [
+        ["Stakeholders", relatedContacts.length + " people mapped"],
+        ["Pipeline", linkedDeal ? linkedDeal.title + " · " + linkedDeal.stage : "No open opportunity linked"],
+        ["Account", company ? company.health + "% health · " + money(company.arr,true) + " ARR" : "Portfolio context"]
+      ];
 
   return (
     <div className="drawerBackdrop" onMouseDown={close}>
@@ -225,21 +248,35 @@ export function DetailDrawer({
         </div>
 
         <div className="drawerSection">
-          <div className="sectionTitle"><span>Relationship timeline</span><button>View all</button></div>
-          {[
-            ["Today", isContact ? "Opened the proposal and reviewed pricing" : "Commercial stakeholder engaged"],
-            ["Sep 25", "Technical review completed with positive notes"],
-            ["Sep 22", "Discovery summary shared with the buying team"],
-            ["Sep 18", "First qualified conversation"]
-          ].map((item, index) => <div className="timelineItem" key={item[0]}><i className={index === 0 ? "active" : ""}/><div><b>{item[1]}</b><span>{item[0]}</span></div></div>)}
+          <div className="sectionTitle"><span>Relationship context</span><button>Live view</button></div>
+          {contextRows.map((item, index) => <div className="timelineItem" key={item[0]}><i className={index === 0 ? "active" : ""}/><div><b>{item[1]}</b><span>{item[0]}</span></div></div>)}
+          {linkedDeal && (
+            <button className="drawerLinkedDeal" onClick={() => onDeal?.(linkedDeal)}>
+              <span><small>Linked opportunity</small><b>{linkedDeal.company} · {linkedDeal.title}</b></span>
+              <span><small>{linkedDeal.stage}</small><b>{money(linkedDeal.value,true)}</b></span>
+              <Icon name="arrow" size={13}/>
+            </button>
+          )}
         </div>
 
         <div className="drawerSection">
           <div className="sectionTitle"><span>Next best action</span></div>
-          <div className="nextAction"><span>✦</span><p>{isContact ? "Share the concise ROI summary before the next commercial call." : "Schedule a multi-threaded review with the economic buyer and technical lead."}</p></div>
+          <div className="nextAction"><span>✦</span><p>{linkedDeal
+            ? linkedDeal.health === "At risk"
+              ? "Strengthen decision coverage before moving the opportunity forward."
+              : linkedDeal.stage === "Negotiation"
+                ? "Protect the approval path and confirm the final commercial owner."
+                : "Use the next customer touch to advance the current exit gate."
+            : isContact
+              ? "Map this stakeholder into an active opportunity before the next touch."
+              : "Review stakeholder coverage and identify the next expansion signal."}</p></div>
         </div>
 
-        <div className="drawerActions"><button className="softBtn"><Icon name="mail" size={14}/> Email</button><button className="softBtn"><Icon name="call" size={14}/> Call</button><button className="primary"><Icon name="plus" size={14}/> Task</button></div>
+        <div className="drawerActions">
+          <button className="softBtn" onClick={() => onAction?.("Email", title, entityCompany)}><Icon name="mail" size={14}/> Email</button>
+          <button className="softBtn" onClick={() => onAction?.("Call", title, entityCompany)}><Icon name="call" size={14}/> Call</button>
+          <button className="primary" onClick={() => onAction?.("Task", title, entityCompany)}><Icon name="plus" size={14}/> Task</button>
+        </div>
       </aside>
     </div>
   );

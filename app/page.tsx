@@ -349,7 +349,40 @@ export default function Home() {
         onCreate={() => { setSearchOpen(false); setCreateOpen(true); }}
       />}
       {createOpen && <CreateModal initialType={createType} close={() => setCreateOpen(false)} onCreate={createItem}/>}
-      {drawer && <DetailDrawer entity={drawer} close={() => setDrawer(null)}/>}
+      {drawer && <DetailDrawer
+        entity={drawer}
+        close={() => setDrawer(null)}
+        deals={deals}
+        contacts={contacts}
+        onDeal={(deal) => { setSelectedDeal(deal); setActive("Deals"); setDrawer(null); }}
+        onAction={(action, label, company) => {
+          if (action === "Task") {
+            const task: Task = {
+              id: "t" + Date.now().toString(),
+              title: "Follow up with " + label,
+              company,
+              type: "Follow-up",
+              due: "Today · 17:00",
+              owner: "MC",
+              done: false,
+              priority: "Normal"
+            };
+            setTasks((current) => [task, ...current]);
+            addActivity({ type:"Task", title:"Follow-up created", company, detail:task.title, actor:"MC" });
+            notify("Task created for " + company);
+            return;
+          }
+
+          addActivity({
+            type: action,
+            title: action === "Email" ? "Email sent" : "Call logged",
+            company,
+            detail: action === "Email" ? "Outbound follow-up sent to "+label+"." : "Customer call logged with "+label+".",
+            actor: "MC"
+          });
+          notify(action + " activity added");
+        }}
+      />}
     </main>
   );
 }

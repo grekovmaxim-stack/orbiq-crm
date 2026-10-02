@@ -712,13 +712,14 @@ export function ContactsView({
 
         <div className="peopleNetwork">
           <div className="peopleNetworkCore"><span>ORBIQ</span><b>Buying group</b><small>Northstar portfolio</small></div>
-          {contacts.slice(0,6).map((contact,index) => (
+          {filtered.slice(0,6).map((contact,index) => (
             <button className={"peopleNode node"+index} key={contact.id} onClick={() => onOpen(contact)}>
               <span className={"avatar c"+(index%4)}>{contact.initials}</span>
               <div><b>{contact.name}</b><small>{contact.relationship}</small></div>
             </button>
           ))}
-          <i className="peopleLine line1"/><i className="peopleLine line2"/><i className="peopleLine line3"/><i className="peopleLine line4"/>
+          {filtered.length > 0 && <><i className="peopleLine line1"/><i className="peopleLine line2"/><i className="peopleLine line3"/><i className="peopleLine line4"/></>}
+          {filtered.length === 0 && <div className="peopleNetworkEmpty"><b>No people match this view</b><small>Clear search or relationship filters.</small></div>}
         </div>
       </section>
 
@@ -765,14 +766,21 @@ export function ContactsView({
 
 export function CompaniesView({
   companies,
+  deals = [],
   onOpen
 }: {
   companies: Company[];
+  deals?: Deal[];
   onOpen: (company: Company) => void;
 }) {
   const totalArr = companies.reduce((sum, company) => sum + company.arr, 0);
   const healthiest = [...companies].sort((a,b) => b.health - a.health)[0];
   const largest = [...companies].sort((a,b) => b.arr - a.arr)[0];
+  const companyNames = new Set(companies.map((company) => company.name));
+  const portfolioDeals = deals.filter((deal) => deal.stage !== "Won" && companyNames.has(deal.company));
+  const openAccountValue = portfolioDeals.reduce((sum, deal) => sum + deal.value, 0);
+  const accountsWithPipeline = new Set(portfolioDeals.map((deal) => deal.company)).size;
+  const portfolioHealth = companies.length ? Math.round(companies.reduce((sum, company) => sum + company.health, 0) / companies.length) : 0;
 
   return (
     <div className="accountsStudio">
@@ -796,15 +804,15 @@ export function CompaniesView({
               <div><b>{company.name}</b><small>{company.health}% health</small></div>
             </button>
           ))}
-          <div className="accountOrbitLabel"><span>Portfolio pulse</span><b>{money(totalArr,true)}</b><small>annual value</small></div>
+          <div className="accountOrbitLabel"><span>Portfolio pulse</span><b>{portfolioHealth}</b><small>avg. health · {money(totalArr,true)} ARR</small></div>
         </div>
       </section>
 
       <section className="accountSignals">
-        <div><span>Portfolio ARR</span><b>{money(totalArr, true)}</b><small>6 strategic accounts</small></div>
+        <div><span>Portfolio ARR</span><b>{money(totalArr, true)}</b><small>{companies.length} strategic accounts</small></div>
         <div><span>Health leader</span><b>{healthiest.name}</b><small>{healthiest.health}% health</small></div>
         <div><span>Largest account</span><b>{largest.name}</b><small>{money(largest.arr,true)} annual value</small></div>
-        <div><span>Expansion potential</span><b>$214K</b><small>across 4 accounts</small></div>
+        <div><span>Open account value</span><b>{money(openAccountValue,true)}</b><small>{accountsWithPipeline} accounts with live pipeline</small></div>
       </section>
 
       <section className="accountMosaic">
@@ -814,7 +822,7 @@ export function CompaniesView({
               <div className={"logo " + company.tone}>{company.name.slice(0,2).toUpperCase()}</div>
               <span className="accountTileArrow"><Icon name="arrow" size={14}/></span>
             </div>
-            <div className="accountTileCopy"><span>{company.industry}</span><h3>{company.name}</h3><p>{company.employees} employees · {company.openDeals} open deals</p></div>
+            <div className="accountTileCopy"><span>{company.industry}</span><h3>{company.name}</h3><p>{company.employees} employees · {deals.filter((deal) => deal.company === company.name && deal.stage !== "Won").length || company.openDeals} open deals</p></div>
             <div className="accountTileBottom">
               <div><span>Annual value</span><b>{money(company.arr,true)}</b></div>
               <div className="accountHealthDial"><span>{company.health}</span></div>
